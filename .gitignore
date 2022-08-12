@@ -1,0 +1,47 @@
+# Application files
+*.apk
+*.ap_
+
+/.gradle
+/local.properties
+.DS_Store
+*\~
+
+# Build folders
+/build
+**/build
+buildSrc/.gradle/
+
+# IDEA/Android Studio ignores
+*.iml
+*.ipr
+*.iws
+*.editorconfig
+**/.idea/shelf
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/datasources.xml
+**/.idea/dataSources.ids
+**/.idea/gradle.xml
+**/.idea/misc.xml
+**/.idea/modules.xml
+**/.idea/libraries
+**/.idea/terminal.xml
+**/.idea/dictionaries
+**/.idea/runConfigurations.xml
+**/.idea/caches
+**/.idea/assetWizardSettings.xml
+**/.idea/encodings.xml
+**/.idea/codeStyles/codeStyleConfig.xml
+**/.idea/jarRepositories.xml
+**/.idea/compiler.xml
+**/.idea/navEditor.xml
+
+### Android NDK ###
+.externalNativeBuild
+
+
+/captures
+.cxx
+local.properties
+

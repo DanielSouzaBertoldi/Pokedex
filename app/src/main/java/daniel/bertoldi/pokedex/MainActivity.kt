@@ -10,6 +10,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
 
@@ -25,9 +29,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    MyAppNavHost()
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun MyAppNavHost(
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController = rememberNavController(),
+    startDestination: String = "home",
+) {
+    NavHost(
+        modifier = modifier,
+        navController = navHostController,
+        startDestination = startDestination,
+    ) {
+        composable("home") {
+            Greeting(name = "Daniel")
         }
     }
 }

@@ -5,6 +5,10 @@
 - [X] Add Retrofit and Moshi
 - [X] Add Coroutines or Flow
 - [X] Add Jetpack Navigation
+- [X] Add Jetpack Paging
+- [X] Add Jetpack Room
 - [ ] Create data layer for home screen
-- [ ] Create domain layer for home scren
+  - [ ] Create response classes
+  - [X] Set up retrofit
+- [ ] Create domain layer for home screen
 - [ ] Create presentation layer for home screen

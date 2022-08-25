@@ -1,4 +1,4 @@
-package daniel.bertoldi.pokedex
+package daniel.bertoldi.pokedex.presentation.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,14 +11,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
 import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -48,12 +47,12 @@ class MainActivity : ComponentActivity() {
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navHostController: NavHostController = rememberNavController(),
-    startDestination: String = "home",
+    startDestinationName: String = "home",
 ) {
     NavHost(
         modifier = modifier,
         navController = navHostController,
-        startDestination = startDestination,
+        startDestination = startDestinationName,
     ) {
         composable("home") {
             Greeting(name = "Daniel")

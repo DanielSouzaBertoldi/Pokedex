@@ -39,7 +39,7 @@ data class SpritesResponse(
 
 @JsonClass(generateAdapter = true)
 data class StatsResponse(
-    @Json(name = "base_stat") val baseState: Int,
+    @Json(name = "base_stat") val baseStat: Int,
     val effort: Int,
     val stat: StatResponse,
 )

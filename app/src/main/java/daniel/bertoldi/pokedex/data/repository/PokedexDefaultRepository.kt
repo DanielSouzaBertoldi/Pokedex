@@ -3,7 +3,7 @@ package daniel.bertoldi.pokedex.data.repository
 import daniel.bertoldi.pokedex.data.datasource.PokedexRemoteDataSource
 import javax.inject.Inject
 
-class PokemonDefaultRepository @Inject constructor(
+class PokedexDefaultRepository @Inject constructor(
     private val remoteDataSource: PokedexRemoteDataSource,
 ) : PokedexRepository {
 

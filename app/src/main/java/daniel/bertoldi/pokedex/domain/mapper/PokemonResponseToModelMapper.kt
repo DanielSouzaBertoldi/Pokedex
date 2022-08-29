@@ -31,11 +31,11 @@ class PokemonResponseToModelMapper @Inject constructor() {
     )
 
     private fun mapSprites(sprites: SpritesResponse, id: Int) = Sprites(
-        backDefault = sprites.backDefault,
-        backShiny = sprites.backShiny,
-        frontDefault = sprites.frontDefault,
-        frontShiny = sprites.frontShiny,
-        artwork = "$SPRITES_BASE_URL/other/official-artwork/$id.png",
+        backDefaultImageUrl = sprites.backDefault,
+        backShinyImageUrl = sprites.backShiny,
+        frontDefaultImageUrl = sprites.frontDefault,
+        frontShinyImageUrl = sprites.frontShiny,
+        artworkImageUrl = "$SPRITES_BASE_URL/other/official-artwork/$id.png",
     )
 
     private fun mapStats(stats: StatsResponse) = Stats(

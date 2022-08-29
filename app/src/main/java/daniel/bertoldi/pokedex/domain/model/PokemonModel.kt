@@ -24,11 +24,11 @@ data class Ability(
 )
 
 data class Sprites(
-    val backDefault: String,
-    val backShiny: String,
-    val frontDefault: String,
-    val frontShiny: String,
-    val artwork: String,
+    val backDefaultImageUrl: String,
+    val backShinyImageUrl: String,
+    val frontDefaultImageUrl: String,
+    val frontShinyImageUrl: String,
+    val artworkImageUrl: String,
 )
 
 data class Stats(

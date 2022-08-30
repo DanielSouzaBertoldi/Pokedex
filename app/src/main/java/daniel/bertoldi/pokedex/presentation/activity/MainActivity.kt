@@ -80,7 +80,7 @@ fun PokemonCard() {
     Card(
         modifier = Modifier.padding(10.dp),
         elevation = 5.dp,
-        backgroundColor = Color(0xFF8BBE8A),
+        backgroundColor = BgTypeGrass,
         shape = Shapes.medium,
     ) {
         Box(

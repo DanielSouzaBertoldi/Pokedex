@@ -1,15 +1,19 @@
 package daniel.bertoldi.pokedex.presentation.model
 
+import androidx.compose.ui.graphics.Color
+
 data class PokemonUiModel(
     val abilities: List<UiAbilities>,
     val height: Int,
     val id: Int,
+    val pokedexNumber: String,
     val isDefault: Boolean,
     val name: String,
     val uiSprites: UiSprites,
     val stats: List<UiStats>,
-    val types: List<UiTypes>,
+    val types: List<UiType>,
     val weight: Int,
+    val backgroundColors: BackgroundColors,
 )
 
 data class UiAbilities(
@@ -34,20 +38,19 @@ data class UiSprites(
 data class UiStats(
     val baseStat: Int,
     val effort: Int,
-    val uiStat: UiStat,
-)
-
-data class UiStat(
     val name: String,
     val url: String,
-)
-
-data class UiTypes(
-    val slot: Int,
-    val uiType: UiType,
 )
 
 data class UiType(
+    val slot: Int,
     val name: String,
     val url: String,
+    val backgroundColor: Color,
+    val icon: Int,
+)
+
+data class BackgroundColors(
+    val typeColor: Color,
+    val backgroundTypeColor: Color,
 )

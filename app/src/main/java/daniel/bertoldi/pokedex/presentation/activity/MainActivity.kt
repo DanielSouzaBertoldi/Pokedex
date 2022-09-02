@@ -7,8 +7,12 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +34,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.bertoldi.pokedex.R
+import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
 import daniel.bertoldi.pokedex.ui.theme.*
 
@@ -44,13 +49,15 @@ class MainActivity : ComponentActivity() {
         viewModel.getPokemons()
 
         setContent {
+            val pokemonUiModel = viewModel.pokemonData.collectAsState()
+
             PokedexTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.background,
                 ) {
-                    MyAppNavHost()
+                    MyAppNavHost(pokemonUiModel = pokemonUiModel.value!!) // this nullable is kinda annoying me.
                 }
             }
         }
@@ -62,6 +69,7 @@ fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navHostController: NavHostController = rememberNavController(),
     startDestinationName: String = "home",
+    pokemonUiModel: PokemonUiModel
 ) {
     NavHost(
         modifier = modifier,
@@ -69,18 +77,18 @@ fun MyAppNavHost(
         startDestination = startDestinationName,
     ) {
         composable("home") {
-            PokemonCard()
+            PokemonCard(pokemonUiModel)
         }
     }
 }
 
-@Preview
 @Composable
-fun PokemonCard() {
+fun PokemonCard(pokemonUiModel: PokemonUiModel) {
+
     Card(
         modifier = Modifier.padding(10.dp),
         elevation = 5.dp,
-        backgroundColor = BgTypeGrass,
+        backgroundColor = pokemonUiModel.backgroundColors.backgroundTypeColor,
         shape = Shapes.medium,
     ) {
         Box(
@@ -119,61 +127,41 @@ fun PokemonCard() {
                         .fillMaxHeight()
                 ) {
                     Text(
-                        text = "#001",
+                        text = pokemonUiModel.pokedexNumber,
                         color = TextNumber,
                         style = Typography.subtitle1,
                     )
                     Text(
-                        text = "Bulbasaur",
+                        text = pokemonUiModel.name,
                         color = TextWhite,
                         style = Typography.h3,
                     )
-                    Row(
+                    LazyRow(
                         modifier = Modifier.wrapContentSize(),
                         horizontalArrangement = Arrangement.spacedBy(5.dp),
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .clip(shape = Shapes.small)
-                                .background(color = TypeGrass)
-                                .padding(5.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(15.dp),
-                                painter = painterResource(id = R.drawable.ic_grass_type),
-                                contentDescription = null,
-                                tint = Color.White,
-                            )
-                            Text(
-                                modifier = Modifier.padding(start = 5.dp),
-                                text = "Grass",
-                                style = Typography.subtitle2,
-                                color = TextWhite,
-                            )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .clip(shape = Shapes.small)
-                                .background(color = TypePoison)
-                                .padding(5.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(15.dp),
-                                painter = painterResource(id = R.drawable.ic_poison_type),
-                                contentDescription = null,
-                                tint = Color.White,
-                            )
-                            Text(
-                                modifier = Modifier.padding(start = 5.dp),
-                                text = "Poison",
-                                style = Typography.subtitle2,
-                                color = TextWhite,
-                            )
+                        items(pokemonUiModel.types) { typeUiData ->
+                            Row(
+                                modifier = Modifier
+                                    .wrapContentSize()
+                                    .clip(shape = Shapes.small)
+                                    .background(color = typeUiData.backgroundColor)
+                                    .padding(5.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(15.dp),
+                                    painter = painterResource(id = typeUiData.icon),
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                )
+                                Text(
+                                    modifier = Modifier.padding(start = 5.dp),
+                                    text = typeUiData.name,
+                                    style = Typography.subtitle2,
+                                    color = TextWhite,
+                                )
+                            }
                         }
                     }
                 }
@@ -184,7 +172,7 @@ fun PokemonCard() {
                     .padding(end = 10.dp)
                     .align(Alignment.CenterEnd),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png")
+                    .data(pokemonUiModel.uiSprites.artwork)
                     .crossfade(true)
                     .build(),
                 contentDescription = null,

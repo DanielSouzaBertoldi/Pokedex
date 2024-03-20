@@ -14,6 +14,7 @@ data class PokemonResponse(
     val stats: List<StatsResponse>,
     val types: List<TypesResponse>,
     val weight: Int,
+    val species: GenericObject,
 )
 
 @JsonClass(generateAdapter = true)

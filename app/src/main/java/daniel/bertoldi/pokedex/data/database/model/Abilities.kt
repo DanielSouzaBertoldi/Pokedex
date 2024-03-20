@@ -23,5 +23,5 @@ data class EffectEntry(
 data class FlavorTextEntry(
     @ColumnInfo(name = "flavor_text") val flavorText: String,
     val language: String,
-    @ColumnInfo(name = "version_group_name") val versionGroupName: String,
+    @ColumnInfo(name = "version_group_name") val versionGroupName: String? = null,
 )

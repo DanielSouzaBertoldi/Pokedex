@@ -20,7 +20,7 @@ class PokedexDefaultRepository @Inject constructor(
         }
 
     override suspend fun getCompletePokemon(pokemonId: Int) =
-        if (pokemonDao.isPokemonInDatabase(pokemonId)) {
+        if (pokemonDao.pokemonHasCompleteData(pokemonId)) {
             localDataSource.getCompletePokemon(pokemonId)
         } else {
             remoteDataSource.getCompletePokemonInfo(pokemonId)

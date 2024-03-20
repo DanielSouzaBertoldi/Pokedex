@@ -32,7 +32,7 @@ data class FlavorTextEntries(
     val flavorText: String,
     val language: GenericObject,
     @Json(name = "version_group")
-    val versionGroup: GenericObject,
+    val versionGroup: GenericObject?,
 )
 
 data class Pokemon(

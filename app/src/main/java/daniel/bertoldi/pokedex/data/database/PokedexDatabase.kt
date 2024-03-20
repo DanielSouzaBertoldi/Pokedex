@@ -7,12 +7,15 @@ import daniel.bertoldi.pokedex.data.database.converters.EffectEntryConverter
 import daniel.bertoldi.pokedex.data.database.converters.FlavorTextConverter
 import daniel.bertoldi.pokedex.data.database.converters.GenericObjectConverter
 import daniel.bertoldi.pokedex.data.database.converters.SpritesConverter
+import daniel.bertoldi.pokedex.data.database.converters.StringListConverter
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
+import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
 import daniel.bertoldi.pokedex.data.database.dao.StatsDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
+import daniel.bertoldi.pokedex.data.database.model.Species
 import daniel.bertoldi.pokedex.data.database.model.Stats
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 
@@ -24,6 +27,7 @@ private const val DATABASE_VERSION = 1
         Abilities::class,
         PokemonAbilitiesCrossRef::class,
         Stats::class,
+        Species::class,
     ],
     version = DATABASE_VERSION,
 )
@@ -32,6 +36,7 @@ private const val DATABASE_VERSION = 1
     FlavorTextConverter::class,
     SpritesConverter::class,
     GenericObjectConverter::class,
+    StringListConverter::class,
 )
 abstract class PokedexDatabase : RoomDatabase() {
 
@@ -42,4 +47,6 @@ abstract class PokedexDatabase : RoomDatabase() {
     abstract fun pokemonAbilitiesCrossRef(): PokemonAbilitiesCrossRefDao
 
     abstract fun statsDao(): StatsDao
+
+    abstract fun speciesDao(): SpeciesDao
 }

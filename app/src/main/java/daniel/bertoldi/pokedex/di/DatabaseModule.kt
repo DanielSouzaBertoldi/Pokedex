@@ -38,4 +38,7 @@ object DatabaseModule {
 
     @Provides
     fun provideStatsDao(pokedexDatabase: PokedexDatabase) = pokedexDatabase.statsDao()
+
+    @Provides
+    fun provideSpeciesDao(pokedexDatabase: PokedexDatabase) = pokedexDatabase.speciesDao()
 }

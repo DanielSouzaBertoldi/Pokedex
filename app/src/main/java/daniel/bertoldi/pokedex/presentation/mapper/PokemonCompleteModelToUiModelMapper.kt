@@ -1,11 +1,10 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
-import daniel.bertoldi.pokedex.domain.model.Ability
+import daniel.bertoldi.pokedex.domain.model.AbilityModel
 import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
-import daniel.bertoldi.pokedex.domain.model.Sprites
+import daniel.bertoldi.pokedex.domain.model.SpritesModel
 import daniel.bertoldi.pokedex.domain.model.Types
 import daniel.bertoldi.pokedex.presentation.model.BackgroundColors
-import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
 import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
 import daniel.bertoldi.pokedex.presentation.model.PokemonUiAbility
 import daniel.bertoldi.pokedex.presentation.model.UiSprites
@@ -29,18 +28,18 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         backgroundColors = mapCardBackgroundColors(pokemonModel.types.first().type.name.uppercase())
     )
 
-    private fun mapAbilities(ability: Ability) = PokemonUiAbility(
-        name = ability.name,
-        isHidden = ability.isHidden,
-        slot = ability.slot,
-        effectEntry = ability.effectEntry,
-        shortEffectEntry = ability.shortEffectEntry,
-        flavorText = ability.flavorText,
-        generation = ability.generation,
-        isMainSeries = ability.isMainSeries,
+    private fun mapAbilities(abilityModel: AbilityModel) = PokemonUiAbility(
+        name = abilityModel.name,
+        isHidden = abilityModel.isHidden,
+        slot = abilityModel.slot,
+        effectEntry = abilityModel.effectEntry,
+        shortEffectEntry = abilityModel.shortEffectEntry,
+        flavorText = abilityModel.flavorText,
+        generation = abilityModel.generation,
+        isMainSeries = abilityModel.isMainSeries,
     )
 
-    private fun mapSprites(sprites: Sprites) = UiSprites(
+    private fun mapSprites(sprites: SpritesModel) = UiSprites(
         backDefault = sprites.backDefaultImageUrl,
         backShiny = sprites.backShinyImageUrl,
         frontDefault = sprites.frontDefaultImageUrl,

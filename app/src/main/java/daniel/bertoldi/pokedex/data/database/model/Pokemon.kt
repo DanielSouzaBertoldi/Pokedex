@@ -2,12 +2,16 @@ package daniel.bertoldi.pokedex.data.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
 
-@Entity(tableName = "pokemons")
+@Entity(
+    tableName = "pokemons",
+    indices = [Index(value = ["pokemonId"])]
+)
 data class Pokemon(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val pokemonId: Int,
     val name: String,
     val height: Int,
     val weight: Int,
@@ -15,6 +19,7 @@ data class Pokemon(
     val sprites: Sprites,
     val types: List<GenericObject>,
     @ColumnInfo(name = "has_complete_data") val hasCompleteData: Boolean,
+    val speciesId: Int,
 )
 
 data class Sprites(

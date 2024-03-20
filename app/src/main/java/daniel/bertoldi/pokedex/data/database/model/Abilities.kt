@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "abilities")
 data class Abilities(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val abilityId: Int,
     val name: String,
     @ColumnInfo(name = "effect_entries") val effectEntries: List<EffectEntry>,
     @ColumnInfo(name = "flavor_text_entries") val flavorTextEntries: List<FlavorTextEntry>,

@@ -6,5 +6,4 @@ import androidx.room.Entity
 data class PokemonAbilitiesCrossRef(
     val abilityId: Int,
     val pokemonId: Int,
-    // Add Pokemon Name, is_hidden and slot??
 )

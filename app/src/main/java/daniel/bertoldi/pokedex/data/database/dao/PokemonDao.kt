@@ -13,15 +13,15 @@ interface PokemonDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemon(pokemon: Pokemon)
 
-    @Query("SELECT EXISTS(SELECT * FROM pokemons WHERE id = :pokemonId)")
+    @Query("SELECT EXISTS(SELECT * FROM pokemons WHERE pokemonId = :pokemonId)")
     suspend fun isPokemonInDatabase(pokemonId: Int): Boolean
 
-    @Query("SELECT * FROM pokemons WHERE id = :pokemonId")
+    @Query("SELECT * FROM pokemons WHERE pokemonId = :pokemonId")
     suspend fun getPokemonById(pokemonId: Int): Pokemon
 
-    @Query("SELECT has_complete_data FROM pokemons WHERE id = :pokemonId")
+    @Query("SELECT has_complete_data FROM pokemons WHERE pokemonId = :pokemonId")
     suspend fun pokemonHasCompleteData(pokemonId: Int): Boolean
 
-    @Update(entity = Pokemon::class)
-    suspend fun updatePokedexEntry(pokemon: Pokemon)
+    @Query("UPDATE pokemons SET has_complete_data = 1 WHERE pokemonId = :pokemonId")
+    suspend fun updatePokedexEntry(pokemonId: Int)
 }

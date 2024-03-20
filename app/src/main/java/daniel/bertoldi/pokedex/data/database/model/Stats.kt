@@ -10,15 +10,15 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = Pokemon::class,
-            parentColumns = ["id"],
-            childColumns = ["pokemonId"],
+            parentColumns = ["pokemonId"],
+            childColumns = ["statPokemonId"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE,
         )
     ]
 )
 data class Stats(
-    @PrimaryKey val pokemonId: Int,
+    @PrimaryKey val statPokemonId: Int,
     val hp: Int? = null,
     val attack: Int? = null,
     val defense: Int? = null,

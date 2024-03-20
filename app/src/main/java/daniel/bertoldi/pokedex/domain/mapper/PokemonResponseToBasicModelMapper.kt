@@ -1,7 +1,6 @@
 package daniel.bertoldi.pokedex.domain.mapper
 
 import daniel.bertoldi.pokedex.data.api.response.*
-import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.domain.model.*
 import javax.inject.Inject
 
@@ -17,7 +16,7 @@ class PokemonResponseToBasicModelMapper @Inject constructor() {
         weight = pokemonResponse.weight,
     )
 
-    private fun mapSprites(sprites: SpritesResponse) = Sprites(
+    private fun mapSprites(sprites: SpritesResponse) = SpritesModel(
         backDefaultImageUrl = sprites.backDefault,
         backShinyImageUrl = sprites.backShiny,
         frontDefaultImageUrl = sprites.frontDefault,

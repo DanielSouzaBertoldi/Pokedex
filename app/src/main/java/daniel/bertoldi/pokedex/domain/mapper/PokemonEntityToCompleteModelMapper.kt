@@ -1,48 +1,38 @@
 package daniel.bertoldi.pokedex.domain.mapper
 
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
+import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
+import daniel.bertoldi.pokedex.data.database.model.Species
 import daniel.bertoldi.pokedex.data.database.model.Sprites
-import daniel.bertoldi.pokedex.domain.model.Ability
-import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
-import daniel.bertoldi.pokedex.domain.model.Type
-import daniel.bertoldi.pokedex.domain.model.Types
+import daniel.bertoldi.pokedex.data.database.model.Stats
+import daniel.bertoldi.pokedex.data.database.model.TypeEffectiveness
+import daniel.bertoldi.pokedex.domain.model.*
 import javax.inject.Inject
-import kotlin.random.Random
 
 class PokemonEntityToCompleteModelMapper @Inject constructor() {
 
-    fun mapFrom(pokemonEntity: Pokemon) = PokemonCompleteModel(
-        abilities = mapAbilities(),
+    fun mapFrom(
+        pokemonEntity: Pokemon,
+        abilitiesEntity: List<Abilities>,
+        statsEntity: Stats,
+        speciesEntity: Species,
+        typeEffectivenessEntity: TypeEffectiveness,
+    ) = PokemonCompleteModel(
+        id = pokemonEntity.pokemonId,
         height = pokemonEntity.height,
-        id = pokemonEntity.id,
         isDefault = pokemonEntity.isDefault,
         name = pokemonEntity.name,
         sprites = mapSprites(pokemonEntity.sprites),
         types = mapTypes(pokemonEntity.types),
         weight = pokemonEntity.weight,
+        abilities = mapAbilities(abilitiesEntity),
+        stats = mapStats(statsEntity),
+        species = mapSpecies(speciesEntity),
+        typeEffectiveness = mapTypeEffectiveness(typeEffectivenessEntity)
     )
 
-    // why is this mocked??
-    private fun mapAbilities() = mutableListOf<Ability>().apply {
-        repeat(3) { // mocked
-            add(
-                Ability(
-                    id = Random.nextInt(),
-                    name = "mock",
-                    isHidden = Random.nextBoolean(),
-                    slot = Random.nextInt(),
-                    effectEntry = "mock",
-                    shortEffectEntry = "mock",
-                    flavorText = "mock",
-                    generation = "mock",
-                    isMainSeries = Random.nextBoolean(),
-                )
-            )
-        }
-    }
-
-    private fun mapSprites(sprites: Sprites) = daniel.bertoldi.pokedex.domain.model.Sprites(
+    private fun mapSprites(sprites: Sprites) = SpritesModel(
         backDefaultImageUrl = sprites.backDefault,
         backShinyImageUrl = sprites.backShiny,
         frontDefaultImageUrl = sprites.frontDefault,
@@ -59,4 +49,72 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
             )
         )
     }
+
+    private fun mapAbilities(abilities: List<Abilities>) = abilities.map {
+        val effectEntry = it.effectEntries.filter { effectEntry ->
+            effectEntry.language == "en"
+        }.maxBy { effect -> effect.effect.length }
+        AbilityModel(
+            id = it.abilityId,
+            name = it.name,
+            isHidden = false, // where is this info ??
+            slot = 1, // where is this info ???
+            effectEntry = effectEntry.effect,
+            shortEffectEntry = effectEntry.shortEffect,
+            flavorText = it.flavorTextEntries.filter { flavorEntry ->
+                flavorEntry.language == "en"
+            }.maxBy { flavor -> flavor.flavorText.length }.flavorText,
+            generation = it.generationName,
+            isMainSeries = it.isMainSeries
+        )
+    }
+
+    private fun mapStats(statsEntity: Stats) = StatsModel(
+        hp = statsEntity.hp,
+        attack = statsEntity.attack,
+        defense = statsEntity.defense,
+        specialAttack = statsEntity.specialAttack,
+        specialDefense = statsEntity.specialDefense,
+        speed = statsEntity.speed,
+        accuracy = statsEntity.accuracy,
+        evasion = statsEntity.evasion,
+    )
+
+    private fun mapSpecies(speciesEntity: Species) = SpeciesModel(
+        baseHappiness = speciesEntity.baseHappiness,
+        captureRate = speciesEntity.captureRate,
+        genderRate = speciesEntity.genderRate,
+        pokedexEntry = speciesEntity.pokedexEntry,
+        growthRate = speciesEntity.growthRate,
+        isBaby = speciesEntity.isBaby,
+        isLegendary = speciesEntity.isLegendary,
+        isMythical = speciesEntity.isMythical,
+        hatchCounter = speciesEntity.hatchCounter,
+    )
+
+    private fun mapTypeEffectiveness(
+        typeEffectivenessEntity: TypeEffectiveness,
+    ) = TypeEffectivenessModel(
+        normal = typeEffectivenessEntity.normal,
+        fighting = typeEffectivenessEntity.fighting,
+        flying = typeEffectivenessEntity.flying,
+        poison = typeEffectivenessEntity.poison,
+        ground = typeEffectivenessEntity.ground,
+        rock = typeEffectivenessEntity.rock,
+        bug = typeEffectivenessEntity.bug,
+        ghost = typeEffectivenessEntity.ghost,
+        steel = typeEffectivenessEntity.steel,
+        fire = typeEffectivenessEntity.fire,
+        water = typeEffectivenessEntity.water,
+        grass = typeEffectivenessEntity.grass,
+        electric = typeEffectivenessEntity.electric,
+        psychic = typeEffectivenessEntity.psychic,
+        ice = typeEffectivenessEntity.ice,
+        dragon = typeEffectivenessEntity.dragon,
+        dark = typeEffectivenessEntity.dark,
+        fairy = typeEffectivenessEntity.fairy,
+        unknown = typeEffectivenessEntity.unknown,
+        shadow = typeEffectivenessEntity.shadow,
+    )
+
 }

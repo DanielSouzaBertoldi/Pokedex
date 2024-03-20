@@ -7,13 +7,13 @@ import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
 import daniel.bertoldi.pokedex.domain.model.Type
 import daniel.bertoldi.pokedex.domain.model.Types
 import javax.inject.Inject
-import daniel.bertoldi.pokedex.domain.model.Sprites as SpritesModel
+import daniel.bertoldi.pokedex.domain.model.SpritesModel as SpritesModel
 
 class PokemonEntityToBasicModelMapper @Inject constructor() {
 
     fun mapFrom(pokemonEntity: Pokemon) = PokemonBasicModel(
         height = pokemonEntity.height,
-        id = pokemonEntity.id,
+        id = pokemonEntity.pokemonId,
         isDefault = pokemonEntity.isDefault,
         name = pokemonEntity.name,
         sprites = mapSprites(pokemonEntity.sprites),

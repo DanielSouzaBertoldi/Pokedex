@@ -13,4 +13,7 @@ interface SpeciesDao {
 
     @Query("SELECT EXISTS (SELECT * FROM species WHERE speciesId = :speciesId)")
     suspend fun isSpeciesInDatabase(speciesId: Int): Boolean
+
+    @Query("SELECT * FROM species WHERE speciesId = :speciesId")
+    suspend fun getSpeciesData(speciesId: Int): Species
 }

@@ -1,7 +1,7 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
 import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
-import daniel.bertoldi.pokedex.domain.model.Sprites
+import daniel.bertoldi.pokedex.domain.model.SpritesModel
 import daniel.bertoldi.pokedex.domain.model.Types
 import daniel.bertoldi.pokedex.presentation.model.BackgroundColors
 import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
@@ -25,7 +25,7 @@ class PokemonBasicModelToUiModelMapper @Inject constructor() {
         backgroundColors = mapCardBackgroundColors(pokemonBasicModel.types.first().type.name.uppercase())
     )
 
-    private fun mapSprites(sprites: Sprites) = UiSprites(
+    private fun mapSprites(sprites: SpritesModel) = UiSprites(
         backDefault = sprites.backDefaultImageUrl,
         backShiny = sprites.backShinyImageUrl,
         frontDefault = sprites.frontDefaultImageUrl,

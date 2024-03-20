@@ -5,12 +5,12 @@ data class PokemonBasicModel(
     val id: Int,
     val isDefault: Boolean,
     val name: String,
-    val sprites: Sprites,
+    val sprites: SpritesModel,
     val types: List<Types>,
     val weight: Int,
 )
 
-data class Sprites(
+data class SpritesModel(
     val backDefaultImageUrl: String?,
     val backShinyImageUrl: String?,
     val frontDefaultImageUrl: String?,

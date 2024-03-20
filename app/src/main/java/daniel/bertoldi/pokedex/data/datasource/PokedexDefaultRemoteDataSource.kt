@@ -1,12 +1,7 @@
 package daniel.bertoldi.pokedex.data.datasource
 
 import daniel.bertoldi.pokedex.data.api.PokeApi
-import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
-import daniel.bertoldi.pokedex.data.api.response.GenericObject
-import daniel.bertoldi.pokedex.data.api.response.PokemonAbilitiesResponse
-import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
-import daniel.bertoldi.pokedex.data.api.response.StatsResponse
-import daniel.bertoldi.pokedex.data.api.response.TypesResponse
+import daniel.bertoldi.pokedex.data.api.response.*
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
@@ -14,6 +9,7 @@ import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
 import daniel.bertoldi.pokedex.data.database.dao.StatsDao
 import daniel.bertoldi.pokedex.data.database.dao.TypeEffectivenessDao
 import daniel.bertoldi.pokedex.data.database.model.*
+import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 import daniel.bertoldi.pokedex.domain.mapper.GenerationResponseToModelMapper
 import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToBasicModelMapper
@@ -47,11 +43,17 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
 
     override suspend fun getCompletePokemonInfo(pokemonId: Int): PokemonCompleteModel {
         val pokemonResponse = pokeApi.getPokemon(pokemonId)
-        getPokemonAbilities(pokemonResponse.abilities)
-        getPokemonSpecies(pokemonResponse.species.url)
-        getPokemonTypeEffectiveness(pokemonResponse.types)
+        val abilitiesResponse = getPokemonAbilities(pokemonResponse.abilities)
+        val speciesResponse = getPokemonSpecies(pokemonResponse.species.url)
+        val typeEffectivenessResponse = getPokemonTypeEffectiveness(pokemonResponse.types)
+        pokemonDao.updatePokedexEntry(pokemonId)
 
-        return pokemonResponseToCompleteModelMapper.mapFrom(pokemonResponse)
+        return pokemonResponseToCompleteModelMapper.mapFrom(
+            pokemonEntity = pokemonResponse,
+            abilitiesResponse = abilitiesResponse,
+            speciesResponse = speciesResponse,
+            typeEffectiveness = typeEffectivenessResponse,
+        )
     }
 
     override suspend fun getNumberOfGenerations() = pokeApi.getGenerations().count
@@ -63,7 +65,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private suspend fun addPokemonToRoom(pokemon: PokemonResponse) {
         pokemonDao.insertPokemon(
             Pokemon(
-                id = pokemon.id,
+                pokemonId = pokemon.id,
                 name = pokemon.name,
                 height = pokemon.height,
                 weight = pokemon.weight,
@@ -82,6 +84,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     )
                 },
                 hasCompleteData = false,
+                speciesId = pokemon.species.url.fetchIdFromUrl(),
             )
         )
 
@@ -91,7 +94,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private suspend fun addPokemonStatsToRoom(pokemonId: Int, statsResponse: List<StatsResponse>) {
         statsDao.insertStat(
             Stats(
-                pokemonId = pokemonId,
+                statPokemonId = pokemonId,
                 hp = statsResponse.getBaseStat("hp"),
                 attack = statsResponse.getBaseStat("attack"),
                 defense = statsResponse.getBaseStat("defense"),
@@ -104,18 +107,23 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         )
     }
 
-    private suspend fun getPokemonAbilities(pokemonAbilites: List<PokemonAbilitiesResponse>) {
+    private suspend fun getPokemonAbilities(
+        pokemonAbilites: List<PokemonAbilitiesResponse>,
+    ): List<AbilityResponse> {
+        val abilitiesResponse = mutableListOf<AbilityResponse>()
         pokemonAbilites.forEach {
             val abilityId = it.ability.url.fetchIdFromUrl()
             val abilityResponse = pokeApi.getAbility(abilityId)
+            abilitiesResponse.add(abilityResponse)
             addAbilityToRoom(abilityResponse)
         }
+        return abilitiesResponse
     }
 
     private suspend fun addAbilityToRoom(abilityResponse: AbilityResponse) {
         abilitiesDao.insertAbility(
             Abilities(
-                id = abilityResponse.id,
+                abilityId = abilityResponse.id,
                 name = abilityResponse.name,
                 effectEntries = abilityResponse.effectEntries.map { effectEntry ->
                     EffectEntry(
@@ -146,7 +154,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         }
     }
 
-    private suspend fun getPokemonSpecies(speciesUrl: String) {
+    private suspend fun getPokemonSpecies(speciesUrl: String): PokemonSpeciesResponse {
         val speciesId = speciesUrl.fetchIdFromUrl()
         val speciesResponse = pokeApi.getPokemonSpecies(speciesId)
 
@@ -170,9 +178,10 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 )
             )
         }
+        return speciesResponse
     }
 
-    private suspend fun getPokemonTypeEffectiveness(types: List<TypesResponse>) {
+    private suspend fun getPokemonTypeEffectiveness(types: List<TypesResponse>): TypeEffectiveness {
         val typeNames = types.map { it.type.name }.sorted()
         val multipliers = mutableMapOf(
             "defense" to mutableMapOf<String, Float>(),
@@ -200,37 +209,39 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
             }
         }
 
-        if (!typeEffectivenessDao.isTypeEffectivenessInDataBase(
+        val typeEffectiveness = TypeEffectiveness(
+            firstType = typeNames[0],
+            secondType = typeNames.getOrElse(1) { "" },
+            normal = multipliers["defense"]?.get("normal"),
+            fighting = multipliers["defense"]?.get("fighting"),
+            flying = multipliers["defense"]?.get("flying"),
+            poison = multipliers["defense"]?.get("poison"),
+            ground = multipliers["defense"]?.get("ground"),
+            rock = multipliers["defense"]?.get("rock"),
+            bug = multipliers["defense"]?.get("bug"),
+            ghost = multipliers["defense"]?.get("ghost"),
+            steel = multipliers["defense"]?.get("steel"),
+            fire = multipliers["defense"]?.get("fire"),
+            water = multipliers["defense"]?.get("water"),
+            grass = multipliers["defense"]?.get("grass"),
+            electric = multipliers["defense"]?.get("electric"),
+            psychic = multipliers["defense"]?.get("psychic"),
+            ice = multipliers["defense"]?.get("ice"),
+            dragon = multipliers["defense"]?.get("dragon"),
+            dark = multipliers["defense"]?.get("dark"),
+            fairy = multipliers["defense"]?.get("fairy"),
+            unknown = multipliers["defense"]?.get("unknown"),
+            shadow = multipliers["defense"]?.get("shadow"),
+        )
+
+        if (
+            !typeEffectivenessDao.isTypeEffectivenessInDataBase(
                 typeNames[0],
                 typeNames.getOrElse(1) { "" })
         ) {
-            typeEffectivenessDao.insertTypeEffectiveness(
-                TypeEffectiveness(
-                    firstType = typeNames[0],
-                    secondType = typeNames.getOrElse(1) { "" },
-                    normal = multipliers["defense"]?.get("normal"),
-                    fighting = multipliers["defense"]?.get("fighting"),
-                    flying = multipliers["defense"]?.get("flying"),
-                    poison = multipliers["defense"]?.get("poison"),
-                    ground = multipliers["defense"]?.get("ground"),
-                    rock = multipliers["defense"]?.get("rock"),
-                    bug = multipliers["defense"]?.get("bug"),
-                    ghost = multipliers["defense"]?.get("ghost"),
-                    steel = multipliers["defense"]?.get("steel"),
-                    fire = multipliers["defense"]?.get("fire"),
-                    water = multipliers["defense"]?.get("water"),
-                    grass = multipliers["defense"]?.get("grass"),
-                    electric = multipliers["defense"]?.get("electric"),
-                    psychic = multipliers["defense"]?.get("psychic"),
-                    ice = multipliers["defense"]?.get("ice"),
-                    dragon = multipliers["defense"]?.get("dragon"),
-                    dark = multipliers["defense"]?.get("dark"),
-                    fairy = multipliers["defense"]?.get("fairy"),
-                    unknown = multipliers["defense"]?.get("unknown"),
-                    shadow = multipliers["defense"]?.get("shadow"),
-                )
-            )
+            typeEffectivenessDao.insertTypeEffectiveness(typeEffectiveness)
         }
+        return typeEffectiveness
     }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =

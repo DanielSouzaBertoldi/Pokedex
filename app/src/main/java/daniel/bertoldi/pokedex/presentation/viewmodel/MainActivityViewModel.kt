@@ -12,6 +12,7 @@ import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
 import daniel.bertoldi.pokedex.usecase.GetPokemonUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -24,6 +25,9 @@ class MainActivityViewModel @Inject constructor(
 
     var errorScreen = false
     var pokemonData = MutableStateFlow<PokemonUiModel?>(null)
+
+    private val _bottomSheetContent = MutableStateFlow<BottomSheetLayout>(BottomSheetLayout.Filter)
+    val bottomSheetContent: MutableStateFlow<BottomSheetLayout> = _bottomSheetContent
 
     // Improve this error handling!
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -46,4 +50,10 @@ class MainActivityViewModel @Inject constructor(
 //            pokemonData.value = pokemonModelToUiModelMapper.mapFrom(getPokemon(1))
 //        }
     }
+}
+
+sealed class BottomSheetLayout {
+    object Generations : BottomSheetLayout()
+    object Sort : BottomSheetLayout()
+    object Filter : BottomSheetLayout()
 }

@@ -11,13 +11,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,12 +41,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
+import daniel.bertoldi.pokedex.presentation.viewmodel.BottomSheetLayout
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
 import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
 import daniel.bertoldi.pokedex.ui.theme.Shapes
 import daniel.bertoldi.pokedex.ui.theme.TextNumber
 import daniel.bertoldi.pokedex.ui.theme.TextWhite
 import daniel.bertoldi.pokedex.ui.theme.Typography
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val lazyPokemonPagingItems = viewModel.pokemonFlow.collectAsLazyPagingItems()
+            val sheetContent = viewModel.bottomSheetContent.collectAsState()
 
             PokedexTheme {
                 val systemUiController = rememberSystemUiController()
@@ -78,9 +80,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-                    MyAppNavHost(lazyPokemonPagingItems = lazyPokemonPagingItems)
+                    MyAppNavHost(
+                        lazyPokemonPagingItems = lazyPokemonPagingItems,
+                        sheetContent = sheetContent,
+                        onIconClick = ::topBarIconClickCallback
+                    )
                 }
             }
+        }
+    }
+
+    private fun topBarIconClickCallback(iconType: String) {
+        if (iconType == "generations") {
+            viewModel.bottomSheetContent.value = BottomSheetLayout.Generations
+        } else if (iconType == "sort") {
+            viewModel.bottomSheetContent.value = BottomSheetLayout.Sort
+        } else {
+            viewModel.bottomSheetContent.value = BottomSheetLayout.Filter
         }
     }
 }
@@ -91,6 +107,8 @@ fun MyAppNavHost(
     navHostController: NavHostController = rememberNavController(),
     startDestinationName: String = "home",
     lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
+    sheetContent: State<BottomSheetLayout>,
+    onIconClick: (iconType: String) -> Unit = {},
 ) {
     NavHost(
         modifier = modifier,
@@ -98,76 +116,157 @@ fun MyAppNavHost(
         startDestination = startDestinationName,
     ) {
         composable("home") {
-            PokemonCard(lazyPokemonPagingItems)
+            PokemonCard(lazyPokemonPagingItems, sheetContent, onIconClick)
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PokemonCard(lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>) {
-    LazyColumn {
-        if (lazyPokemonPagingItems.loadState.refresh == LoadState.Loading) {
-            item {
-                RefreshScreen()
+fun PokemonCard(
+    lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
+    sheetContent: State<BottomSheetLayout>,
+    onIconClick: (iconType: String) -> Unit = {},
+) {
+    val modalBottomSheetState = rememberModalBottomSheetState(
+        ModalBottomSheetValue.Hidden
+    )
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheetLayout(
+        sheetState = modalBottomSheetState,
+        sheetContent = {
+            if (sheetContent.value == BottomSheetLayout.Filter) {
+                Spacer(modifier = Modifier.height(50.dp))
+                Text("You've opened the FILTERS option!")
+                Spacer(modifier = Modifier.height(50.dp))
+            } else if(sheetContent.value == BottomSheetLayout.Generations) {
+                Spacer(modifier = Modifier.height(50.dp))
+                Text("You've opened the GENERATIONS option!")
+                Spacer(modifier = Modifier.height(50.dp))
+            } else {
+                Spacer(modifier = Modifier.height(50.dp))
+                Text("You've opened the SORT option!")
+                Spacer(modifier = Modifier.height(50.dp))
             }
         }
-
-        items(lazyPokemonPagingItems) { pokemonUiModel ->
-            Card(
-                modifier = Modifier.padding(10.dp),
-                elevation = 5.dp,
-                backgroundColor = pokemonUiModel!!.backgroundColors.backgroundTypeColor,
-                shape = Shapes.medium,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(115.dp),
-                ) {
-                    BackgroundPokeball(
-                        modifier = Modifier
-                            .size(150.dp)
-                            .align(Alignment.CenterEnd)
-                    )
-                    BackgroundDots(modifier = Modifier)
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 20.dp, top = 20.dp)
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar {
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                modalBottomSheetState.apply {
+                                    onIconClick("generations")
+                                    if (isVisible) hide() else show()
+                                }
+                            }
+                        }
                     ) {
-                        Column(
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_generations),
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                modalBottomSheetState.apply {
+                                    onIconClick("sort")
+                                    if (isVisible) hide() else show()
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_sort),
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                modalBottomSheetState.apply {                                    onIconClick("generations")
+                                    onIconClick("filters")
+                                    if (isVisible) hide() else show()
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_filters),
+                            contentDescription = null
+                        )
+                    }
+                }
+            }) { _ ->
+            LazyColumn {
+                if (lazyPokemonPagingItems.loadState.refresh == LoadState.Loading) {
+                    item {
+                        RefreshScreen()
+                    }
+                }
+
+                items(lazyPokemonPagingItems) { pokemonUiModel ->
+                    Card(
+                        modifier = Modifier.padding(10.dp),
+                        elevation = 5.dp,
+                        backgroundColor = pokemonUiModel!!.backgroundColors.backgroundTypeColor,
+                        shape = Shapes.medium,
+                    ) {
+                        Box(
                             modifier = Modifier
-                                .fillMaxHeight()
+                                .fillMaxWidth()
+                                .height(115.dp),
                         ) {
-                            PokemonInfo(pokemonUiModel)
+                            BackgroundPokeball(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .align(Alignment.CenterEnd)
+                            )
+                            BackgroundDots(modifier = Modifier)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 20.dp, top = 20.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                ) {
+                                    PokemonInfo(pokemonUiModel)
+                                }
+                            }
+                            AsyncImage(
+                                modifier = Modifier
+                                    .size(130.dp)
+                                    .padding(end = 10.dp)
+                                    .align(Alignment.CenterEnd),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(pokemonUiModel.uiSprites.artwork)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Fit,
+                                placeholder = rememberAsyncImagePainter(
+                                    model = R.drawable.pokeball,
+                                ),
+                                error = painterResource(
+                                    id = R.drawable.missingno
+                                ),
+                            )
                         }
                     }
-                    AsyncImage(
-                        modifier = Modifier
-                            .size(130.dp)
-                            .padding(end = 10.dp)
-                            .align(Alignment.CenterEnd),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(pokemonUiModel.uiSprites.artwork)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        placeholder = rememberAsyncImagePainter(
-                            model = R.drawable.pokeball,
-                        ),
-                        error = painterResource(
-                            id = R.drawable.missingno
-                        ),
-                    )
                 }
-            }
-        }
 
-        if (lazyPokemonPagingItems.loadState.append == LoadState.Loading) {
-            item {
-                AppendingScreen()
+                if (lazyPokemonPagingItems.loadState.append == LoadState.Loading) {
+                    item {
+                        AppendingScreen()
+                    }
+                }
             }
         }
     }

@@ -20,6 +20,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         typeEffectivenessEntity: TypeEffectiveness,
     ) = PokemonCompleteModel(
         id = pokemonEntity.pokemonId,
+        baseExperience = pokemonEntity.baseExperience,
         height = pokemonEntity.height,
         isDefault = pokemonEntity.isDefault,
         name = pokemonEntity.name,
@@ -83,6 +84,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
     private fun mapSpecies(speciesEntity: Species) = SpeciesModel(
         baseHappiness = speciesEntity.baseHappiness,
         captureRate = speciesEntity.captureRate,
+        eggGroups = speciesEntity.eggGroups,
         genderRate = speciesEntity.genderRate,
         pokedexEntry = speciesEntity.pokedexEntry,
         growthRate = speciesEntity.growthRate,
@@ -90,6 +92,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         isLegendary = speciesEntity.isLegendary,
         isMythical = speciesEntity.isMythical,
         hatchCounter = speciesEntity.hatchCounter,
+        name = speciesEntity.genera,
     )
 
     private fun mapTypeEffectiveness(

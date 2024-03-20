@@ -2,6 +2,7 @@ package daniel.bertoldi.pokedex.domain.model
 
 data class PokemonCompleteModel(
     val id: Int,
+    val baseExperience: Int,
     val height: Int,
     val isDefault: Boolean,
     val name: String,
@@ -40,6 +41,7 @@ data class StatsModel(
 data class SpeciesModel(
     val baseHappiness: Int,
     val captureRate: Int,
+    val eggGroups: List<String>,
     val genderRate: Int,
     val pokedexEntry: String,
     val growthRate: String,
@@ -47,6 +49,7 @@ data class SpeciesModel(
     val isLegendary: Boolean,
     val isMythical: Boolean,
     val hatchCounter: Int,
+    val name: String,
 )
 
 data class TypeEffectivenessModel(

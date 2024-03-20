@@ -14,6 +14,7 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         typeEffectiveness: TypeEffectiveness,
     ) = PokemonCompleteModel(
         id = pokemonEntity.id,
+        baseExperience = pokemonEntity.baseExperience,
         height = pokemonEntity.height,
         isDefault = pokemonEntity.isDefault,
         name = pokemonEntity.name,
@@ -62,7 +63,8 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         )
     )
 
-    private fun mapStats(stats: List<StatsResponse>) = StatsModel( // duplicated logic
+    private fun mapStats(stats: List<StatsResponse>) = StatsModel(
+        // duplicated logic
         hp = stats.getBaseStat("hp"),
         attack = stats.getBaseStat("attack"),
         defense = stats.getBaseStat("defense"),
@@ -76,16 +78,26 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
     private fun mapSpecies(speciesResponse: PokemonSpeciesResponse) = SpeciesModel( // duplicated logic
         baseHappiness = speciesResponse.baseHappiness,
         captureRate = speciesResponse.captureRate,
+        eggGroups = speciesResponse.eggGroups.map { it.name },
         genderRate = speciesResponse.genderRate,
         pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
             flavorEntry.language.name == "en"
         }.maxBy { it.flavorText.length }.flavorText,
-        growthRate = speciesResponse.growthRate.name,
+        growthRate = formatGrowthRate(speciesResponse.growthRate.name),
         isBaby = speciesResponse.isBaby,
         isLegendary = speciesResponse.isLegendary,
         isMythical = speciesResponse.isMythical,
         hatchCounter = speciesResponse.hatchCounter,
+        name = speciesResponse.genera.firstOrNull { generaEntry ->
+            generaEntry.language.name == "en"
+        }?.genus.orEmpty()
     )
+
+    private fun formatGrowthRate(growthRate: String) = growthRate
+        .split("-")
+        .joinToString(" ") {
+            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
+        }
 
     private fun mapTypeEffectiveness(
         typeEffectivenessEntity: TypeEffectiveness,

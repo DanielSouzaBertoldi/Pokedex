@@ -84,6 +84,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     )
                 },
                 hasCompleteData = false,
+                baseExperience = pokemon.baseExperience,
                 speciesId = pokemon.species.url.fetchIdFromUrl(),
             )
         )
@@ -174,7 +175,9 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     isLegendary = speciesResponse.isLegendary,
                     isMythical = speciesResponse.isMythical,
                     hatchCounter = speciesResponse.hatchCounter,
-                    genera = speciesResponse.genera.first { it.language.name == "en" }.genus,
+                    genera = speciesResponse.genera.firstOrNull {
+                        it.language.name == "en"
+                    }?.genus.orEmpty(),
                 )
             )
         }

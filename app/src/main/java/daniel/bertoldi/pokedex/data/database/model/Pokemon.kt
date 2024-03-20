@@ -19,6 +19,7 @@ data class Pokemon(
     val sprites: Sprites,
     val types: List<GenericObject>,
     @ColumnInfo(name = "has_complete_data") val hasCompleteData: Boolean,
+    @ColumnInfo(name = "base_experience") val baseExperience: Int,
     val speciesId: Int,
 )
 

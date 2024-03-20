@@ -39,4 +39,9 @@ interface PokeApi {
     suspend fun getPokemonTypeInfo(
         @Path("typeId") typeId: Int,
     ): PokemonTypeResponse
+
+    @GET("evolution-chain/{evolutionChainId}")
+    suspend fun getEvolutionChain(
+        @Path("evolutionChainId") evolutionChainId: Int,
+    )
 }

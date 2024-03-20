@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.data.datasource
 
+import android.util.Log
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.*
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
@@ -46,6 +47,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         val abilitiesResponse = getPokemonAbilities(pokemonResponse.abilities)
         val speciesResponse = getPokemonSpecies(pokemonResponse.species.url)
         val typeEffectivenessResponse = getPokemonTypeEffectiveness(pokemonResponse.types)
+        val evolutionChain = getEvolutionChain(speciesResponse.evolutionChain.url.fetchIdFromUrl())
         pokemonDao.updatePokedexEntry(pokemonId)
 
         return pokemonResponseToCompleteModelMapper.mapFrom(
@@ -247,6 +249,11 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
             typeEffectivenessDao.insertTypeEffectiveness(typeEffectiveness)
         }
         return typeEffectiveness
+    }
+
+    private suspend fun getEvolutionChain(evolutionChainId: Int) {
+        val evolutionChainResponse = pokeApi.getEvolutionChain(evolutionChainId)
+        Log.d("EVOLUTION-CHAIN", evolutionChainResponse.toString())
     }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =

@@ -17,10 +17,16 @@ data class PokemonSpeciesResponse(
     @Json(name = "is_mythical") val isMythical: Boolean,
     @Json(name = "hatch_counter") val hatchCounter: Int,
     val genera: List<GeneraResponse>,
+    @Json(name = "evolution_chain") val evolutionChain: EvolutionChain,
 )
 
 @JsonClass(generateAdapter = true)
 data class GeneraResponse(
     val genus: String,
     val language: GenericObject
+)
+
+@JsonClass(generateAdapter = true)
+data class EvolutionChain(
+    val url: String,
 )

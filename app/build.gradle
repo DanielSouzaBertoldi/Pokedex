@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'io.gitlab.arturbosch.detekt'
 }
 
 android {
@@ -91,7 +92,7 @@ dependencies {
     implementation "androidx.paging:paging-compose:1.0.0-alpha15"
 
     implementation "androidx.room:room-runtime:2.4.3"
-    annotationProcessor "androidx.room:room-compiler:2.4.3"
+    kapt "androidx.room:room-compiler:2.4.3"
     testImplementation "androidx.room:room-testing:2.4.3"
     implementation "androidx.room:room-paging:2.5.0-alpha02"
 
@@ -101,4 +102,9 @@ dependencies {
 
 kapt {
     correctErrorTypes true
+}
+
+detekt {
+    allRules = true
+    source = files("src/main/java/")
 }

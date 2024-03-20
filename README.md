@@ -7,8 +7,10 @@
 - [X] Add Jetpack Navigation
 - [X] Add Jetpack Paging
 - [X] Add Jetpack Room
-- [ ] Create data layer for home screen
-  - [ ] Create response classes
+- [X] Create data layer for home screen
+  - [X] Create repository/datasource layers
+  - [X] Create response classes
   - [X] Set up retrofit
-- [ ] Create domain layer for home screen
+- [X] Create domain layer for home screen
+  - [X] Create mapper and model
 - [ ] Create presentation layer for home screen

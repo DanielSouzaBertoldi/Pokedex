@@ -133,5 +133,5 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =
-        this.first { it.stat.name == stat }.baseStat
+        this.first { it.stat.name == stat }.baseStat // theres a bug here!!!
 }

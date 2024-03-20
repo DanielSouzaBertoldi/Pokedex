@@ -1,26 +1,25 @@
 package daniel.bertoldi.pokedex.domain.mapper
 
-import daniel.bertoldi.pokedex.data.api.response.*
-import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
-import daniel.bertoldi.pokedex.domain.model.*
+import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
+import daniel.bertoldi.pokedex.data.api.response.SpritesResponse
+import daniel.bertoldi.pokedex.data.api.response.TypesResponse
+import daniel.bertoldi.pokedex.domain.model.Ability
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
+import daniel.bertoldi.pokedex.domain.model.Sprites
+import daniel.bertoldi.pokedex.domain.model.Type
+import daniel.bertoldi.pokedex.domain.model.Types
 import javax.inject.Inject
 import kotlin.random.Random
 
-// the api actually returns the artwork URL so I don't need this const.
-private const val SPRITES_BASE_URL =
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
+class PokemonResponseToCompleteModelMapper @Inject constructor() {
 
-class PokemonResponseToModelMapper @Inject constructor(
-    private val abilitiesDao: AbilitiesDao,
-) {
-
-    fun mapFrom(pokemonResponse: PokemonResponse) = PokemonModel(
+    fun mapFrom(pokemonResponse: PokemonResponse) = PokemonCompleteModel(
         abilities = mapAbilities(),
         height = pokemonResponse.height,
         id = pokemonResponse.id,
         isDefault = pokemonResponse.isDefault,
         name = pokemonResponse.name,
-        sprites = mapSprites(pokemonResponse.sprites, pokemonResponse.id),
+        sprites = mapSprites(pokemonResponse.sprites),
         types = pokemonResponse.types.map { mapTypes(it) },
         weight = pokemonResponse.weight,
     )
@@ -44,12 +43,12 @@ class PokemonResponseToModelMapper @Inject constructor(
         )
     }
 
-    private fun mapSprites(sprites: SpritesResponse, id: Int) = Sprites(
+    private fun mapSprites(sprites: SpritesResponse) = Sprites(
         backDefaultImageUrl = sprites.backDefault,
         backShinyImageUrl = sprites.backShiny,
         frontDefaultImageUrl = sprites.frontDefault,
         frontShinyImageUrl = sprites.frontShiny,
-        artworkImageUrl = "$SPRITES_BASE_URL/other/official-artwork/$id.png",
+        artworkImageUrl = sprites.otherSprites.officialArtworkSprites.frontDefault.orEmpty(),
     )
 
     private fun mapTypes(types: TypesResponse) = Types(

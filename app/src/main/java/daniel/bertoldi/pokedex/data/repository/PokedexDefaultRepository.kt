@@ -12,11 +12,18 @@ class PokedexDefaultRepository @Inject constructor(
     private val localDataSource: PokedexLocalDataSource,
 ) : PokedexRepository {
 
-    override suspend fun getPokemons(pokemonId: Int) =
+    override suspend fun getBasicPokemons(pokemonId: Int) =
         if (pokemonDao.isPokemonInDatabase(pokemonId)) {
-            localDataSource.getPokemon(pokemonId)
+            localDataSource.getBasicPokemon(pokemonId)
         } else {
-            remoteDataSource.getPokemon(pokemonId)
+            remoteDataSource.getBasicPokemonInfo(pokemonId)
+        }
+
+    override suspend fun getCompletePokemon(pokemonId: Int) =
+        if (pokemonDao.isPokemonInDatabase(pokemonId)) {
+            localDataSource.getCompletePokemon(pokemonId)
+        } else {
+            remoteDataSource.getCompletePokemonInfo(pokemonId)
         }
 
     override suspend fun fetchListOfGenerations() = mutableListOf<GenerationData>().apply {

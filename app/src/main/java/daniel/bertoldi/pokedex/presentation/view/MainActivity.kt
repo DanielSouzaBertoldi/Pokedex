@@ -41,7 +41,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.BottomSheetLayout
-import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
 import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
 import daniel.bertoldi.pokedex.presentation.model.filters.GenerationUIData
 import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
@@ -147,7 +147,7 @@ fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navHostController: NavHostController = rememberAnimatedNavController(),
     startDestinationName: String = "home",
-    lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
+    lazyPokemonPagingItems: LazyPagingItems<PokemonBasicUiModel>,
     sheetContent: State<BottomSheetLayout>,
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
     filterOptions: MutableStateFlow<FilterOptions>,
@@ -214,7 +214,7 @@ fun MyAppNavHost(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PokemonListComponent(
-    lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
+    lazyPokemonPagingItems: LazyPagingItems<PokemonBasicUiModel>,
     sheetContent: State<BottomSheetLayout>,
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
     filterOptions: MutableStateFlow<FilterOptions>,

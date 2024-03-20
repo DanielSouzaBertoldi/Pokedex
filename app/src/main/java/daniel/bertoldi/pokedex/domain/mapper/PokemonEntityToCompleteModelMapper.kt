@@ -3,19 +3,16 @@ package daniel.bertoldi.pokedex.domain.mapper
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.Sprites
-import daniel.bertoldi.pokedex.domain.model.Sprites as SpritesModel
 import daniel.bertoldi.pokedex.domain.model.Ability
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
-import daniel.bertoldi.pokedex.domain.model.Stat
-import daniel.bertoldi.pokedex.domain.model.Stats
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
 import daniel.bertoldi.pokedex.domain.model.Type
 import daniel.bertoldi.pokedex.domain.model.Types
 import javax.inject.Inject
 import kotlin.random.Random
 
-class PokemonEntityToModelMapper @Inject constructor() {
+class PokemonEntityToCompleteModelMapper @Inject constructor() {
 
-    fun mapFrom(pokemonEntity: Pokemon) = PokemonModel(
+    fun mapFrom(pokemonEntity: Pokemon) = PokemonCompleteModel(
         abilities = mapAbilities(),
         height = pokemonEntity.height,
         id = pokemonEntity.id,
@@ -26,6 +23,7 @@ class PokemonEntityToModelMapper @Inject constructor() {
         weight = pokemonEntity.weight,
     )
 
+    // why is this mocked??
     private fun mapAbilities() = mutableListOf<Ability>().apply {
         repeat(3) { // mocked
             add(
@@ -44,7 +42,7 @@ class PokemonEntityToModelMapper @Inject constructor() {
         }
     }
 
-    private fun mapSprites(sprites: Sprites) = SpritesModel(
+    private fun mapSprites(sprites: Sprites) = daniel.bertoldi.pokedex.domain.model.Sprites(
         backDefaultImageUrl = sprites.backDefault,
         backShinyImageUrl = sprites.backShiny,
         frontDefaultImageUrl = sprites.frontDefault,

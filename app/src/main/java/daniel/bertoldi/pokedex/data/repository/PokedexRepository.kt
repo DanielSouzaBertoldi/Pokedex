@@ -1,13 +1,18 @@
 package daniel.bertoldi.pokedex.data.repository
 
 import daniel.bertoldi.pokedex.domain.model.GenerationData
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
+import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
 
 interface PokedexRepository {
 
-    suspend fun getPokemons(
+    suspend fun getBasicPokemons(
         pokemonId: Int,
-    ): PokemonModel
+    ): PokemonBasicModel
+
+    suspend fun getCompletePokemon(
+        pokemonId: Int,
+    ): PokemonCompleteModel
 
     suspend fun fetchListOfGenerations(): List<GenerationData>
 }

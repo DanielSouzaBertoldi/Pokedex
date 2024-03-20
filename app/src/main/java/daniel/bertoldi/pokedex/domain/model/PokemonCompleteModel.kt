@@ -1,6 +1,6 @@
 package daniel.bertoldi.pokedex.domain.model
 
-data class PokemonModel(
+data class PokemonCompleteModel(
     val abilities: List<Ability>,
     val height: Int,
     val id: Int,
@@ -23,14 +23,6 @@ data class Ability(
     val isMainSeries: Boolean,
 )
 
-data class Sprites(
-    val backDefaultImageUrl: String?,
-    val backShinyImageUrl: String?,
-    val frontDefaultImageUrl: String?,
-    val frontShinyImageUrl: String?,
-    val artworkImageUrl: String,
-)
-
 data class Stats(
     val baseStat: Int,
     val effort: Int,
@@ -38,16 +30,6 @@ data class Stats(
 )
 
 data class Stat(
-    val name: String,
-    val url: String,
-)
-
-data class Types(
-    val slot: Int,
-    val type: Type,
-)
-
-data class Type(
     val name: String,
     val url: String,
 )

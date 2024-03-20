@@ -1,8 +1,11 @@
 package daniel.bertoldi.pokedex.usecase
 
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
+import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
 
 interface GetPokemonUseCase {
 
-    suspend operator fun invoke(pokemonId: Int): PokemonModel
+    suspend fun basicData(pokemonId: Int): PokemonBasicModel
+
+    suspend fun completeData(pokemonId: Int): PokemonCompleteModel
 }

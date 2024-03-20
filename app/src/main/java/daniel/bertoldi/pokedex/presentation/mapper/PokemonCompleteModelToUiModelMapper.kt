@@ -1,14 +1,22 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
-import daniel.bertoldi.pokedex.domain.model.*
-import daniel.bertoldi.pokedex.presentation.model.*
+import daniel.bertoldi.pokedex.domain.model.Ability
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
+import daniel.bertoldi.pokedex.domain.model.Sprites
+import daniel.bertoldi.pokedex.domain.model.Types
+import daniel.bertoldi.pokedex.presentation.model.BackgroundColors
+import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonUiAbility
+import daniel.bertoldi.pokedex.presentation.model.UiSprites
+import daniel.bertoldi.pokedex.presentation.model.UiType
 import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
 import java.util.Locale
 import javax.inject.Inject
 
-class PokemonModelToUiModelMapper @Inject constructor() {
+class PokemonCompleteModelToUiModelMapper @Inject constructor() {
 
-    fun mapFrom(pokemonModel: PokemonModel) = PokemonUiModel(
+    fun mapFrom(pokemonModel: PokemonCompleteModel) = PokemonCompleteUiModel(
         abilities = pokemonModel.abilities.map { mapAbilities(it) },
         height = pokemonModel.height,
         id = pokemonModel.id,
@@ -58,7 +66,5 @@ class PokemonModelToUiModelMapper @Inject constructor() {
         backgroundTypeColor = PokemonUIData.values().first { it.name == type }.backgroundColor,
     )
 
-    private fun String.capitalize() = this.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
-    }
+    private fun String.capitalize() = this.replaceFirstChar { it.uppercase() }
 }

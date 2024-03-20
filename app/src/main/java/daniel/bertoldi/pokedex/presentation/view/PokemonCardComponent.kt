@@ -24,7 +24,8 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import daniel.bertoldi.pokedex.R
-import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
 import daniel.bertoldi.pokedex.ui.theme.Shapes
 import daniel.bertoldi.pokedex.ui.theme.TextNumber
 import daniel.bertoldi.pokedex.ui.theme.TextWhite
@@ -33,7 +34,7 @@ import daniel.bertoldi.pokedex.ui.theme.Typography
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PokemonCardComponent(
-    pokemonUiModel: PokemonUiModel?,
+    pokemonUiModel: PokemonBasicUiModel?,
     onNavigateToDetails: () -> Unit,
 ) {
     Card(
@@ -120,8 +121,8 @@ private fun BackgroundDots(modifier: Modifier) {
 }
 
 @Composable
-fun PokemonInfo(
-    pokemonUiModel: PokemonUiModel,
+private fun PokemonInfo(
+    pokemonUiModel: PokemonBasicUiModel,
     numberStyle: TextStyle,
     nameStyle: TextStyle,
 ) {

@@ -1,12 +1,13 @@
-package daniel.bertoldi.pokedex.presentation.view
+package daniel.bertoldi.pokedex.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import daniel.bertoldi.pokedex.presentation.mapper.PokemonModelToUiModelMapper
-import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
-import daniel.bertoldi.pokedex.usecase.GetPokemon
+import daniel.bertoldi.pokedex.presentation.mapper.PokemonCompleteModelToUiModelMapper
+import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
+import daniel.bertoldi.pokedex.usecase.GetPokemonDefaultUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,12 +15,12 @@ import javax.inject.Inject
 @HiltViewModel
 class PokemonDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getPokemon: GetPokemon,
-    private val pokemonModelToUiModelMapper: PokemonModelToUiModelMapper,
+    private val getPokemon: GetPokemonDefaultUseCase,
+    private val pokemonCompleteToUiModelMapper: PokemonCompleteModelToUiModelMapper,
 ) : ViewModel() {
 
     val detailsScreenState  = MutableStateFlow(DetailsScreenState.LOADING)
-    val pokemonDetails = MutableStateFlow<PokemonUiModel?>(null)
+    val pokemonDetails = MutableStateFlow<PokemonCompleteUiModel?>(null)
 
     init {
         val pokemonId: Int = checkNotNull(savedStateHandle["pokemonId"])
@@ -31,7 +32,9 @@ class PokemonDetailsViewModel @Inject constructor(
     private fun getPokemonDetails(pokemonId: Int) {
         if (pokemonId != -1) {
             viewModelScope.launch {
-                pokemonDetails.value = pokemonModelToUiModelMapper.mapFrom(getPokemon(pokemonId))
+                pokemonDetails.value = pokemonCompleteToUiModelMapper.mapFrom(
+                    getPokemon.completeData(pokemonId)
+                )
                 detailsScreenState.value = DetailsScreenState.SUCCESS
             }
         } else {

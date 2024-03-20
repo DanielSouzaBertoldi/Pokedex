@@ -6,7 +6,7 @@ import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import daniel.bertoldi.pokedex.usecase.GetPokemonGenerationsUIDefault
-import daniel.bertoldi.pokedex.usecase.GetPokemon
+import daniel.bertoldi.pokedex.usecase.GetPokemonDefaultUseCase
 import daniel.bertoldi.pokedex.usecase.GetPokemonUseCase
 import daniel.bertoldi.pokedex.usecase.GetPokemonGenerationsUIUseCase
 
@@ -16,7 +16,7 @@ interface PokedexUseCaseModule {
 
     @[Binds Reusable]
     fun bindsGetPokemonUseCase(
-        getPokemon: GetPokemon
+        getPokemonDefaultUseCase: GetPokemonDefaultUseCase
     ): GetPokemonUseCase
 
     @[Binds Reusable]

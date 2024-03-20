@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -34,7 +37,13 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import daniel.bertoldi.pokedex.R
-import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
+import daniel.bertoldi.pokedex.presentation.viewmodel.DetailsScreenState
+import daniel.bertoldi.pokedex.presentation.viewmodel.PokemonDetailsViewModel
+import daniel.bertoldi.pokedex.ui.theme.Shapes
+import daniel.bertoldi.pokedex.ui.theme.TextNumber
+import daniel.bertoldi.pokedex.ui.theme.TextWhite
 import daniel.bertoldi.pokedex.ui.theme.Typography
 import daniel.bertoldi.pokedex.ui.theme.pokemonFont
 
@@ -71,7 +80,7 @@ private fun ErrorState() {
 
 @Composable
 private fun SuccessState(
-    pokemonDetails: PokemonUiModel,
+    pokemonDetails: PokemonCompleteUiModel,
     onBackClicked: () -> Unit,
 ) {
 
@@ -155,7 +164,7 @@ private fun BoxScope.BackgroundPokemonName(name: String) {
 }
 
 @Composable
-private fun PokemonRow(pokemonDetails: PokemonUiModel) {
+private fun PokemonRow(pokemonDetails: PokemonCompleteUiModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -204,7 +213,7 @@ private fun PokemonImage(artwork: String) {
 }
 
 @Composable
-private fun PokemonMainDetails(pokemonDetails: PokemonUiModel) {
+private fun PokemonMainDetails(pokemonDetails: PokemonCompleteUiModel) {
     Column(
         modifier = Modifier
             .padding(start = 25.dp)
@@ -390,3 +399,51 @@ private fun SheetContent() {
 }
 
 private fun Color.darken() = ColorUtils.blendARGB(this.toArgb(), Color.Black.toArgb(), .5f)
+
+// Duplicated code here..
+@Composable
+private fun PokemonInfo(
+    pokemonUiModel: PokemonCompleteUiModel,
+    numberStyle: TextStyle,
+    nameStyle: TextStyle,
+) {
+    Text(
+        text = pokemonUiModel.pokedexNumber,
+        color = TextNumber,
+        style = numberStyle,
+    )
+    Text(
+        text = pokemonUiModel.name,
+        color = TextWhite,
+        style = nameStyle,
+    )
+    LazyRow(
+        modifier = Modifier.wrapContentSize()
+            .padding(top = 5.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        items(pokemonUiModel.types) { typeUiData ->
+            Row(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .clip(shape = Shapes.small)
+                    .background(color = typeUiData.backgroundColor)
+                    .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(15.dp),
+                    painter = painterResource(id = typeUiData.icon),
+                    contentDescription = null,
+                    tint = Color.White,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 5.dp),
+                    text = typeUiData.name,
+                    style = Typography.subtitle2,
+                    color = TextWhite,
+                )
+            }
+        }
+    }
+}

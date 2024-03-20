@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
 
 @Dao
 interface PokemonDao {

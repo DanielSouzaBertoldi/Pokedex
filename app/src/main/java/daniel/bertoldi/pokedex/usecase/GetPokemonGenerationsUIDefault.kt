@@ -40,7 +40,7 @@ class GetPokemonGenerationsUIDefault @Inject constructor(
     private suspend fun loadCurrentSelectedPokemons(listOfGenerations: List<GenerationData>) {
         listOfGenerations.forEach {
             it.currentPokemons.forEach { pokemonId ->
-                pokedexRepository.getPokemons(pokemonId)
+                pokedexRepository.getBasicPokemons(pokemonId)
             }
         }
     }

@@ -1,6 +1,5 @@
 package daniel.bertoldi.pokedex.data.datasource
 
-import android.util.Log
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
@@ -18,26 +17,37 @@ import daniel.bertoldi.pokedex.data.database.model.Sprites
 import daniel.bertoldi.pokedex.data.database.model.Stats
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 import daniel.bertoldi.pokedex.domain.mapper.GenerationResponseToModelMapper
-import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToModelMapper
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
+import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToBasicModelMapper
+import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToCompleteModelMapper
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
+import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
 import javax.inject.Inject
 
 private val fetchIdRegex = Regex("([\\d]+)")
 
 class PokedexDefaultRemoteDataSource @Inject constructor(
     private val pokeApi: PokeApi,
-    private val pokemonResponseToModelMapper: PokemonResponseToModelMapper,
+    private val pokemonResponseToBasicModelMapper: PokemonResponseToBasicModelMapper,
     private val abilitiesDao: AbilitiesDao,
     private val pokemonAbilitiesCrossRefDao: PokemonAbilitiesCrossRefDao,
     private val pokemonDao: PokemonDao,
     private val statsDao: StatsDao,
     private val generationsResponseToModelMapper: GenerationResponseToModelMapper,
+    private val pokemonResponseToCompleteModelMapper: PokemonResponseToCompleteModelMapper,
 ) : PokedexRemoteDataSource {
 
-    override suspend fun getPokemon(pokemonId: Int): PokemonModel {
+    override suspend fun getBasicPokemonInfo(pokemonId: Int): PokemonBasicModel {
+        val pokemonResponse = pokeApi.getPokemon(pokemonId)
+
+        addPokemonToRoom(pokemonResponse)
+
+        return pokemonResponseToBasicModelMapper.mapFrom(pokemonResponse)
+    }
+
+    override suspend fun getCompletePokemonInfo(pokemonId: Int): PokemonCompleteModel {
         val pokemonResponse = pokeApi.getPokemon(pokemonId)
         pokemonResponse.abilities.forEach {
-            val abilityId = fetchIdRegex.findAll(it.ability.url).last().value.toInt()
+            val abilityId = it.ability.url.fetchIdFromUrl()
 
             if (abilitiesDao.getAbilityById(abilityId) == null) {
                 val abilityResponse = pokeApi.getAbility(abilityId)
@@ -47,7 +57,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
 
         addPokemonToRoom(pokemonResponse)
 
-        return pokemonResponseToModelMapper.mapFrom(pokemonResponse)
+        return pokemonResponseToCompleteModelMapper.mapFrom(pokemonResponse)
     }
 
     override suspend fun getNumberOfGenerations() = pokeApi.getGenerations().count
@@ -135,4 +145,6 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =
         this.firstOrNull { it.stat.name == stat }?.baseStat
+
+    private fun String.fetchIdFromUrl() = fetchIdRegex.findAll(this).last().value.toInt()
 }

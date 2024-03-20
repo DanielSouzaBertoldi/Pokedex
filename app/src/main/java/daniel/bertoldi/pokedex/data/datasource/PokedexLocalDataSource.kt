@@ -1,10 +1,15 @@
 package daniel.bertoldi.pokedex.data.datasource
 
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
+import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
+import daniel.bertoldi.pokedex.domain.model.PokemonCompleteModel
 
 interface PokedexLocalDataSource {
 
-    suspend fun getPokemon(
+    suspend fun getBasicPokemon(
         pokemonId: Int
-    ): PokemonModel
+    ): PokemonBasicModel
+
+    suspend fun getCompletePokemon(
+        pokemonId: Int,
+    ): PokemonCompleteModel
 }

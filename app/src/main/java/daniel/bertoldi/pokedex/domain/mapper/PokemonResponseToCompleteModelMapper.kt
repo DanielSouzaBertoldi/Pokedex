@@ -66,7 +66,6 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
     )
 
     private fun mapStats(stats: List<StatsResponse>) = StatsModel(
-        // duplicated logic
         hp = stats.getBaseStat("hp"),
         attack = stats.getBaseStat("attack"),
         defense = stats.getBaseStat("defense"),
@@ -86,7 +85,7 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
             pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
                 flavorEntry.language.name == "en"
             }.maxBy { it.flavorText.length }.flavorText.replace("\n", " "),
-            growthRate = formatGrowthRate(speciesResponse.growthRate.name), // TODO: should I be formating it here? Isn't it best to format it in Model -> Ui layer? hmm
+            growthRate = speciesResponse.growthRate.name,
             isBaby = speciesResponse.isBaby,
             isLegendary = speciesResponse.isLegendary,
             isMythical = speciesResponse.isMythical,
@@ -97,28 +96,28 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         )
 
     private fun mapTypeEffectiveness(
-        typeEffectivenessEntity: TypeEffectiveness,
+        typeEffectiveness: TypeEffectiveness,
     ) = TypeEffectivenessModel(
-        normal = typeEffectivenessEntity.normal,
-        fighting = typeEffectivenessEntity.fighting,
-        flying = typeEffectivenessEntity.flying,
-        poison = typeEffectivenessEntity.poison,
-        ground = typeEffectivenessEntity.ground,
-        rock = typeEffectivenessEntity.rock,
-        bug = typeEffectivenessEntity.bug,
-        ghost = typeEffectivenessEntity.ghost,
-        steel = typeEffectivenessEntity.steel,
-        fire = typeEffectivenessEntity.fire,
-        water = typeEffectivenessEntity.water,
-        grass = typeEffectivenessEntity.grass,
-        electric = typeEffectivenessEntity.electric,
-        psychic = typeEffectivenessEntity.psychic,
-        ice = typeEffectivenessEntity.ice,
-        dragon = typeEffectivenessEntity.dragon,
-        dark = typeEffectivenessEntity.dark,
-        fairy = typeEffectivenessEntity.fairy,
-        unknown = typeEffectivenessEntity.unknown,
-        shadow = typeEffectivenessEntity.shadow,
+        normal = typeEffectiveness.normal,
+        fighting = typeEffectiveness.fighting,
+        flying = typeEffectiveness.flying,
+        poison = typeEffectiveness.poison,
+        ground = typeEffectiveness.ground,
+        rock = typeEffectiveness.rock,
+        bug = typeEffectiveness.bug,
+        ghost = typeEffectiveness.ghost,
+        steel = typeEffectiveness.steel,
+        fire = typeEffectiveness.fire,
+        water = typeEffectiveness.water,
+        grass = typeEffectiveness.grass,
+        electric = typeEffectiveness.electric,
+        psychic = typeEffectiveness.psychic,
+        ice = typeEffectiveness.ice,
+        dragon = typeEffectiveness.dragon,
+        dark = typeEffectiveness.dark,
+        fairy = typeEffectiveness.fairy,
+        unknown = typeEffectiveness.unknown,
+        shadow = typeEffectiveness.shadow,
     )
 
     private fun mapEvolutionChain(
@@ -153,13 +152,6 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
     ): List<EvolutionChainDetailsModel> = chain.map {
         it.addEvolution()
     }
-
-
-    private fun formatGrowthRate(growthRate: String) = growthRate
-        .split("-")
-        .joinToString(" ") {
-            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
-        }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =
         this.firstOrNull { it.stat.name == stat }?.baseStat

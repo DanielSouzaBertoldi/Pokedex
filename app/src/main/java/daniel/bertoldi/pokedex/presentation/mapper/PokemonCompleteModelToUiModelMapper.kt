@@ -112,7 +112,7 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor(
         catchRate = getCatchRate(species.captureRate),
         genderRate = getGenderRate(species.genderRate),
         pokedexEntry = species.pokedexEntry,
-        growthRate = species.growthRate,
+        growthRate = species.growthRate.formatGrowthRate(),
         isBaby = species.isBaby,
         isLegendary = species.isLegendary,
         isMythical = species.isMythical,
@@ -261,4 +261,10 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor(
             append(smallerText)
         }
     }
+
+    private fun String.formatGrowthRate() = this
+        .split("-")
+        .joinToString(" ") {
+            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
+        }
 }

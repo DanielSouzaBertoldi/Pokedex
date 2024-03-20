@@ -85,7 +85,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         eggGroups = speciesEntity.eggGroups,
         genderRate = speciesEntity.genderRate,
         pokedexEntry = speciesEntity.pokedexEntry,
-        growthRate = formatGrowthRate(speciesEntity.growthRate),
+        growthRate = speciesEntity.growthRate,
         isBaby = speciesEntity.isBaby,
         isLegendary = speciesEntity.isLegendary,
         isMythical = speciesEntity.isMythical,
@@ -146,10 +146,4 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
     ): List<EvolutionChainDetailsModel> = chain.map {
         it.parseEvolution()
     }
-
-    private fun formatGrowthRate(growthRate: String) = growthRate // duped logic
-        .split("-")
-        .joinToString(" ") {
-            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
-        }
 }

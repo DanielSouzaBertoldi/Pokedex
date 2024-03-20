@@ -14,7 +14,6 @@ object PokemonFilterFactory {
         }
     }
 
-    // rename Type to something more cool
     private fun createTypeList() = buildList {
         PokemonUIData.values().forEach {
             add(
@@ -34,8 +33,8 @@ object PokemonFilterFactory {
         HeightUIData.values().forEach {
             add(
                 PokemonFilterUIData(
-                    filterUiData = FilterUiData.Size(
-                        limit = it.heightLimit,
+                    filterUiData = FilterUiData.Height(
+                        heightLimit = it.heightLimit,
                         foregroundColor = it.color,
                         backgroundColor = it.color,
                         name = it.name,
@@ -50,8 +49,8 @@ object PokemonFilterFactory {
         WeightUIData.values().forEach {
             add(
                 PokemonFilterUIData(
-                    filterUiData = FilterUiData.Size(
-                        limit = it.weightLimit,
+                    filterUiData = FilterUiData.Weight(
+                        weightLimit = it.weightLimit,
                         foregroundColor = it.color,
                         backgroundColor = it.color,
                         name = it.name,

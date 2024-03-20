@@ -15,8 +15,16 @@ sealed class FilterUiData {
         override val icon: Int,
     ) : FilterUiData()
 
-    data class Size(
-        val limit: Int,
+    data class Height(
+        val heightLimit: Int,
+        override val foregroundColor: Color,
+        override val backgroundColor: Color,
+        override val name: String,
+        override val icon: Int,
+    ) : FilterUiData()
+
+    data class Weight(
+        val weightLimit: Int,
         override val foregroundColor: Color,
         override val backgroundColor: Color,
         override val name: String,

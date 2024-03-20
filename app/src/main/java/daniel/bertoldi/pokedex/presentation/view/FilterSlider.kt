@@ -46,7 +46,7 @@ fun FilterSlider(
 
     Column(modifier = modifier) {
         RangeSlider(
-            values = sliderPosition,
+            value = sliderPosition,
             onValueChange = { sliderPosition = it },
             onValueChangeFinished = { /* Do something here */ },
             valueRange = valueRange,

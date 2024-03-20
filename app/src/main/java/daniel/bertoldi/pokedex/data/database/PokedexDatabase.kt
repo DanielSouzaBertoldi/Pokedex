@@ -9,6 +9,7 @@ import daniel.bertoldi.pokedex.data.database.converters.GenericObjectConverter
 import daniel.bertoldi.pokedex.data.database.converters.SpritesConverter
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
+import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
@@ -32,6 +33,8 @@ private const val DATABASE_VERSION = 1
 abstract class PokedexDatabase : RoomDatabase() {
 
     abstract fun abilitiesDao(): AbilitiesDao
+
+    abstract fun pokemonDao(): PokemonDao
 
     abstract fun pokemonAbilitiesCrossRef(): PokemonAbilitiesCrossRefDao
 }

@@ -2,11 +2,16 @@ package daniel.bertoldi.pokedex.data.datasource
 
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
+import daniel.bertoldi.pokedex.data.api.response.GenericObject
+import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
+import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.EffectEntry
 import daniel.bertoldi.pokedex.data.database.model.FlavorTextEntry
+import daniel.bertoldi.pokedex.data.database.model.Pokemon
+import daniel.bertoldi.pokedex.data.database.model.Sprites
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToModelMapper
 import daniel.bertoldi.pokedex.domain.model.PokemonModel
@@ -19,6 +24,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private val pokemonResponseToModelMapper: PokemonResponseToModelMapper,
     private val abilitiesDao: AbilitiesDao,
     private val pokemonAbilitiesCrossRefDao: PokemonAbilitiesCrossRefDao,
+    private val pokemonDao: PokemonDao,
 ) : PokedexRemoteDataSource {
 
     override suspend fun getPokemon(pokemonId: Int): PokemonModel {
@@ -31,6 +37,8 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 addAbilityToRoom(abilityResponse)
             }
         }
+
+        addPokemonToRoom(pokemonResponse)
 
         return pokemonResponseToModelMapper.mapFrom(pokemonResponse)
     }
@@ -70,5 +78,37 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 )
             )
         }
+    }
+
+    private suspend fun addPokemonToRoom(pokemon: PokemonResponse) {
+        pokemonDao.insertPokemon(
+            Pokemon(
+                id = pokemon.id,
+                name = pokemon.name,
+                height = pokemon.height,
+                weight = pokemon.weight,
+                isDefault = pokemon.isDefault,
+                sprites = Sprites(
+                    backDefault = pokemon.sprites.backDefault,
+                    backShiny = pokemon.sprites.backDefault,
+                    frontDefault = pokemon.sprites.backDefault,
+                    frontShiny = pokemon.sprites.backDefault,
+                    officialArtwork = pokemon.sprites.backDefault,
+                ),
+                stats = pokemon.stats.map {
+                    // should add base_stat and effort here too
+                    GenericObject(
+                        name = it.stat.name,
+                        url = it.stat.url,
+                    )
+                },
+                types = pokemon.types.map {
+                    GenericObject(
+                        name = it.type.name,
+                        url = it.type.url,
+                    )
+                }
+            )
+        )
     }
 }

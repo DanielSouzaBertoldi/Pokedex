@@ -1,7 +1,5 @@
 package daniel.bertoldi.pokedex.ui.theme
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import daniel.bertoldi.pokedex.R
 
@@ -31,7 +29,11 @@ enum class PokemonUIData(val typeColor: Color, val backgroundColor: Color, val i
     PSYCHIC(Color(0xFFEA5D60), Color(0xFFFF6568), R.drawable.ic_psychic_type),
     ROCK(Color(0xFFBAAB82), Color(0xFFD4C294), R.drawable.ic_rock_type),
     STEEL(Color(0xFF417D9A), Color(0xFF4C91B2), R.drawable.ic_steel_type),
-    WATER(Color(0xFF4A90DA), Color(0xFF58ABF6), R.drawable.ic_water_type),
+    WATER(Color(0xFF4A90DA), Color(0xFF58ABF6), R.drawable.ic_water_type);
+
+    companion object {
+        fun findTypeUiData(name: String) = values().firstOrNull { it.name == name }
+    }
 }
 
 /* Generic Background Colors */

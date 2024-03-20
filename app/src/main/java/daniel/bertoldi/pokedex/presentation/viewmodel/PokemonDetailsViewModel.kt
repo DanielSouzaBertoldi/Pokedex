@@ -27,8 +27,6 @@ class PokemonDetailsViewModel @Inject constructor(
         getPokemonDetails(pokemonId)
     }
 
-    // maybe have another usecase that'll return the full pokemon data, not only what's
-    // shown in the home list.
     private fun getPokemonDetails(pokemonId: Int) {
         if (pokemonId != -1) {
             viewModelScope.launch {

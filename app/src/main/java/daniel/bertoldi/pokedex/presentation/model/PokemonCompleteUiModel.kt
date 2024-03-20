@@ -4,13 +4,14 @@ import androidx.compose.ui.text.AnnotatedString
 
 data class PokemonCompleteUiModel(
     val id: Int,
-    val height: DuoTextUi,
+    val height: AnnotatedString,
     val pokedexNumber: String,
+    val pokedexEntry: String,
     val isDefault: Boolean,
     val name: String,
     val uiSprites: UiSprites,
     val types: List<UiType>,
-    val weight: DuoTextUi,
+    val weight: AnnotatedString,
     val backgroundColors: BackgroundColors,
     val baseExperience: Int,
     val abilities: List<PokemonUiAbility>,
@@ -48,20 +49,16 @@ data class StatDetailUiModel(
 )
 
 data class SpeciesUiModel(
-    val catchRate: DuoTextUi,
+    val catchRate: AnnotatedString,
     val genderRate: AnnotatedString,
     val pokedexEntry: String,
     val growthRate: String,
     val isBaby: Boolean,
     val isLegendary: Boolean,
     val isMythical: Boolean,
-    val eggCycles: DuoTextUi,
+    val eggCycles: AnnotatedString,
+    val eggGroups: String,
     val name: String,
-)
-
-data class DuoTextUi(
-    val mainText: String,
-    val secondaryText: String,
 )
 
 data class TypeEffectivenessUiModel(
@@ -85,7 +82,40 @@ data class TypeEffectivenessUiModel(
     val fairy: Effectiveness?,
     val unknown: Effectiveness?,
     val shadow: Effectiveness?,
-)
+) {
+    operator fun iterator(): Iterator<Pair<String, Effectiveness?>> = listOf(
+        "NORMAL" to normal,
+        "FIGHTING" to fighting,
+        "FLYING" to flying,
+        "POISON" to poison,
+        "GROUND" to ground,
+        "ROCK" to rock,
+        "BUG" to bug,
+        "GHOST" to ghost,
+        "STEEL" to steel,
+        "FIRE" to fire,
+        "WATER" to water,
+        "GRASS" to grass,
+        "ELECTRIC" to electric,
+        "PSYCHIC" to psychic,
+        "ICE" to ice,
+        "DRAGON" to dragon,
+        "DARK" to dark,
+        "FAIRY" to fairy,
+        "UNKOWN" to unknown,
+        "SHADOW" to shadow,
+    ).iterator()
+
+    fun getATypeEffectiveness(expectedEffectiveness: Effectiveness): List<String> {
+        val listOfEffectiveness = mutableListOf<String>()
+        for ((key, value) in this) {
+            if (value == expectedEffectiveness) {
+                listOfEffectiveness.add(key)
+            }
+        }
+        return listOfEffectiveness
+    }
+}
 
 enum class Effectiveness {
     NONE,

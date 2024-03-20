@@ -84,7 +84,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     )
                 },
                 hasCompleteData = false,
-                baseExperience = pokemon.baseExperience,
+                baseExperience = pokemon.baseExperience ?: -1, // create logic to deal with this
                 speciesId = pokemon.species.url.fetchIdFromUrl(),
             )
         )
@@ -142,6 +142,8 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 },
                 generationName = abilityResponse.generation.name,
                 isMainSeries = abilityResponse.isMainSeries,
+                isHidden = false, // TODO: maybe I should use a different Data Class to retrieve this data, since an ability can be hidden or not for different pokemons, this property shouldn't be here at all!
+                slot = 1,
             )
         )
 
@@ -150,6 +152,8 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 PokemonAbilitiesCrossRef(
                     abilityId = abilityResponse.id,
                     pokemonId = pokemon.data.url.fetchIdFromUrl(),
+                    isHidden = pokemon.isHidden,
+                    slot = pokemon.slot,
                 )
             )
         }
@@ -169,7 +173,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     genderRate = speciesResponse.genderRate,
                     pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
                         flavorEntry.language.name == "en"
-                    }.maxBy { it.flavorText.length }.flavorText,
+                    }.maxBy { it.flavorText.length }.flavorText.replace("\n", " "),
                     growthRate = speciesResponse.growthRate.name,
                     isBaby = speciesResponse.isBaby,
                     isLegendary = speciesResponse.isLegendary,
@@ -185,7 +189,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     }
 
     private suspend fun getPokemonTypeEffectiveness(types: List<TypesResponse>): TypeEffectiveness {
-        val typeNames = types.map { it.type.name }.sorted()
+        val typeNames = types.map { it.type.name }
         val multipliers = mutableMapOf(
             "defense" to mutableMapOf<String, Float>(),
             "attack" to mutableMapOf()

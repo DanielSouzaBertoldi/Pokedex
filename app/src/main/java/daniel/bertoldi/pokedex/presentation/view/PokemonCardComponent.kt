@@ -25,7 +25,6 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
-import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
 import daniel.bertoldi.pokedex.ui.theme.Shapes
 import daniel.bertoldi.pokedex.ui.theme.TextNumber
 import daniel.bertoldi.pokedex.ui.theme.TextWhite

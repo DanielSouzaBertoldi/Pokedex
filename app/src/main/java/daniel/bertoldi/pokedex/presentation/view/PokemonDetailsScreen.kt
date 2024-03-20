@@ -6,7 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,15 +40,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import daniel.bertoldi.pokedex.R
-import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
+import daniel.bertoldi.pokedex.presentation.model.Effectiveness
 import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
+import daniel.bertoldi.pokedex.presentation.model.PokemonUiAbility
 import daniel.bertoldi.pokedex.presentation.viewmodel.DetailsScreenState
 import daniel.bertoldi.pokedex.presentation.viewmodel.PokemonDetailsViewModel
-import daniel.bertoldi.pokedex.ui.theme.Shapes
-import daniel.bertoldi.pokedex.ui.theme.TextNumber
-import daniel.bertoldi.pokedex.ui.theme.TextWhite
-import daniel.bertoldi.pokedex.ui.theme.Typography
-import daniel.bertoldi.pokedex.ui.theme.pokemonFont
+import daniel.bertoldi.pokedex.ui.theme.*
 
 @Composable
 fun PokemonDetailsScreen(
@@ -125,7 +125,7 @@ private fun SuccessState(
                     contentDescription = null,
                 )
             }
-            SheetContent()
+            SheetContent(pokemonDetails)
         }
     }
 }
@@ -229,7 +229,7 @@ private fun PokemonMainDetails(pokemonDetails: PokemonCompleteUiModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun SheetContent() {
+private fun SheetContent(pokemonDetails: PokemonCompleteUiModel,) {
     val pageCount = 3
     val pagerState = rememberPagerState()
     val pagerTitle = remember {
@@ -286,115 +286,249 @@ private fun SheetContent() {
         state = pagerState,
         itemSpacing = 5.dp,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                )
-                .padding(start = 40.dp, end = 40.dp, top = 40.dp, bottom = 50.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(5.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
-            )
+        when (pagerState.currentPage) {
+            0 -> AboutSheet(pokemonDetails)
+            1 -> StatsSheet()
+            else -> EvolutionSheet()
+        }
+    }
+}
 
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
+@Composable
+private fun AboutSheet(
+    pokemonDetails: PokemonCompleteUiModel,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
             )
+            .padding(start = 40.dp, end = 40.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(modifier = Modifier.size(40.dp))
+        Text(
+            modifier = Modifier.padding(5.dp),
+            text = pokemonDetails.pokedexEntry,
+            color = TextGrey,
+            style = Typography.body1,
+        )
 
+        PokedexDataComponent(
+            speciesName = pokemonDetails.species.name,
+            height = pokemonDetails.height,
+            weight = pokemonDetails.weight,
+            abilities = pokemonDetails.abilities,
+            weaknesses = pokemonDetails.typeEffectiveness.getATypeEffectiveness(Effectiveness.WEAK),
+        )
+        TrainingComponent(
+            catchRate = pokemonDetails.species.catchRate,
+            baseExp = pokemonDetails.baseExperience,
+            growthRate = pokemonDetails.species.growthRate,
+        )
+        BreedingComponent(
+            gender = pokemonDetails.species.genderRate,
+            eggGroups = pokemonDetails.species.eggGroups,
+            eggCycles = pokemonDetails.species.eggCycles,
+        )
+        Spacer(modifier = Modifier.size(50.dp))
+    }
+}
+
+@Composable
+private fun PokedexDataComponent(
+    speciesName: String,
+    height: AnnotatedString,
+    weight: AnnotatedString,
+    abilities: List<PokemonUiAbility>,
+    weaknesses: List<String>,
+) {
+    SectionTitleComponent(title = "Pokédex Data")
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        SimpleRow("Species", speciesName)
+        SimpleRow("Height", detailAnnotated = height)
+        SimpleRow("Weight", detailAnnotated = weight)
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
+                modifier = Modifier.weight(0.4f),
+                text = "Abilities",
+                style = Typography.subtitle2,
+                color = TextBlack,
             )
-
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+            ) {
+                abilities.filterNot { it.isHidden }.forEach {
+                    Text(
+                        text = "${it.slot}. ${it.name}",
+                        style = Typography.body1,
+                        color = TextGrey,
+                    )
+                }
+                abilities.filter { it.isHidden }.forEach {
+                    Text(
+                        text = "${it.name} (hidden ability)",
+                        style = Typography.subtitle1,
+                        color = TextGrey,
+                    )
+                }
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
+                modifier = Modifier.weight(0.4f),
+                text = "Weaknesses",
+                style = Typography.subtitle2,
+                color = TextBlack,
             )
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                weaknesses.forEach { weakness ->
+                    PokemonUIData.findTypeUiData(weakness)?.let { uiData ->
+                        Box(
+                            modifier = Modifier
+                                .size(25.dp)
+                                .background(
+                                    color = uiData.typeColor,
+                                    shape = RoundedCornerShape(3.dp)
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(15.dp),
+                                painter = painterResource(id = uiData.icon),
+                                contentDescription = null,
+                                tint = BgWhite,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
+@Composable
+private fun TrainingComponent(
+    catchRate: AnnotatedString,
+    baseExp: Int,
+    growthRate: String,
+) {
+    SectionTitleComponent(title = "Training")
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        // Missing EV Yield (?)
+        SimpleRow(title = "Catch Rate", detailAnnotated = catchRate)
+        // Missing Base Friendship (??)
+        SimpleRow(title = "Base Exp", detail = baseExp.toString())
+        SimpleRow(title = "Growth Rate", detail = growthRate)
+    }
+}
+
+@Composable
+private fun BreedingComponent(
+    gender: AnnotatedString,
+    eggGroups: String,
+    eggCycles: AnnotatedString
+) {
+    SectionTitleComponent(title = "Breeding")
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        SimpleRow(title = "Gender", detailAnnotated = gender)
+        SimpleRow(title = "Egg Groups", detail = eggGroups)
+        SimpleRow(title = "Egg Cycles", detailAnnotated = eggCycles)
+    }
+}
+
+@Composable
+private fun SectionTitleComponent(title: String) {
+    Text(
+        modifier = Modifier.padding(top = 30.dp, bottom = 20.dp),
+        text = title,
+        color = PokemonUIData.GRASS.typeColor,
+        style = Typography.h4,
+    )
+}
+
+@Composable
+private fun SimpleRow(
+    title: String,
+    detail: String? = null, // TODO: maybe change the name to leading for title and trailing for these two other?
+    detailAnnotated: AnnotatedString? = null,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            modifier = Modifier.weight(0.4f),
+            text = title,
+            style = Typography.subtitle2,
+            color = TextBlack,
+        )
+        if (detail != null) {
             Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
+                modifier = Modifier.weight(1f),
+                text = detail,
+                style = Typography.body1,
+                color = TextGrey,
             )
-
+        } else if (detailAnnotated != null) {
             Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-                color = Color.Black,
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 35.dp),
-                text = "Salve vadalismo",
+                modifier = Modifier.weight(1f),
+                text = detailAnnotated,
+                style = Typography.body1,
+                color = TextGrey,
             )
         }
+    }
+}
+
+@Composable
+private fun StatsSheet() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+            )
+            .padding(start = 40.dp, end = 40.dp, top = 40.dp, bottom = 50.dp)
+    ) {
+        Text(
+            modifier = Modifier.padding(5.dp),
+            text = "Stats Screen",
+            color = Color.Black,
+        )
+    }
+}
+
+@Composable
+private fun EvolutionSheet() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+            )
+            .padding(start = 40.dp, end = 40.dp, top = 40.dp, bottom = 50.dp)
+    ) {
+        Text(
+            modifier = Modifier.padding(5.dp),
+            text = "Evolution Screen",
+            color = Color.Black,
+        )
     }
 }
 
@@ -418,7 +552,8 @@ private fun PokemonInfo(
         style = nameStyle,
     )
     LazyRow(
-        modifier = Modifier.wrapContentSize()
+        modifier = Modifier
+            .wrapContentSize()
             .padding(top = 5.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {

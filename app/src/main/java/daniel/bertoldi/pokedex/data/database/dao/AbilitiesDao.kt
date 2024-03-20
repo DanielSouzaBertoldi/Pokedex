@@ -10,7 +10,7 @@ import daniel.bertoldi.pokedex.data.database.model.Abilities
 @Dao
 interface AbilitiesDao {
 
-    @Query("SELECT * FROM abilities WHERE abilityId = :abilityId")
+    @Query("SELECT * FROM abilities WHERE ability_id = :abilityId")
     suspend fun getAbilityById(abilityId: Int): Abilities?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -21,8 +21,11 @@ interface AbilitiesDao {
 
     @Transaction
     @Query(
-        "SELECT * FROM PokemonAbilitiesCrossRef as int " +
-        "LEFT JOIN abilities as ab ON ab.abilityId = int.abilityId WHERE int.pokemonId = :pokemonId"
+        "SELECT ab.ability_id, name, effect_entries, flavor_text_entries, generation_name, is_main_series, int.is_hidden, int.slot " +
+        "FROM pokemon_abilities_cross_ref as int " +
+        "LEFT JOIN abilities as ab " +
+        "ON ab.ability_id = int.ability_id " +
+        "WHERE int.pokemon_id = :pokemonId"
     )
     suspend fun getPokemonAbilities(pokemonId: Int): List<Abilities>
 }

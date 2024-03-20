@@ -4,6 +4,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import daniel.bertoldi.pokedex.domain.model.*
 import daniel.bertoldi.pokedex.presentation.model.*
 import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
@@ -15,10 +16,11 @@ import kotlin.math.floor
 class PokemonCompleteModelToUiModelMapper @Inject constructor() {
 
     fun mapFrom(pokemonModel: PokemonCompleteModel) = PokemonCompleteUiModel(
-        abilities = pokemonModel.abilities.map { mapAbilities(it) },
+        abilities = pokemonModel.abilities.map { mapAbilities(it) }.sortedBy { it.slot },
         height = pokemonModel.height.calculateHeight(),
         id = pokemonModel.id,
         pokedexNumber = String.format(Locale.ROOT, "#%03d", pokemonModel.id),
+        pokedexEntry = pokemonModel.species.pokedexEntry,
         isDefault = pokemonModel.isDefault,
         name = pokemonModel.name.capitalize(),
         uiSprites = mapSprites(pokemonModel.sprites),
@@ -34,7 +36,7 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
     )
 
     private fun mapAbilities(abilityModel: AbilityModel) = PokemonUiAbility(
-        name = abilityModel.name,
+        name = abilityModel.name.replaceFirstChar { it.uppercase() },
         isHidden = abilityModel.isHidden,
         slot = abilityModel.slot,
         effectEntry = abilityModel.effectEntry,
@@ -99,17 +101,18 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         isLegendary = species.isLegendary,
         isMythical = species.isMythical,
         eggCycles = getEggCycles(species.hatchCounter),
+        eggGroups = species.eggGroups.joinToString(separator = " ") { it.replaceFirstChar { firstChar -> firstChar.uppercase() } },
         name = species.name,
     )
 
-    private fun getCatchRate(captureRate: Int) = DuoTextUi(
+    private fun getCatchRate(captureRate: Int) = subscriptText(
         mainText = "$captureRate",
-        secondaryText = "(5.9% with Pokéball, full HP)" // idk how to calculate this
+        smallerText = "(5.9% with Pokéball, full HP)"// TODO: idk how to calculate this
     )
 
     private fun getGenderRate(genderRate: Int): AnnotatedString {
         return if (genderRate != -1) {
-            val femaleRate = (genderRate / 1) * 100
+            val femaleRate = (genderRate.toDouble() / 8) * 100
             val maleRate = 100 - femaleRate
 
             buildAnnotatedString {
@@ -130,38 +133,38 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         }
     }
 
-    private fun getEggCycles(hatchCounter: Int): DuoTextUi {
+    private fun getEggCycles(hatchCounter: Int): AnnotatedString {
         val minimumSteps = 128 * hatchCounter // for Pokemon Sword/Shild/Scarlet/Violet
         val maxSteps = 257 * hatchCounter // for Gen V and VI
 
-        return DuoTextUi(
+        return subscriptText(
             mainText = "$hatchCounter",
-            secondaryText = "($minimumSteps - $maxSteps)"
+            smallerText = "($minimumSteps - $maxSteps)",
         )
     }
 
     private fun mapTypeEffectiveness(typeEffectiveness: TypeEffectivenessModel) =
         TypeEffectivenessUiModel(
             normal = typeEffectiveness.normal?.getTypeEffectiveness(),
-            fighting = typeEffectiveness.normal?.getTypeEffectiveness(),
-            flying = typeEffectiveness.normal?.getTypeEffectiveness(),
-            poison = typeEffectiveness.normal?.getTypeEffectiveness(),
-            ground = typeEffectiveness.normal?.getTypeEffectiveness(),
-            rock = typeEffectiveness.normal?.getTypeEffectiveness(),
-            bug = typeEffectiveness.normal?.getTypeEffectiveness(),
-            ghost = typeEffectiveness.normal?.getTypeEffectiveness(),
-            steel = typeEffectiveness.normal?.getTypeEffectiveness(),
-            fire = typeEffectiveness.normal?.getTypeEffectiveness(),
-            water = typeEffectiveness.normal?.getTypeEffectiveness(),
-            grass = typeEffectiveness.normal?.getTypeEffectiveness(),
-            electric = typeEffectiveness.normal?.getTypeEffectiveness(),
-            psychic = typeEffectiveness.normal?.getTypeEffectiveness(),
-            ice = typeEffectiveness.normal?.getTypeEffectiveness(),
-            dragon = typeEffectiveness.normal?.getTypeEffectiveness(),
-            dark = typeEffectiveness.normal?.getTypeEffectiveness(),
-            fairy = typeEffectiveness.normal?.getTypeEffectiveness(),
-            unknown = typeEffectiveness.normal?.getTypeEffectiveness(),
-            shadow = typeEffectiveness.normal?.getTypeEffectiveness(),
+            fighting = typeEffectiveness.fighting?.getTypeEffectiveness(),
+            flying = typeEffectiveness.flying?.getTypeEffectiveness(),
+            poison = typeEffectiveness.poison?.getTypeEffectiveness(),
+            ground = typeEffectiveness.ground?.getTypeEffectiveness(),
+            rock = typeEffectiveness.rock?.getTypeEffectiveness(),
+            bug = typeEffectiveness.bug?.getTypeEffectiveness(),
+            ghost = typeEffectiveness.ghost?.getTypeEffectiveness(),
+            steel = typeEffectiveness.steel?.getTypeEffectiveness(),
+            fire = typeEffectiveness.fire?.getTypeEffectiveness(),
+            water = typeEffectiveness.water?.getTypeEffectiveness(),
+            grass = typeEffectiveness.grass?.getTypeEffectiveness(),
+            electric = typeEffectiveness.electric?.getTypeEffectiveness(),
+            psychic = typeEffectiveness.psychic?.getTypeEffectiveness(),
+            ice = typeEffectiveness.ice?.getTypeEffectiveness(),
+            dragon = typeEffectiveness.dragon?.getTypeEffectiveness(),
+            dark = typeEffectiveness.dark?.getTypeEffectiveness(),
+            fairy = typeEffectiveness.fairy?.getTypeEffectiveness(),
+            unknown = typeEffectiveness.unknown?.getTypeEffectiveness(),
+            shadow = typeEffectiveness.shadow?.getTypeEffectiveness(),
         )
 
     private fun Float.getTypeEffectiveness() = when {
@@ -186,22 +189,32 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
 
     private fun String.capitalize() = this.replaceFirstChar { it.uppercase() }
 
-    private fun Int.calculateHeight(): DuoTextUi {
-        val length = 100 * (this.toDouble() / 10) / 2.54
+    private fun Int.calculateHeight(): AnnotatedString {
+        val meters = this.toDouble() / 10
+        val length = 100 * meters / 2.54
         val feet = (length / 12).toBigDecimal().setScale(1, RoundingMode.HALF_UP).toInt()
         val inch = (length - 12 * feet).toBigDecimal().setScale(0, RoundingMode.HALF_UP).toInt()
-        return DuoTextUi(
-            mainText = "${this}m",
-            secondaryText = "(${feet}'${inch.toString().padStart(2, '0')}\")"
+        return subscriptText(
+            mainText = "${meters}m",
+            smallerText =
+                "(${feet}'${inch.toString().padStart(2, '0')}\")"
         )
     }
 
-    private fun Int.calculateWeight(): DuoTextUi {
+    private fun Int.calculateWeight(): AnnotatedString {
         val kg = this.toDouble() / 10
         val pounds = "%.1f".format(kg / 0.45359237)
-        return DuoTextUi(
-            mainText = "${kg}kg",
-            secondaryText = "($pounds)"
+        return subscriptText(
+            mainText = "${kg.toString().padStart(2, '0')}kg",
+            smallerText = "($pounds)",
         )
+    }
+
+    private fun subscriptText(mainText: String, smallerText: String) = buildAnnotatedString {
+        append(mainText)
+        append(" ")
+        withStyle(SpanStyle(fontSize = 13.sp)) {
+            append(smallerText)
+        }
     }
 }

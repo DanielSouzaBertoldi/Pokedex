@@ -14,7 +14,7 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         typeEffectiveness: TypeEffectiveness,
     ) = PokemonCompleteModel(
         id = pokemonEntity.id,
-        baseExperience = pokemonEntity.baseExperience,
+        baseExperience = pokemonEntity.baseExperience ?: -1,
         height = pokemonEntity.height,
         isDefault = pokemonEntity.isDefault,
         name = pokemonEntity.name,
@@ -82,8 +82,8 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         genderRate = speciesResponse.genderRate,
         pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
             flavorEntry.language.name == "en"
-        }.maxBy { it.flavorText.length }.flavorText,
-        growthRate = formatGrowthRate(speciesResponse.growthRate.name),
+        }.maxBy { it.flavorText.length }.flavorText.replace("\n", " "),
+        growthRate = formatGrowthRate(speciesResponse.growthRate.name), // TODO: should I be formating it here? Isn't it best to format it in Model -> Ui layer? hmm
         isBaby = speciesResponse.isBaby,
         isLegendary = speciesResponse.isLegendary,
         isMythical = speciesResponse.isMythical,
@@ -92,12 +92,6 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
             generaEntry.language.name == "en"
         }?.genus.orEmpty()
     )
-
-    private fun formatGrowthRate(growthRate: String) = growthRate
-        .split("-")
-        .joinToString(" ") {
-            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
-        }
 
     private fun mapTypeEffectiveness(
         typeEffectivenessEntity: TypeEffectiveness,
@@ -123,6 +117,12 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         unknown = typeEffectivenessEntity.unknown,
         shadow = typeEffectivenessEntity.shadow,
     )
+
+    private fun formatGrowthRate(growthRate: String) = growthRate
+        .split("-")
+        .joinToString(" ") {
+            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
+        }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =
         this.firstOrNull { it.stat.name == stat }?.baseStat

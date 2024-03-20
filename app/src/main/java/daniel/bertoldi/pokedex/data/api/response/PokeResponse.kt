@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class PokemonResponse(
     val abilities: List<PokemonAbilitiesResponse>,
-    @Json(name = "base_experience") val baseExperience: Int,
+    @Json(name = "base_experience") val baseExperience: Int?,
     val height: Int,
     val id: Int,
     @Json(name = "is_default") val isDefault: Boolean,

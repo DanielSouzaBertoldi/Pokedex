@@ -58,8 +58,8 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         AbilityModel(
             id = it.abilityId,
             name = it.name,
-            isHidden = false, // where is this info ??
-            slot = 1, // where is this info ???
+            isHidden = it.isHidden,
+            slot = it.slot,
             effectEntry = effectEntry.effect,
             shortEffectEntry = effectEntry.shortEffect,
             flavorText = it.flavorTextEntries.filter { flavorEntry ->
@@ -87,7 +87,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         eggGroups = speciesEntity.eggGroups,
         genderRate = speciesEntity.genderRate,
         pokedexEntry = speciesEntity.pokedexEntry,
-        growthRate = speciesEntity.growthRate,
+        growthRate = formatGrowthRate(speciesEntity.growthRate),
         isBaby = speciesEntity.isBaby,
         isLegendary = speciesEntity.isLegendary,
         isMythical = speciesEntity.isMythical,
@@ -120,4 +120,9 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         shadow = typeEffectivenessEntity.shadow,
     )
 
+    private fun formatGrowthRate(growthRate: String) = growthRate // duped logic
+        .split("-")
+        .joinToString(" ") {
+            it.replaceFirstChar { firstChar -> firstChar.uppercase() }
+        }
 }

@@ -6,12 +6,14 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "abilities")
 data class Abilities(
-    @PrimaryKey val abilityId: Int,
+    @ColumnInfo(name = "ability_id") @PrimaryKey val abilityId: Int,
     val name: String,
     @ColumnInfo(name = "effect_entries") val effectEntries: List<EffectEntry>,
     @ColumnInfo(name = "flavor_text_entries") val flavorTextEntries: List<FlavorTextEntry>,
     @ColumnInfo(name = "generation_name") val generationName: String,
     @ColumnInfo(name = "is_main_series") val isMainSeries: Boolean,
+    @ColumnInfo(name = "is_hidden") val isHidden: Boolean,
+    val slot: Int,
 )
 
 data class EffectEntry(

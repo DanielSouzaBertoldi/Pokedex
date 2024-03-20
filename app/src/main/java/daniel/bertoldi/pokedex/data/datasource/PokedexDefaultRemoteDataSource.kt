@@ -16,6 +16,7 @@ import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.Sprites
 import daniel.bertoldi.pokedex.data.database.model.Stats
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
+import daniel.bertoldi.pokedex.domain.mapper.GenerationResponseToModelMapper
 import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToModelMapper
 import daniel.bertoldi.pokedex.domain.model.PokemonModel
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private val pokemonAbilitiesCrossRefDao: PokemonAbilitiesCrossRefDao,
     private val pokemonDao: PokemonDao,
     private val statsDao: StatsDao,
+    private val generationsResponseToModelMapper: GenerationResponseToModelMapper,
 ) : PokedexRemoteDataSource {
 
     override suspend fun getPokemon(pokemonId: Int): PokemonModel {
@@ -46,6 +48,12 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
 
         return pokemonResponseToModelMapper.mapFrom(pokemonResponse)
     }
+
+    override suspend fun getNumberOfGenerations() = pokeApi.getGenerations().count
+
+    override suspend fun getGeneration(id: Int) = generationsResponseToModelMapper.mapFrom(
+        pokeApi.getGeneration(id)
+    )
 
     private suspend fun addAbilityToRoom(abilityResponse: AbilityResponse) {
         abilitiesDao.insertAbility(
@@ -76,9 +84,6 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 PokemonAbilitiesCrossRef(
                     abilityId = abilityResponse.id,
                     pokemonId = fetchIdRegex.findAll(pokemon.data.url).last().value.toInt(),
-//                    pokemonName = pokemon.data.name,
-//                    isHidden = pokemon.isHidden,
-//                    slot = pokemon.slot,
                 )
             )
         }
@@ -115,15 +120,18 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         statsDao.insertStat(
             Stats(
                 pokemonId = pokemonId,
-                hp = statsResponse.first { it.stat.name == "hp" }.baseStat,
-                attack = statsResponse.first { it.stat.name == "attack" }.baseStat,
-                defense = statsResponse.first { it.stat.name == "defense" }.baseStat,
-                specialAttack = statsResponse.first { it.stat.name == "special-attack" }.baseStat,
-                specialDefense = statsResponse.first { it.stat.name == "special-defense" }.baseStat,
-                speed = statsResponse.first { it.stat.name == "speed" }.baseStat,
-                accuracy = statsResponse.find { it.stat.name == "accuracy" }?.baseStat,
-                evasion = statsResponse.find { it.stat.name == "evasion" }?.baseStat,
+                hp = statsResponse.getBaseStat("hp"),
+                attack = statsResponse.getBaseStat("attack"),
+                defense = statsResponse.getBaseStat("defense"),
+                specialAttack = statsResponse.getBaseStat("special-attack"),
+                specialDefense = statsResponse.getBaseStat("special-defense"),
+                speed = statsResponse.getBaseStat("speed"),
+                accuracy = statsResponse.getBaseStat( "accuracy"),
+                evasion = statsResponse.getBaseStat("evasion"),
             )
         )
     }
+
+    private fun List<StatsResponse>.getBaseStat(stat: String) =
+        this.first { it.stat.name == stat }.baseStat
 }

@@ -14,7 +14,6 @@ data class Pokemon(
     @ColumnInfo(name = "is_default") val isDefault: Boolean,
     val sprites: Sprites,
     val types: List<GenericObject>,
-//    val abilities: List<Ability>,
 )
 
 data class Sprites(
@@ -24,14 +23,3 @@ data class Sprites(
     val frontShiny: String?,
     val officialArtwork: String?,
 )
-
-//data class Types(
-//    val slot: Int,
-//    val type: GenericObject,
-//)
-
-//data class Ability(
-//    val id: Int,
-//    val isHidden: Boolean,
-//    val slot: Int,
-//)

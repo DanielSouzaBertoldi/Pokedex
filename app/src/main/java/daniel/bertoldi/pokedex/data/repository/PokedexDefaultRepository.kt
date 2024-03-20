@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.data.repository
 
+import daniel.bertoldi.pokedex.GenerationData
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.data.datasource.PokedexLocalDataSource
 import daniel.bertoldi.pokedex.data.datasource.PokedexRemoteDataSource
@@ -17,4 +18,10 @@ class PokedexDefaultRepository @Inject constructor(
         } else {
             remoteDataSource.getPokemon(pokemonId)
         }
+
+    override suspend fun fetchListOfGenerations() = mutableListOf<GenerationData>().apply {
+        repeat(remoteDataSource.getNumberOfGenerations()) {
+            this.add(remoteDataSource.getGeneration(it + 1))
+        }
+    }
 }

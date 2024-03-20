@@ -5,8 +5,10 @@ import dagger.Module
 import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import daniel.bertoldi.pokedex.usecase.DefaultGetPokemonGenerations
 import daniel.bertoldi.pokedex.usecase.GetPokemon
 import daniel.bertoldi.pokedex.usecase.GetPokemonUseCase
+import daniel.bertoldi.pokedex.usecase.GetPokemonGenerationsUseCase
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -16,4 +18,9 @@ interface PokedexUseCaseModule {
     fun bindsGetPokemonUseCase(
         getPokemon: GetPokemon
     ): GetPokemonUseCase
+
+    @[Binds Reusable]
+    fun bindsSetupDataBaseUseCase(
+        setupDataBase: DefaultGetPokemonGenerations,
+    ): GetPokemonGenerationsUseCase
 }

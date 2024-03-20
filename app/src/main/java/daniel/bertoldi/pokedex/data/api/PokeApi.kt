@@ -1,6 +1,8 @@
 package daniel.bertoldi.pokedex.data.api
 
 import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
+import daniel.bertoldi.pokedex.data.api.response.GenerationResponse
+import daniel.bertoldi.pokedex.data.api.response.GenerationsListResponse
 import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -17,4 +19,12 @@ interface PokeApi {
     suspend fun getAbility(
         @Path("abilityId") abilityId: Int,
     ): AbilityResponse
+
+    @GET("generation/")
+    suspend fun getGenerations(): GenerationsListResponse
+
+    @GET("generation/{generationId}")
+    suspend fun getGeneration(
+        @Path("generationId") generationId: Int,
+    ): GenerationResponse
 }

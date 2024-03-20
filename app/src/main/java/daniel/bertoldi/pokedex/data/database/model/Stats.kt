@@ -19,12 +19,12 @@ import androidx.room.PrimaryKey
 )
 data class Stats(
     @PrimaryKey val pokemonId: Int,
-    val hp: Int,
-    val attack: Int,
-    val defense: Int,
-    @ColumnInfo(name = "special_attack") val specialAttack: Int,
-    @ColumnInfo(name = "special_defense") val specialDefense: Int,
-    val speed: Int,
+    val hp: Int? = null,
+    val attack: Int? = null,
+    val defense: Int? = null,
+    @ColumnInfo(name = "special_attack") val specialAttack: Int? = null,
+    @ColumnInfo(name = "special_defense") val specialDefense: Int? = null,
+    val speed: Int? = null,
     val accuracy: Int? = null,
     val evasion: Int? = null,
 )

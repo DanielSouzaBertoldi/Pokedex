@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.data.datasource
 
+import android.util.Log
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
@@ -133,5 +134,5 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =
-        this.first { it.stat.name == stat }.baseStat // theres a bug here!!!
+        this.firstOrNull { it.stat.name == stat }?.baseStat
 }

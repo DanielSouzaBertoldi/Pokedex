@@ -19,8 +19,11 @@
 <br />
 <div align="center">
   <a href="https://github.com/DanielSouzaBertoldi/pokedex">
-    <img src="readme_media/pokedex-app-icon.png" alt="Logo" width="80" height="80">
+    <img src="readme_media/pokedex-app-icon.png" alt="Logo" height="200">
   </a>
+
+
+  <i>*Logo by <a href="https://dribbble.com/shots/2214760-Pokedex-App-Icon">Joe Kotlan</a></i>
 
 <h3 align="center">Pokedéx</h3>
 
@@ -64,7 +67,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Pokedex Video][product-video]](https://github.com/DanielSouzaBertoldi/Pokedex/)
+https://github.com/DanielSouzaBertoldi/Pokedex/assets/28109145/7eb74402-3655-47e7-aeef-62675031fe52
+
 
 A basic Pokedéx app that shows a list of Pokémon and their data, based on this [Figma](https://www.figma.com/file/THLxZSlOoUYMZrjFg0Kl1M/Pok%C3%A9dex?type=design&node-id=18241-2789&mode=design&t=F41WGriuYghVmBhW-0).
 This project was built using the following frameworks and libraries:
@@ -93,7 +97,7 @@ app flow is done. There's a lot to do still, but I think it's a great basic show
 * [![AndroidStudio][AndroidStudio]][AndroidStudio-url]
 * [![Kotlin][Kotlin]][Kotlin-url]
 * [![Compose][Compose]][Compose-url]
-* [![JUnit5][JUnit5.js]][JUnit5-url]
+* [![JUnit5][JUnit5]][JUnit5-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -174,7 +178,6 @@ Project Link: [https://github.com/DanielSouzaBertoldi/Pokedex](https://github.co
 [linkedin-url]: https://www.linkedin.com/in/DanielSouzaBertoldi/
 [android-shield]: https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white
 [android-url]: https://www.android.com/
-[product-video]: readme_media/pokedex_sample.mov
 [AndroidStudio]: https://img.shields.io/badge/Android_Studio-5383EC?style=for-the-badge&logo=androidstudio&logoColor=3DDC84
 [AndroidStudio-url]: https://developer.android.com/studio
 [Kotlin]: https://img.shields.io/badge/Kotlin-B72BD5?style=for-the-badge&logo=kotlin&logoColor=6858F6

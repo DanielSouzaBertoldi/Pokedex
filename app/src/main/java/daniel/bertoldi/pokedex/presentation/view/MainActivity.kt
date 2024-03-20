@@ -37,6 +37,7 @@ import daniel.bertoldi.pokedex.presentation.model.BottomSheetLayout
 import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
 import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
 import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
+import daniel.bertoldi.pokedex.presentation.model.filters.SortOptions
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
 import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,7 +78,8 @@ class MainActivity : ComponentActivity() {
                         sheetContent = sheetContent,
                         onIconClick = ::topBarIconClickCallback,
                         filterOptions = viewModel.filterOptions,
-                        onFilterClick = ::onFilterClicked,
+                        onFilterClick = ::onMainFiltersClicked,
+                        onSortClick = ::onSortClicked,
                     )
                 }
             }
@@ -88,9 +90,9 @@ class MainActivity : ComponentActivity() {
         viewModel.bottomSheetContent.value = iconType
     }
 
-    private fun onFilterClicked(idx: Int, name: String) {
+    private fun onMainFiltersClicked(idx: Int, name: String) {
         viewModel.filterOptions.value = viewModel.filterOptions.value.copy(
-            mainFilters = viewModel.filterOptions.value.mainFilters.toMutableMap().mapValues {
+            miscFilters = viewModel.filterOptions.value.miscFilters.toMutableMap().mapValues {
                 if (it.key == name) {
                     it.value.toMutableList().apply {
                         set(
@@ -107,6 +109,12 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
+
+    private fun onSortClicked(sortOptionName: String) {
+        viewModel.filterOptions.value = viewModel.filterOptions.value.copy(
+            sortOption = SortOptions.parse(sortOptionName)
+        )
+    }
 }
 
 @Composable
@@ -119,7 +127,8 @@ fun MyAppNavHost(
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
     filterOptions: MutableStateFlow<FilterOptions>,
     onFilterClick: (Int, String) -> Unit = { _, _ -> },
-) {
+    onSortClick: (String) -> Unit,
+    ) {
     NavHost(
         modifier = modifier,
         navController = navHostController,
@@ -131,7 +140,8 @@ fun MyAppNavHost(
                 sheetContent = sheetContent,
                 onIconClick = onIconClick,
                 filterOptions = filterOptions,
-                onFilterClick = onFilterClick,
+                onMainFilterClick = onFilterClick,
+                onSortClick = onSortClick,
             )
         }
     }
@@ -144,7 +154,8 @@ fun PokemonListComponent(
     sheetContent: State<BottomSheetLayout>,
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
     filterOptions: MutableStateFlow<FilterOptions>,
-    onFilterClick: (Int, String) -> Unit,
+    onMainFilterClick: (Int, String) -> Unit,
+    onSortClick: (String) -> Unit,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
@@ -159,13 +170,14 @@ fun PokemonListComponent(
                 Text("You've opened the GENERATIONS option!")
                 Spacer(modifier = Modifier.height(50.dp))
             } else if (sheetContent.value == BottomSheetLayout.Sort) {
-                Spacer(modifier = Modifier.height(50.dp))
-                Text("You've opened the SORT option!")
-                Spacer(modifier = Modifier.height(50.dp))
+                SortComponent(
+                    filterOptions = filterOptions,
+                    onButtonClicked = onSortClick,
+                )
             } else {
                 FilterComponent(
                     filterOptions = filterOptions,
-                    onFilterClicked = onFilterClick,
+                    onFilterClicked = onMainFilterClick,
                     onConfirmClicked = {
                         scope.launch {
                             modalBottomSheetState.hide()

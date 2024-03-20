@@ -34,7 +34,7 @@ class MainActivityViewModel @Inject constructor(
 
     val filterOptions = MutableStateFlow(
         FilterOptions(
-            pokemonFilterFactory.make()
+            pokemonFilterFactory.make(),
         )
     )
 

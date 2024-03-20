@@ -66,7 +66,7 @@ fun FilterComponent(
             text = "Use advanced search to explore Pokémon by type, weakness, height and more!",
         )
 
-        filterOptionsState.mainFilters.forEach { (key, filter) ->
+        filterOptionsState.miscFilters.forEach { (key, filter) ->
             Text(
                 modifier = modifier.padding(top = 35.dp),
                 color = TextBlack,

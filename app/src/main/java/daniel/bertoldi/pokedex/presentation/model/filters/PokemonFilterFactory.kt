@@ -1,8 +1,8 @@
 package daniel.bertoldi.pokedex.presentation.model.filters
 
-import daniel.bertoldi.pokedex.ui.theme.HeightUIData
-import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
-import daniel.bertoldi.pokedex.ui.theme.WeightUIData
+import daniel.bertoldi.design.system.HeightUIData
+import daniel.bertoldi.design.system.PokemonUIData
+import daniel.bertoldi.design.system.WeightUIData
 
 object PokemonFilterFactory {
     fun make(): Map<String, List<PokemonFilterUIData>> {

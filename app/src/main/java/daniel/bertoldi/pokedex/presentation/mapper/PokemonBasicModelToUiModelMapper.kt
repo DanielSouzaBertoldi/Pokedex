@@ -8,7 +8,7 @@ import daniel.bertoldi.pokedex.presentation.model.BackgroundColors
 import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
 import daniel.bertoldi.pokedex.presentation.model.UiSprites
 import daniel.bertoldi.pokedex.presentation.model.UiType
-import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
+import daniel.bertoldi.design.system.PokemonUIData
 import java.util.Locale
 import javax.inject.Inject
 

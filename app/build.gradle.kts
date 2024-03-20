@@ -117,6 +117,8 @@ dependencies {
 
     // DataStore
     implementation(libs.bundles.datastore)
+
+    implementation(project(":design-system"))
 }
 
 kapt {

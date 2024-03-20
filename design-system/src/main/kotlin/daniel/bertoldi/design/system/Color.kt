@@ -1,7 +1,6 @@
-package daniel.bertoldi.pokedex.ui.theme
+package daniel.bertoldi.design.system
 
 import androidx.compose.ui.graphics.Color
-import daniel.bertoldi.pokedex.R
 
 // Delete this after all colors have been added.
 val Purple200 = Color(0xFFBB86FC)

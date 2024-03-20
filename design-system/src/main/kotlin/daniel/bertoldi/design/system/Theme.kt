@@ -1,4 +1,4 @@
-package daniel.bertoldi.pokedex.ui.theme
+package daniel.bertoldi.design.system
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

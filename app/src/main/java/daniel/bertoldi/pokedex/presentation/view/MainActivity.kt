@@ -47,7 +47,7 @@ import daniel.bertoldi.pokedex.presentation.model.filters.GenerationUIData
 import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
 import daniel.bertoldi.pokedex.presentation.model.filters.SortOptions
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
-import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
+import daniel.bertoldi.design.system.PokedexTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 

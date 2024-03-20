@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -20,22 +19,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
-import daniel.bertoldi.pokedex.presentation.model.filters.FilterUiData
-import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
 import daniel.bertoldi.pokedex.presentation.model.filters.SortOptions
-import daniel.bertoldi.pokedex.ui.theme.BgDefaultInput
-import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
-import daniel.bertoldi.pokedex.ui.theme.TextBlack
-import daniel.bertoldi.pokedex.ui.theme.TextGrey
-import daniel.bertoldi.pokedex.ui.theme.TextWhite
-import daniel.bertoldi.pokedex.ui.theme.Typography
+import daniel.bertoldi.design.system.BgDefaultInput
+import daniel.bertoldi.design.system.PokemonUIData
+import daniel.bertoldi.design.system.TextBlack
+import daniel.bertoldi.design.system.TextGrey
+import daniel.bertoldi.design.system.TextWhite
+import daniel.bertoldi.design.system.Typography
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -57,14 +52,14 @@ fun SortComponent(
     ) {
         Text(
             modifier = modifier,
-            color = TextBlack,
-            style = Typography.h3,
+            color = daniel.bertoldi.design.system.TextBlack,
+            style = daniel.bertoldi.design.system.Typography.h3,
             text = "Sort",
         )
         Text(
             modifier = modifier.padding(top = 5.dp, bottom = 35.dp),
-            color = TextGrey,
-            style = Typography.body1,
+            color = daniel.bertoldi.design.system.TextGrey,
+            style = daniel.bertoldi.design.system.Typography.body1,
             text = "Sort Pokémons alphabetically or by National Pokédex number!",
         )
 
@@ -94,13 +89,13 @@ private fun SortButton(
         transitionSpec = { tween(500) },
         label = "sortButtonColor",
     ) { isSelected ->
-        if (isSelected) PokemonUIData.PSYCHIC.typeColor else BgDefaultInput
+        if (isSelected) daniel.bertoldi.design.system.PokemonUIData.PSYCHIC.typeColor else daniel.bertoldi.design.system.BgDefaultInput
     }
     val textColor by sortTransition.animateColor(
         transitionSpec = { tween(500) },
         label = "sortTextColor",
     ) { isSelected ->
-        if (isSelected) TextWhite else TextGrey
+        if (isSelected) daniel.bertoldi.design.system.TextWhite else daniel.bertoldi.design.system.TextGrey
     }
     val elevation by sortTransition.animateDp(
         transitionSpec = { tween(500) },
@@ -116,8 +111,8 @@ private fun SortButton(
             .height(60.dp)
             .shadow(
                 elevation = elevation,
-                ambientColor = PokemonUIData.PSYCHIC.typeColor,
-                spotColor = PokemonUIData.PSYCHIC.typeColor,
+                ambientColor = daniel.bertoldi.design.system.PokemonUIData.PSYCHIC.typeColor,
+                spotColor = daniel.bertoldi.design.system.PokemonUIData.PSYCHIC.typeColor,
             ),
         onClick = { onButtonClicked(sortOption.name) },
         colors = ButtonDefaults.buttonColors(
@@ -132,7 +127,7 @@ private fun SortButton(
         Text(
             modifier = Modifier,
             text = sortOption.text,
-            style = Typography.body1,
+            style = daniel.bertoldi.design.system.Typography.body1,
         )
     }
 }

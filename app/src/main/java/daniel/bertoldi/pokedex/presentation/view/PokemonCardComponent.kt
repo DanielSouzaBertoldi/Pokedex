@@ -25,10 +25,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
-import daniel.bertoldi.pokedex.ui.theme.Shapes
-import daniel.bertoldi.pokedex.ui.theme.TextNumber
-import daniel.bertoldi.pokedex.ui.theme.TextWhite
-import daniel.bertoldi.pokedex.ui.theme.Typography
+import daniel.bertoldi.design.system.Shapes
+import daniel.bertoldi.design.system.TextNumber
+import daniel.bertoldi.design.system.TextWhite
+import daniel.bertoldi.design.system.Typography
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

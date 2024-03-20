@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.domain.model.*
 import daniel.bertoldi.pokedex.presentation.model.*
-import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
+import daniel.bertoldi.design.system.PokemonUIData
 import java.math.RoundingMode
 import java.util.Locale
 import javax.inject.Inject

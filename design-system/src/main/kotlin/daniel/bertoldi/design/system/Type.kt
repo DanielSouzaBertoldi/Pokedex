@@ -1,4 +1,4 @@
-package daniel.bertoldi.pokedex.ui.theme
+package daniel.bertoldi.design.system
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import daniel.bertoldi.pokedex.R
 
 val pokemonFont = FontFamily(
     Font(R.font.sf_pro_display_bold, weight = FontWeight.Bold),
@@ -14,7 +13,7 @@ val pokemonFont = FontFamily(
     Font(R.font.sf_pro_display_regular, weight = FontWeight.Normal),
 )
 
-// Set of Material typography styles to start with
+// Change this to Material 3
 val Typography = Typography(
     h1 = TextStyle(
         fontSize = 100.sp,

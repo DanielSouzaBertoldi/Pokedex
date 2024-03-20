@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -36,10 +35,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import daniel.bertoldi.design.system.*
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
 import daniel.bertoldi.pokedex.presentation.model.filters.GenerationUIData
-import daniel.bertoldi.pokedex.ui.theme.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.lang.Math.PI
 import java.lang.Math.cos

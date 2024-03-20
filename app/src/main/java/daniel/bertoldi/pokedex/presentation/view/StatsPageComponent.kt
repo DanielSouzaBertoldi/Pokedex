@@ -23,11 +23,11 @@ import daniel.bertoldi.pokedex.presentation.model.Effectiveness
 import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
 import daniel.bertoldi.pokedex.presentation.model.StatDetailUiModel
 import daniel.bertoldi.pokedex.presentation.model.TypeEffectivenessUiModel
-import daniel.bertoldi.pokedex.ui.theme.BgWhite
-import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
-import daniel.bertoldi.pokedex.ui.theme.TextBlack
-import daniel.bertoldi.pokedex.ui.theme.TextGrey
-import daniel.bertoldi.pokedex.ui.theme.Typography
+import daniel.bertoldi.design.system.BgWhite
+import daniel.bertoldi.design.system.PokemonUIData
+import daniel.bertoldi.design.system.TextBlack
+import daniel.bertoldi.design.system.TextGrey
+import daniel.bertoldi.design.system.Typography
 
 @Composable
 fun StatsPage(pokemonDetails: PokemonCompleteUiModel) {

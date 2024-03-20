@@ -21,11 +21,10 @@ import coil.request.ImageRequest
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.EvolutionChainUiModel
 import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
-import daniel.bertoldi.pokedex.ui.theme.GradientGrey
-import daniel.bertoldi.pokedex.ui.theme.GradientLightWhite
-import daniel.bertoldi.pokedex.ui.theme.TextBlack
-import daniel.bertoldi.pokedex.ui.theme.TextGrey
-import daniel.bertoldi.pokedex.ui.theme.Typography
+import daniel.bertoldi.design.system.GradientGrey
+import daniel.bertoldi.design.system.TextBlack
+import daniel.bertoldi.design.system.TextGrey
+import daniel.bertoldi.design.system.Typography
 
 @Composable
 fun EvolutionPage(pokemonDetails: PokemonCompleteUiModel) {

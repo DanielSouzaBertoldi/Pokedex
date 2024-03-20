@@ -9,12 +9,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,11 +37,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import daniel.bertoldi.design.system.*
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
 import daniel.bertoldi.pokedex.presentation.viewmodel.DetailsScreenState
 import daniel.bertoldi.pokedex.presentation.viewmodel.PokemonDetailsViewModel
-import daniel.bertoldi.pokedex.ui.theme.*
+import kotlinx.coroutines.launch
 
 @Composable
 fun PokemonDetailsScreen(
@@ -231,6 +232,7 @@ private fun SheetContent(pokemonDetails: PokemonCompleteUiModel) {
     val pagerTitle = remember {
         listOf("About", "Stats", "Evolution")
     }
+    val coroutineScope = rememberCoroutineScope()
 
     Row(
         modifier = Modifier
@@ -268,7 +270,10 @@ private fun SheetContent(pokemonDetails: PokemonCompleteUiModel) {
                 Text(
                     modifier = Modifier
                         .width(100.dp)
-                        .align(Alignment.Center),
+                        .align(Alignment.Center)
+                        .clickable {
+                            coroutineScope.launch { pagerState.animateScrollToPage(it) }
+                        },
                     text = pagerTitle[it],
                     style = textStyle,
                     textAlign = TextAlign.Center,

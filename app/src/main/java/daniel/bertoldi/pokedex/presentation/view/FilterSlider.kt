@@ -20,11 +20,11 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import daniel.bertoldi.pokedex.ui.theme.BgDefaultInput
-import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
-import daniel.bertoldi.pokedex.ui.theme.TextBlack
-import daniel.bertoldi.pokedex.ui.theme.TextGrey
-import daniel.bertoldi.pokedex.ui.theme.Typography
+import daniel.bertoldi.design.system.BgDefaultInput
+import daniel.bertoldi.design.system.PokemonUIData
+import daniel.bertoldi.design.system.TextBlack
+import daniel.bertoldi.design.system.TextGrey
+import daniel.bertoldi.design.system.Typography
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -40,8 +40,8 @@ fun FilterSlider(
     Text(
         modifier = modifier.padding(top = 35.dp, bottom = 20.dp),
         text = "Number Range",
-        color = TextBlack,
-        style = Typography.h4,
+        color = daniel.bertoldi.design.system.TextBlack,
+        style = daniel.bertoldi.design.system.Typography.h4,
     )
 
     Column(modifier = modifier) {
@@ -51,9 +51,9 @@ fun FilterSlider(
             onValueChangeFinished = { /* Do something here */ },
             valueRange = valueRange,
             colors = SliderDefaults.colors(
-                thumbColor = PokemonUIData.PSYCHIC.typeColor.compositeOver(Color.White),
-                activeTrackColor = PokemonUIData.PSYCHIC.typeColor,
-                inactiveTrackColor = BgDefaultInput,
+                thumbColor = daniel.bertoldi.design.system.PokemonUIData.PSYCHIC.typeColor.compositeOver(Color.White),
+                activeTrackColor = daniel.bertoldi.design.system.PokemonUIData.PSYCHIC.typeColor,
+                inactiveTrackColor = daniel.bertoldi.design.system.BgDefaultInput,
             ),
         )
 
@@ -119,7 +119,7 @@ private fun SliderLabel(
         modifier = modifier.defaultMinSize(minWidth = minWidth),
         text = label,
         textAlign = TextAlign.Center,
-        style = Typography.subtitle2,
-        color = TextGrey,
+        style = daniel.bertoldi.design.system.Typography.subtitle2,
+        color = daniel.bertoldi.design.system.TextGrey,
     )
 }

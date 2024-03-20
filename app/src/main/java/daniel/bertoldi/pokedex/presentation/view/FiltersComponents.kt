@@ -26,9 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import daniel.bertoldi.design.system.*
 import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
 import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
-import daniel.bertoldi.pokedex.ui.theme.*
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable

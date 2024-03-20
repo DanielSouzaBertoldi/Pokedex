@@ -89,6 +89,9 @@ fun FilterComponent(
                         filterData = pokemon,
                         onFilterClicked = onFilterClicked,
                     )
+                    if (idx == filter.lastIndex) {
+                        BoxFiller(15.dp)
+                    }
                 }
             }
         }

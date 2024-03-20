@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -64,7 +64,11 @@ fun PokemonCardComponent(
                     modifier = Modifier
                         .fillMaxHeight()
                 ) {
-                    PokemonInfo(pokemonUiModel)
+                    PokemonInfo(
+                        pokemonUiModel = pokemonUiModel,
+                        numberStyle = Typography.subtitle1,
+                        nameStyle = Typography.h3,
+                    )
                 }
             }
             AsyncImage(
@@ -116,19 +120,24 @@ private fun BackgroundDots(modifier: Modifier) {
 }
 
 @Composable
-private fun PokemonInfo(pokemonUiModel: PokemonUiModel) {
+fun PokemonInfo(
+    pokemonUiModel: PokemonUiModel,
+    numberStyle: TextStyle,
+    nameStyle: TextStyle,
+) {
     Text(
         text = pokemonUiModel.pokedexNumber,
         color = TextNumber,
-        style = Typography.subtitle1,
+        style = numberStyle,
     )
     Text(
         text = pokemonUiModel.name,
         color = TextWhite,
-        style = Typography.h3,
+        style = nameStyle,
     )
     LazyRow(
-        modifier = Modifier.wrapContentSize(),
+        modifier = Modifier.wrapContentSize()
+            .padding(top = 5.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         items(pokemonUiModel.types) { typeUiData ->

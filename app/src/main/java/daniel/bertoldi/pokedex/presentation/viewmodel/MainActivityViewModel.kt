@@ -28,10 +28,9 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(
     private val getPokemon: GetPokemonUseCase,
     private val pokemonModelToUiModelMapper: PokemonModelToUiModelMapper,
-    private val pokemonFilterFactory: PokemonFilterFactory,
     private val getPokemonGenerationsUIUseCase: GetPokemonGenerationsUIUseCase,
-    private val generationsDataStore: DataStore<GenerationsData>,
-    ) : ViewModel() {
+    pokemonFilterFactory: PokemonFilterFactory,
+) : ViewModel() {
 
     var errorScreen = false
 
@@ -81,14 +80,6 @@ class MainActivityViewModel @Inject constructor(
             filterOptions.value = filterOptions.value.copy(
                 generationOption = getPokemonGenerationsUIUseCase()
             )
-        }
-    }
-
-    fun applyFilters() {
-        val enabledFilters = filterOptions.value.miscFilters["types"]?.filter { it.isSelected }
-
-        if (enabledFilters != null) {
-
         }
     }
 }

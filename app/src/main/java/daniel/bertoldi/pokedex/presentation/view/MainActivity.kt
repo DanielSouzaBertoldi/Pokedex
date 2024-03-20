@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -25,6 +26,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -88,7 +91,6 @@ class MainActivity : ComponentActivity() {
                         onFilterClick = ::onMainFiltersClicked,
                         onSortClick = ::onSortClicked,
                         onGenerationClicked = ::onGenerationClicked,
-                        onFilterApply = ::onFilterApply,
                     )
                 }
             }
@@ -137,10 +139,6 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
-
-    private fun onFilterApply() {
-        viewModel.applyFilters()
-    }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -156,7 +154,6 @@ fun MyAppNavHost(
     onFilterClick: (Int, String) -> Unit = { _, _ -> },
     onSortClick: (String) -> Unit,
     onGenerationClicked: (GenerationUIData) -> Unit,
-    onFilterApply: () -> Unit,
 ) {
     AnimatedNavHost(
         modifier = modifier,
@@ -175,7 +172,7 @@ fun MyAppNavHost(
             exitTransition = {
                 when (targetState.destination.route) {
                     "details" ->
-                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = spring(Spring.DampingRatioHighBouncy))
                     else -> null
                 }
             },
@@ -188,16 +185,16 @@ fun MyAppNavHost(
                 onMainFilterClick = onFilterClick,
                 onSortClick = onSortClick,
                 onGenerationClicked = onGenerationClicked,
-                onFilterApply = onFilterApply,
                 navHostController = navHostController,
             )
         }
         composable(
-            route = "details",
+            route = "details/{pokemonId}",
+            arguments = listOf(navArgument("pokemonId") { type = NavType.IntType }),
             enterTransition = {
                 when (initialState.destination.route) {
                     "home" ->
-                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = spring(4f))
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(500))
                     else -> null
                 }
             },
@@ -208,8 +205,8 @@ fun MyAppNavHost(
                     else -> null
                 }
             }
-        ) {
-            PokemonDetailsScreen()
+        ) { _ ->
+            PokemonDetailsScreen { navHostController.popBackStack() }
         }
     }
 }
@@ -224,7 +221,6 @@ fun PokemonListComponent(
     onMainFilterClick: (Int, String) -> Unit,
     onSortClick: (String) -> Unit,
     onGenerationClicked: (GenerationUIData) -> Unit,
-    onFilterApply: () -> Unit,
     navHostController: NavHostController,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState(
@@ -254,7 +250,6 @@ fun PokemonListComponent(
                         onFilterClicked = onMainFilterClick,
                         onConfirmClicked = {
                             scope.launch {
-                                onFilterApply()
                                 modalBottomSheetState.hide()
                             }
                         }
@@ -283,7 +278,9 @@ fun PokemonListComponent(
                     PokemonCardComponent(
                         pokemonUiModel = pokemonUiModel,
                         onNavigateToDetails = {
-                            navHostController.navigate("details") { launchSingleTop = true }
+                            navHostController.navigate("details/${pokemonUiModel?.id}") {
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
@@ -339,16 +336,6 @@ private fun AppendingScreen() {
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Fit,
-        )
-    }
-}
-
-@Composable
-private fun PokemonDetailsScreen() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.align(Alignment.Center),
-            text = "Olá, sou a tela de detalhes do pokemon!"
         )
     }
 }

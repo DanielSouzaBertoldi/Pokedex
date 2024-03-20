@@ -32,6 +32,7 @@ class PokemonPagingSource @Inject constructor(
                 data = listOf(pokemonModelToUiModelMapper.mapFrom(pokemonModel)),
                 prevKey = null,
                 nextKey = pokemonModel.id.inc(),
+//                nextKey = null,
             )
         } catch (e: JsonDataException) {
             Log.d("PAGING-LOAD-ERROR", e.toString())

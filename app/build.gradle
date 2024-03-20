@@ -97,6 +97,10 @@ dependencies {
     testImplementation "androidx.room:room-testing:2.4.3"
     implementation "androidx.room:room-paging:2.5.0-alpha02"
 
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.25.1"
+    implementation "com.google.accompanist:accompanist-placeholder:0.25.1"
+    implementation "com.google.accompanist:accompanist-pager:0.25.1"
+
     // This is just for debugging reasons. It will be deleted later on.
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 }

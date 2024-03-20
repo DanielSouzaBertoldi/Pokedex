@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class PokemonResponse(
-    val abilities: List<AbilitiesResponse>,
+    val abilities: List<PokemonAbilitiesResponse>,
     val height: Int,
     val id: Int,
     @Json(name = "is_default") val isDefault: Boolean,
@@ -17,14 +17,14 @@ data class PokemonResponse(
 )
 
 @JsonClass(generateAdapter = true)
-data class AbilitiesResponse(
-    val ability: AbilityResponse,
+data class PokemonAbilitiesResponse(
+    val ability: PokemonAbilityResponse,
     @Json(name = "is_hidden") val isHidden: Boolean,
     val slot: Int,
 )
 
 @JsonClass(generateAdapter = true)
-data class AbilityResponse(
+data class PokemonAbilityResponse(
     val name: String,
     val url: String,
 )

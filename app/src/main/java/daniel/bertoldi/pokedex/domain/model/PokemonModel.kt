@@ -1,7 +1,7 @@
 package daniel.bertoldi.pokedex.domain.model
 
 data class PokemonModel(
-    val abilities: List<Abilities>,
+    val abilities: List<Ability>,
     val height: Int,
     val id: Int,
     val isDefault: Boolean,
@@ -12,15 +12,16 @@ data class PokemonModel(
     val weight: Int,
 )
 
-data class Abilities(
-    val ability: Ability,
+data class Ability(
+    val id: Int,
+    val name: String,
     val isHidden: Boolean,
     val slot: Int,
-)
-
-data class Ability(
-    val name: String,
-    val url: String,
+    val effectEntry: String,
+    val shortEffectEntry: String,
+    val flavorText: String,
+    val generation: String,
+    val isMainSeries: Boolean,
 )
 
 data class Sprites(

@@ -22,13 +22,15 @@ class PokemonModelToUiModelMapper @Inject constructor() {
         backgroundColors = mapCardBackgroundColors(pokemonModel.types.first().type.name.uppercase())
     )
 
-    private fun mapAbilities(abilities: Abilities) = UiAbilities(
-        uiAbility = UiAbility(
-            name = abilities.ability.name,
-            url = abilities.ability.url,
-        ),
-        isHidden = abilities.isHidden,
-        slot = abilities.slot,
+    private fun mapAbilities(ability: Ability) = PokemonUiAbility(
+        name = ability.name,
+        isHidden = ability.isHidden,
+        slot = ability.slot,
+        effectEntry = ability.effectEntry,
+        shortEffectEntry = ability.shortEffectEntry,
+        flavorText = ability.flavorText,
+        generation = ability.generation,
+        isMainSeries = ability.isMainSeries,
     )
 
     private fun mapSprites(sprites: Sprites) = UiSprites(

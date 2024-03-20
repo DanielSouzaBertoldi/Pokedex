@@ -36,6 +36,7 @@ buildSrc/.gradle/
 **/.idea/jarRepositories.xml
 **/.idea/compiler.xml
 **/.idea/navEditor.xml
+**/.idea/deploymentTargetDropDown.xml
 
 ### Android NDK ###
 .externalNativeBuild

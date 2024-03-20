@@ -4,13 +4,15 @@ import daniel.bertoldi.pokedex.data.api.response.*
 import daniel.bertoldi.pokedex.domain.model.*
 import javax.inject.Inject
 
+// the api actually returns the artwork URL so I don't need this const.
 private const val SPRITES_BASE_URL =
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
+private const val DEFAULT_LANGUAGE = "en"
 
 class PokemonResponseToModelMapper @Inject constructor() {
 
-    fun mapFrom(pokemonResponse: PokemonResponse) = PokemonModel(
-        abilities = pokemonResponse.abilities.map { mapAbilities(it) },
+    fun mapFrom(pokemonResponse: PokemonResponse, abilities: List<AbilityResponse>) = PokemonModel(
+        abilities = abilities.map { mapAbilities(it, pokemonResponse.name) },
         height = pokemonResponse.height,
         id = pokemonResponse.id,
         isDefault = pokemonResponse.isDefault,
@@ -21,15 +23,24 @@ class PokemonResponseToModelMapper @Inject constructor() {
         weight = pokemonResponse.weight,
     )
 
-    private fun mapAbilities(abilities: AbilitiesResponse) = Abilities(
-        ability = Ability(
-            name = abilities.ability.name,
-            url = abilities.ability.url,
-        ),
-        isHidden = abilities.isHidden,
-        slot = abilities.slot,
-    )
+    private fun mapAbilities(ability: AbilityResponse, pokemonName: String): Ability {
+        val effectEntry = ability.effectEntries.first { it.language.name == DEFAULT_LANGUAGE }
+        val pokemonAbilityData = ability.pokemon.first { it.data.name == pokemonName }
 
+        return Ability(
+            id = ability.id,
+            name = ability.name,
+            isHidden = pokemonAbilityData.isHidden,
+            slot = pokemonAbilityData.slot,
+            effectEntry = effectEntry.effect,
+            shortEffectEntry = effectEntry.shortEffect,
+            flavorText = ability.flavorTextEntries.first {
+                it.language.name == DEFAULT_LANGUAGE
+            }.flavorText,
+            generation = ability.generation.name,
+            isMainSeries = ability.isMainSeries,
+        )
+    }
     private fun mapSprites(sprites: SpritesResponse, id: Int) = Sprites(
         backDefaultImageUrl = sprites.backDefault,
         backShinyImageUrl = sprites.backShiny,
@@ -39,7 +50,7 @@ class PokemonResponseToModelMapper @Inject constructor() {
     )
 
     private fun mapStats(stats: StatsResponse): Stats {
-        val stats1 = Stats(
+        return Stats(
             baseStat = stats.baseStat,
             effort = stats.effort,
             stat = Stat(
@@ -47,7 +58,6 @@ class PokemonResponseToModelMapper @Inject constructor() {
                 url = stats.stat.url,
             )
         )
-        return stats1
     }
 
     private fun mapTypes(types: TypesResponse) = Types(

@@ -18,6 +18,7 @@ data class PokemonCompleteUiModel(
     val stats: StatsUiModel,
     val species: SpeciesUiModel,
     val typeEffectiveness: TypeEffectivenessUiModel,
+    val evolutionChain: EvolutionChainUiModel,
 )
 
 data class PokemonUiAbility(
@@ -135,3 +136,28 @@ enum class Effectiveness {
     KINDA_STRONG,
     STRONG
 }
+
+data class EvolutionChainUiModel(
+    val name: String,
+    val pokedexNumber: String,
+    val imageUrl: String,
+    val isBaby: Boolean,
+    val heldItem: String? = null,
+    val knownMove: String? = null,
+    val knownMoveType: String? = null,
+    val minLevel: Int? = null,
+    val minHappiness: Int? = null,
+    val minBeauty: Int? = null,
+    val minAffection: Int? = null,
+    val needsOverworldRain: Boolean,
+    val partySpecies: String? = null,
+    val partyType: String? = null,
+    val relativePhysicalStats: Int? = null,
+    val timeOfDay: String,
+    val turnUpsideDown: Boolean,
+    val location: String? = null,
+    val trigger: String? = null,
+    val item: String? = null,
+    val gender: Int? = null,
+    val nextEvolutions: List<EvolutionChainUiModel>,
+)

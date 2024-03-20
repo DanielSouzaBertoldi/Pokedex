@@ -286,7 +286,7 @@ private fun SheetContent(pokemonDetails: PokemonCompleteUiModel) {
         when (pagerState.currentPage) {
             0 -> AboutPage(pokemonDetails)
             1 -> StatsPage(pokemonDetails)
-            else -> EvolutionSheet()
+            else -> EvolutionPage(pokemonDetails)
         }
     }
 }
@@ -329,26 +329,6 @@ internal fun SimpleRow(
                 color = TextGrey,
             )
         }
-    }
-}
-
-
-@Composable
-private fun EvolutionSheet() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-            )
-            .padding(start = 40.dp, end = 40.dp, top = 40.dp, bottom = 50.dp)
-    ) {
-        Text(
-            modifier = Modifier.padding(5.dp),
-            text = "Evolution Screen",
-            color = Color.Black,
-        )
     }
 }
 

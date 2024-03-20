@@ -8,7 +8,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import daniel.bertoldi.pokedex.data.database.model.ChainDetails
 
 @OptIn(ExperimentalStdlibApi::class)
-class ChainDetailsConverter {
+class EvolutionChainConverter {
 
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 

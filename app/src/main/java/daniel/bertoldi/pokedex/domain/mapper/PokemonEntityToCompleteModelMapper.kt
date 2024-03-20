@@ -118,55 +118,26 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         shadow = typeEffectivenessEntity.shadow,
     )
 
-    private fun ChainLinkResponse.parseEvolution() = EvolutionChainDetailsModel(
-        name = this.species.name,
-        isBaby = this.isBaby,
-        heldItem = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        knownMove = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        knownMoveType = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
-        minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
-        minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
-        minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
-        needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain ?: false,
-        partySpecies = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        partyType = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
-        timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
-        turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
-        location = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        trigger = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        item = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-        gender = this.evolutionDetails.firstOrNull()?.gender,
-        nextEvolution = getNextChainLayer(this.chain),
-    )
-
-    private fun getNextChainLayer(
-        chain: List<ChainLinkResponse>,
-    ): List<EvolutionChainDetailsModel> = chain.map {
-        it.parseEvolution()
-    }
-
     private fun ChainDetails.parseEvolution() = EvolutionChainDetailsModel(
         name = this.evolutionName,
         isBaby = this.isBaby,
-        heldItem = this.evolutionDetails.firstOrNull()?.heldItem, // I shouldn't be using first or Null actually. I should parse them all!!!
-        knownMove = this.evolutionDetails.firstOrNull()?.heldItem,
-        knownMoveType = this.evolutionDetails.firstOrNull()?.heldItem,
-        minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
-        minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
-        minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
-        minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
-        needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain ?: false,
-        partySpecies = this.evolutionDetails.firstOrNull()?.heldItem,
-        partyType = this.evolutionDetails.firstOrNull()?.heldItem,
-        relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
-        timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
-        turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
-        location = this.evolutionDetails.firstOrNull()?.heldItem,
-        trigger = this.evolutionDetails.firstOrNull()?.heldItem,
-        item = this.evolutionDetails.firstOrNull()?.heldItem,
-        gender = this.evolutionDetails.firstOrNull()?.gender,
+        heldItem = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem, // I shouldn't be using first or Null actually. I should parse them all!!!
+        knownMove = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        knownMoveType = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        minLevel = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.minLevel,
+        minHappiness = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.minHappiness,
+        minBeauty = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.minBeauty,
+        minAffection = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.minAffection,
+        needsOverworldRain = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.needsOverworldRain ?: false,
+        partySpecies = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        partyType = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        relativePhysicalStats = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.relativePhysicalStats,
+        timeOfDay = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.timeOfDay ?: "",
+        turnUpsideDown = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.turnUpsideDown ?: false,
+        location = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        trigger = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        item = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.heldItem,
+        gender = this.evolvesTo.firstOrNull()?.evolutionDetails?.firstOrNull()?.gender,
         nextEvolution = getNextChainDetailsLayer(this.evolvesTo),
     )
 

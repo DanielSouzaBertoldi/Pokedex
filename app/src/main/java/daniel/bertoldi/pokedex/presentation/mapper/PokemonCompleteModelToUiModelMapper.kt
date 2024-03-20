@@ -1,12 +1,12 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
+import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.domain.model.*
 import daniel.bertoldi.pokedex.presentation.model.*
 import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
@@ -15,15 +15,18 @@ import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.floor
 
-class PokemonCompleteModelToUiModelMapper @Inject constructor() {
+private const val POKEDEX_NUMBER_FORMAT = "#%03d"
 
-    fun mapFrom(pokemonModel: PokemonCompleteModel): PokemonCompleteUiModel {
-        Log.d("EVOLUTION", pokemonModel.evolutionChain.toString())
+class PokemonCompleteModelToUiModelMapper @Inject constructor(
+    private val pokemonDao: PokemonDao,
+) {
+
+    suspend fun mapFrom(pokemonModel: PokemonCompleteModel): PokemonCompleteUiModel {
         return PokemonCompleteUiModel(
             abilities = pokemonModel.abilities.map { mapAbilities(it) }.sortedBy { it.slot },
             height = pokemonModel.height.calculateHeight(),
             id = pokemonModel.id,
-            pokedexNumber = String.format(Locale.ROOT, "#%03d", pokemonModel.id),
+            pokedexNumber = String.format(Locale.ROOT, POKEDEX_NUMBER_FORMAT, pokemonModel.id),
             pokedexEntry = pokemonModel.species.pokedexEntry,
             isDefault = pokemonModel.isDefault,
             name = pokemonModel.name.capitalize(),
@@ -36,7 +39,8 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
             baseExperience = pokemonModel.baseExperience,
             stats = mapStats(pokemonModel.stats),
             species = mapSpecies(pokemonModel.species),
-            typeEffectiveness = mapTypeEffectiveness(pokemonModel.typeEffectiveness)
+            typeEffectiveness = mapTypeEffectiveness(pokemonModel.typeEffectiveness),
+            evolutionChain = pokemonModel.evolutionChain.mapEvolutionChain(),
         )
     }
 
@@ -65,7 +69,8 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
             slot = types.slot,
             name = types.type.name.replaceFirstChar { it.uppercase() },
             url = types.type.url,
-            backgroundColor = typeUiData?.typeColor ?: Color.Transparent, // TODO: maybe throw an error instead of this?
+            backgroundColor = typeUiData?.typeColor
+                ?: Color.Transparent, // TODO: maybe throw an error instead of this?
             icon = typeUiData?.icon ?: -1,
             typeColor = typeUiData?.typeColor ?: Color.Transparent,
         )
@@ -89,7 +94,8 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         evasion = stats.evasion?.let { getStatDetail(it) },
         total = ((stats.hp ?: 0) + (stats.attack ?: 0) + (stats.defense ?: 0) +
                 (stats.specialAttack ?: 0) + (stats.specialDefense ?: 0) + (stats.speed ?: 0) +
-                (stats.accuracy ?: 0) + (stats.evasion ?: 0)).toString() // TODO: ok, this is just filthy.
+                (stats.accuracy ?: 0) + (stats.evasion
+            ?: 0)).toString() // TODO: ok, this is just filthy.
     )
 
     private fun getStatDetail(
@@ -177,6 +183,34 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
             shadow = typeEffectiveness.shadow?.getTypeEffectiveness(),
         )
 
+    private suspend fun EvolutionChainDetailsModel.mapEvolutionChain(): EvolutionChainUiModel {
+        val pokemonData = pokemonDao.getPokemonIdAndSprites(name)
+        return EvolutionChainUiModel(
+            name = name.replaceFirstChar { it.uppercase() },
+            pokedexNumber = String.format(Locale.ROOT, POKEDEX_NUMBER_FORMAT, pokemonData.pokemonId),
+            imageUrl = pokemonData.sprites.officialArtwork.orEmpty(),
+            isBaby = isBaby,
+            heldItem = heldItem,
+            knownMove = knownMove,
+            knownMoveType = knownMoveType,
+            minLevel = minLevel,
+            minHappiness = minHappiness,
+            minBeauty = minBeauty,
+            minAffection = minAffection,
+            needsOverworldRain = needsOverworldRain,
+            partySpecies = partySpecies,
+            partyType = partyType,
+            relativePhysicalStats = relativePhysicalStats,
+            timeOfDay = timeOfDay,
+            turnUpsideDown = turnUpsideDown,
+            location = location,
+            trigger = trigger,
+            item = item,
+            gender = gender,
+            nextEvolutions = nextEvolution.map { it.mapEvolutionChain() },
+        )
+    }
+
     private fun Float.getTypeEffectiveness() = when {
         this == 0.25f -> Effectiveness.STRONG
         this == 0.5f -> Effectiveness.KINDA_STRONG
@@ -207,7 +241,7 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         return subscriptText(
             mainText = "${meters}m",
             smallerText =
-                "(${feet}'${inch.toString().padStart(2, '0')}\")"
+            "(${feet}'${inch.toString().padStart(2, '0')}\")"
         )
     }
 

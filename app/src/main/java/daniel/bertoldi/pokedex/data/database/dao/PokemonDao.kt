@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
+import daniel.bertoldi.pokedex.data.database.model.PokemonIdAndSprites
 
 @Dao
 interface PokemonDao {
@@ -24,4 +24,7 @@ interface PokemonDao {
 
     @Query("UPDATE pokemons SET has_complete_data = 1 WHERE pokemonId = :pokemonId")
     suspend fun updatePokedexEntry(pokemonId: Int)
+
+    @Query("SELECT pokemonId, sprites FROM pokemons WHERE name = :name")
+    suspend fun getPokemonIdAndSprites(name: String): PokemonIdAndSprites
 }

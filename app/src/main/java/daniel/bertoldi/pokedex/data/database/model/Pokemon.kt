@@ -30,3 +30,8 @@ data class Sprites(
     val frontShiny: String?,
     val officialArtwork: String?,
 )
+
+data class PokemonIdAndSprites(
+    val pokemonId: Int,
+    val sprites: Sprites,
+)

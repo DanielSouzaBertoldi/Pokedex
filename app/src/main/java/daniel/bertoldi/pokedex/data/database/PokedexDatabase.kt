@@ -10,8 +10,10 @@ import daniel.bertoldi.pokedex.data.database.converters.SpritesConverter
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
+import daniel.bertoldi.pokedex.data.database.dao.StatsDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
+import daniel.bertoldi.pokedex.data.database.model.Stats
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 
 private const val DATABASE_VERSION = 1
@@ -21,6 +23,7 @@ private const val DATABASE_VERSION = 1
         Pokemon::class,
         Abilities::class,
         PokemonAbilitiesCrossRef::class,
+        Stats::class,
     ],
     version = DATABASE_VERSION,
 )
@@ -37,4 +40,6 @@ abstract class PokedexDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
 
     abstract fun pokemonAbilitiesCrossRef(): PokemonAbilitiesCrossRefDao
+
+    abstract fun statsDao(): StatsDao
 }

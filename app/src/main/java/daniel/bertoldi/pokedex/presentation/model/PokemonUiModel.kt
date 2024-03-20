@@ -10,7 +10,6 @@ data class PokemonUiModel(
     val isDefault: Boolean,
     val name: String,
     val uiSprites: UiSprites,
-    val stats: List<UiStats>,
     val types: List<UiType>,
     val weight: Int,
     val backgroundColors: BackgroundColors,
@@ -33,13 +32,6 @@ data class UiSprites(
     val frontDefault: String?,
     val frontShiny: String?,
     val artwork: String,
-)
-
-data class UiStats(
-    val baseStat: Int,
-    val effort: Int,
-    val name: String,
-    val url: String,
 )
 
 data class UiType(

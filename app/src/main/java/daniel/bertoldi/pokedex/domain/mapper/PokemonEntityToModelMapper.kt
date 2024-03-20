@@ -22,7 +22,6 @@ class PokemonEntityToModelMapper @Inject constructor() {
         isDefault = pokemonEntity.isDefault,
         name = pokemonEntity.name,
         sprites = mapSprites(pokemonEntity.sprites),
-        stats = mapStats(pokemonEntity.stats),
         types = mapTypes(pokemonEntity.types),
         weight = pokemonEntity.weight,
     )
@@ -52,18 +51,6 @@ class PokemonEntityToModelMapper @Inject constructor() {
         frontShinyImageUrl = sprites.frontShiny,
         artworkImageUrl = sprites.officialArtwork.orEmpty(),
     )
-
-    private fun mapStats(stats: List<GenericObject>) = stats.map { stat ->
-        Stats(
-            // mocked values
-            baseStat = 1,
-            effort = 2,
-            stat = Stat(
-                name = stat.name,
-                url = stat.url,
-            )
-        )
-    }
 
     private fun mapTypes(types: List<GenericObject>) = types.map { type ->
         Types(

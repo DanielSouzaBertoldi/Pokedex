@@ -7,7 +7,6 @@ data class PokemonModel(
     val isDefault: Boolean,
     val name: String,
     val sprites: Sprites,
-    val stats: List<Stats>,
     val types: List<Types>,
     val weight: Int,
 )

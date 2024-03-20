@@ -13,7 +13,6 @@ data class Pokemon(
     val weight: Int,
     @ColumnInfo(name = "is_default") val isDefault: Boolean,
     val sprites: Sprites,
-    val stats: List<GenericObject>,
     val types: List<GenericObject>,
 //    val abilities: List<Ability>,
 )

@@ -16,7 +16,6 @@ class PokemonModelToUiModelMapper @Inject constructor() {
         isDefault = pokemonModel.isDefault,
         name = pokemonModel.name.capitalize(),
         uiSprites = mapSprites(pokemonModel.sprites),
-        stats = pokemonModel.stats.map { mapStats(it) },
         types = pokemonModel.types.map { mapTypes(it) },
         weight = pokemonModel.weight,
         backgroundColors = mapCardBackgroundColors(pokemonModel.types.first().type.name.uppercase())
@@ -39,13 +38,6 @@ class PokemonModelToUiModelMapper @Inject constructor() {
         frontDefault = sprites.frontDefaultImageUrl,
         frontShiny = sprites.frontShinyImageUrl,
         artwork = sprites.artworkImageUrl,
-    )
-
-    private fun mapStats(stats: Stats) = UiStats(
-        baseStat = stats.baseStat,
-        effort = stats.effort,
-        name = stats.stat.name,
-        url = stats.stat.url,
     )
 
     private fun mapTypes(types: Types): UiType {

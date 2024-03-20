@@ -21,7 +21,6 @@ class PokemonResponseToModelMapper @Inject constructor(
         isDefault = pokemonResponse.isDefault,
         name = pokemonResponse.name,
         sprites = mapSprites(pokemonResponse.sprites, pokemonResponse.id),
-        stats = pokemonResponse.stats.map { mapStats(it) },
         types = pokemonResponse.types.map { mapTypes(it) },
         weight = pokemonResponse.weight,
     )
@@ -52,17 +51,6 @@ class PokemonResponseToModelMapper @Inject constructor(
         frontShinyImageUrl = sprites.frontShiny,
         artworkImageUrl = "$SPRITES_BASE_URL/other/official-artwork/$id.png",
     )
-
-    private fun mapStats(stats: StatsResponse): Stats {
-        return Stats(
-            baseStat = stats.baseStat,
-            effort = stats.effort,
-            stat = Stat(
-                name = stats.stat.name,
-                url = stats.stat.url,
-            )
-        )
-    }
 
     private fun mapTypes(types: TypesResponse) = Types(
         slot = types.slot,

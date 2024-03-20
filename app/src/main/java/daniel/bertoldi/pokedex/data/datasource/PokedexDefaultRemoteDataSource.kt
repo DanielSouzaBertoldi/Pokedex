@@ -4,14 +4,17 @@ import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
 import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
+import daniel.bertoldi.pokedex.data.api.response.StatsResponse
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
+import daniel.bertoldi.pokedex.data.database.dao.StatsDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.EffectEntry
 import daniel.bertoldi.pokedex.data.database.model.FlavorTextEntry
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.Sprites
+import daniel.bertoldi.pokedex.data.database.model.Stats
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToModelMapper
 import daniel.bertoldi.pokedex.domain.model.PokemonModel
@@ -25,6 +28,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private val abilitiesDao: AbilitiesDao,
     private val pokemonAbilitiesCrossRefDao: PokemonAbilitiesCrossRefDao,
     private val pokemonDao: PokemonDao,
+    private val statsDao: StatsDao,
 ) : PokedexRemoteDataSource {
 
     override suspend fun getPokemon(pokemonId: Int): PokemonModel {
@@ -95,19 +99,30 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     frontShiny = pokemon.sprites.frontShiny,
                     officialArtwork = pokemon.sprites.otherSprites.officialArtworkSprites.frontDefault,
                 ),
-                stats = pokemon.stats.map {
-                    // should add base_stat and effort here too
-                    GenericObject(
-                        name = it.stat.name,
-                        url = it.stat.url,
-                    )
-                },
                 types = pokemon.types.map {
                     GenericObject(
                         name = it.type.name,
                         url = it.type.url,
                     )
                 }
+            )
+        )
+
+        addPokemonStatsToRoom(pokemon.id, pokemon.stats)
+    }
+
+    private suspend fun addPokemonStatsToRoom(pokemonId: Int, statsResponse: List<StatsResponse>) {
+        statsDao.insertStat(
+            Stats(
+                pokemonId = pokemonId,
+                hp = statsResponse.first { it.stat.name == "hp" }.baseStat,
+                attack = statsResponse.first { it.stat.name == "attack" }.baseStat,
+                defense = statsResponse.first { it.stat.name == "defense" }.baseStat,
+                specialAttack = statsResponse.first { it.stat.name == "special-attack" }.baseStat,
+                specialDefense = statsResponse.first { it.stat.name == "special-defense" }.baseStat,
+                speed = statsResponse.first { it.stat.name == "speed" }.baseStat,
+                accuracy = statsResponse.find { it.stat.name == "accuracy" }?.baseStat,
+                evasion = statsResponse.find { it.stat.name == "evasion" }?.baseStat,
             )
         )
     }

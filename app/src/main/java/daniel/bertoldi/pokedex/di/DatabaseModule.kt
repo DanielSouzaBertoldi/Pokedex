@@ -36,4 +36,6 @@ object DatabaseModule {
     fun providePokemonAbilitiesCrossRefDao(pokedexDatabase: PokedexDatabase) =
         pokedexDatabase.pokemonAbilitiesCrossRef()
 
+    @Provides
+    fun provideStatsDao(pokedexDatabase: PokedexDatabase) = pokedexDatabase.statsDao()
 }

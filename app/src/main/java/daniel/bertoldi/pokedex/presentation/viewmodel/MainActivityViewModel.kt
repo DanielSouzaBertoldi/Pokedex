@@ -34,7 +34,6 @@ class MainActivityViewModel @Inject constructor(
     fun getPokemons() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             pokemonData.value = pokemonModelToUiModelMapper.mapFrom(getPokemon(1))
-            Log.d("pokemon", pokemonData.value.toString())
         }
     }
 }

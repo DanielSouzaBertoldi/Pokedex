@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daniel.bertoldi.pokedex.domain.model.PokemonModel
+import daniel.bertoldi.pokedex.presentation.mapper.PokemonModelToUiModelMapper
 import daniel.bertoldi.pokedex.usecase.GetPokemonUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val getPokemon: GetPokemonUseCase,
+    private val pokemonModelToUiModelMapper: PokemonModelToUiModelMapper,
 ) : ViewModel() {
 
     var errorScreen = false

@@ -1,7 +1,7 @@
 # Plans
 
-- [ ] Add Compose lib
-- [ ] Add dependency injection lib
+- [X] Add Compose lib
+- [X] Add dependency injection lib
 - [ ] Add Retrofit
 - [ ] Add OkHttp
 - [ ] Add Coroutines / Flow

@@ -12,7 +12,9 @@ data class AbilityResponse(
     val generation: GenericObject,
     @Json(name = "is_main_series")
     val isMainSeries: Boolean,
-    val pokemon: List<Pokemon>
+    val pokemon: List<Pokemon>,
+    val isHidden: Boolean = false,
+    val slot: Int = 0,
 )
 
 data class EffectEntries(

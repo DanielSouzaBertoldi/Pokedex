@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import daniel.bertoldi.pokedex.data.database.model.Abilities
+import daniel.bertoldi.pokedex.data.database.model.PokemonAbility
 
 @Dao
 interface AbilitiesDao {
@@ -27,5 +28,5 @@ interface AbilitiesDao {
         "ON ab.ability_id = int.ability_id " +
         "WHERE int.pokemon_id = :pokemonId"
     )
-    suspend fun getPokemonAbilities(pokemonId: Int): List<Abilities>
+    suspend fun getPokemonAbilities(pokemonId: Int): List<PokemonAbility>
 }

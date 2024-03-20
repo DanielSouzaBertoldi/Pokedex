@@ -36,7 +36,7 @@ class PokedexDefaultLocalDataSource @Inject constructor(
 
         return pokemonEntityToCompleteModelMapper.mapFrom(
             pokemonEntity = pokemonBasicInfo,
-            abilitiesEntity = abilities,
+            pokemonAbilities = abilities,
             statsEntity = stats,
             speciesEntity = species,
             typeEffectivenessEntity = typeEffectiveness,

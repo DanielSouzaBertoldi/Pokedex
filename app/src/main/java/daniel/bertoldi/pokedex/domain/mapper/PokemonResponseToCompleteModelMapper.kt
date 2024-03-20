@@ -35,8 +35,8 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         AbilityModel(
             id = it.id,
             name = it.name,
-            isHidden = false, // ????
-            slot = 1, // ???
+            isHidden = it.isHidden,
+            slot = it.slot,
             effectEntry = effectEntry.effect,
             shortEffectEntry = effectEntry.shortEffect,
             flavorText = it.flavorTextEntries.filter { flavorEntry ->

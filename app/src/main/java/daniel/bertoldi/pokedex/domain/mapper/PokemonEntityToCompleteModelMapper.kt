@@ -1,12 +1,7 @@
 package daniel.bertoldi.pokedex.domain.mapper
 
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
-import daniel.bertoldi.pokedex.data.database.model.Abilities
-import daniel.bertoldi.pokedex.data.database.model.Pokemon
-import daniel.bertoldi.pokedex.data.database.model.Species
-import daniel.bertoldi.pokedex.data.database.model.Sprites
-import daniel.bertoldi.pokedex.data.database.model.Stats
-import daniel.bertoldi.pokedex.data.database.model.TypeEffectiveness
+import daniel.bertoldi.pokedex.data.database.model.*
 import daniel.bertoldi.pokedex.domain.model.*
 import javax.inject.Inject
 
@@ -14,7 +9,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
 
     fun mapFrom(
         pokemonEntity: Pokemon,
-        abilitiesEntity: List<Abilities>,
+        pokemonAbilities: List<PokemonAbility>,
         statsEntity: Stats,
         speciesEntity: Species,
         typeEffectivenessEntity: TypeEffectiveness,
@@ -27,7 +22,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         sprites = mapSprites(pokemonEntity.sprites),
         types = mapTypes(pokemonEntity.types),
         weight = pokemonEntity.weight,
-        abilities = mapAbilities(abilitiesEntity),
+        abilities = mapAbilities(pokemonAbilities),
         stats = mapStats(statsEntity),
         species = mapSpecies(speciesEntity),
         typeEffectiveness = mapTypeEffectiveness(typeEffectivenessEntity)
@@ -51,7 +46,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         )
     }
 
-    private fun mapAbilities(abilities: List<Abilities>) = abilities.map {
+    private fun mapAbilities(abilities: List<PokemonAbility>) = abilities.map {
         val effectEntry = it.effectEntries.filter { effectEntry ->
             effectEntry.language == "en"
         }.maxBy { effect -> effect.effect.length }

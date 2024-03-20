@@ -115,7 +115,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         pokemonAbilites.forEach {
             val abilityId = it.ability.url.fetchIdFromUrl()
             val abilityResponse = pokeApi.getAbility(abilityId)
-            abilitiesResponse.add(abilityResponse)
+            abilitiesResponse.add(abilityResponse.copy(isHidden = it.isHidden, slot = it.slot))
             addAbilityToRoom(abilityResponse)
         }
         return abilitiesResponse
@@ -142,8 +142,6 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 },
                 generationName = abilityResponse.generation.name,
                 isMainSeries = abilityResponse.isMainSeries,
-                isHidden = false, // TODO: maybe I should use a different Data Class to retrieve this data, since an ability can be hidden or not for different pokemons, this property shouldn't be here at all!
-                slot = 1,
             )
         )
 

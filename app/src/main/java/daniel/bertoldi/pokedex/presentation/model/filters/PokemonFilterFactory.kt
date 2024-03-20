@@ -15,7 +15,7 @@ object PokemonFilterFactory {
     }
 
     // rename Type to something more cool
-    private fun createTypeList() = buildList<PokemonFilterUIData> {
+    private fun createTypeList() = buildList {
         PokemonUIData.values().forEach {
             add(
                 PokemonFilterUIData(

@@ -4,18 +4,23 @@ import androidx.datastore.core.DataStore
 import daniel.bertoldi.pokedex.data.repository.PokedexRepository
 import daniel.bertoldi.pokedex.domain.model.GenerationData
 import daniel.bertoldi.pokedex.domain.model.GenerationsData
+import daniel.bertoldi.pokedex.presentation.mapper.GenerationsDataToUIMapper
+import daniel.bertoldi.pokedex.presentation.model.filters.GenerationUIData
 import kotlinx.collections.immutable.mutate
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class GetPokemonGenerationsDefault @Inject constructor(
+class GetPokemonGenerationsUIDefault @Inject constructor(
     private val pokedexRepository: PokedexRepository,
     private val generationsDataStore: DataStore<GenerationsData>,
-) : GetPokemonGenerationsUseCase {
-    override suspend fun invoke() {
-        if (generationsDataStore.data.first().generation.isEmpty()) {
+    private val generationsDataToUIMapper: GenerationsDataToUIMapper,
+) : GetPokemonGenerationsUIUseCase {
+    override suspend fun invoke(): List<GenerationUIData> {
+        val dataStoreData = generationsDataStore.data.first()
+        if (dataStoreData.generation.isEmpty()) {
             addGenerationsToDataStore()
         }
+        return generationsDataToUIMapper.mapFrom(dataStoreData.generation)
     }
 
     private suspend fun addGenerationsToDataStore() {

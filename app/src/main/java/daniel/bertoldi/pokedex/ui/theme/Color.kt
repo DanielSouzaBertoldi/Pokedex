@@ -39,73 +39,10 @@ val BgWhite = Color(0xFFFFFFFF)
 val BgDefaultInput = Color(0xFFF2F2F2)
 val BgPressedInput = Color(0xFFE2E2E2)
 val BgModal = Color(0x8017171B)
-
-/* Gradient Colors */
-val GradientVector = Brush.verticalGradient(
-    colors = listOf(
-        Color(0x4DFFFFFF),
-        Color(0x00FFFFFF),
-    )
-)
-val GradientPokeball = Brush.verticalGradient(
-    colors = listOf(
-        Color(0xFFF5F5F5),
-        Color(0xFFFFFFFF),
-    ),
-    // this is probably wrong. I should calculate the density of the screen to
-    // calculate the offset properly. Check:
-    // https://stackoverflow.com/questions/71702233/how-to-create-angular-gradient-in-jetpack-compose
-    startY = 50f,
-)
-val GradientVectorGrey = Brush.linearGradient(
-    colors = listOf(
-        Color(0xFFE5E5E5),
-        Color(0x00F5F5F5),
-    ),
-    // Why these values? See here:
-    // https://stackoverflow.com/questions/67598613/android-compose-custom-lineargradient-with-angle-like-gradientdrawable
-    start = Offset(Float.POSITIVE_INFINITY, 0f),
-    end = Offset(0f, Float.POSITIVE_INFINITY),
-    // This angle basically goes from Top Left to Bottom Right of the view.
-)
-val GradientPokeballGrey = Brush.linearGradient(
-    colors = listOf(
-        Color(0xFFECECEC),
-        Color(0xFFF5F5F5),
-    ),
-    start = Offset(Float.POSITIVE_INFINITY, 0f),
-    end = Offset(0f, Float.POSITIVE_INFINITY),
-)
-val GradientVectorWhite = Brush.linearGradient(
-    colors = listOf(
-        Color(0x4DFFFFFF),
-        Color(0x00FFFFFF),
-    ),
-    start = Offset(Float.POSITIVE_INFINITY, 0f),
-    end = Offset(0f, Float.POSITIVE_INFINITY),
-)
-val GradientPokeballWhite = Brush.linearGradient(
-    colors = listOf(
-        Color(0x1AFFFFFF),
-        Color(0x00FFFFFF),
-    ),
-    start = Offset(Float.POSITIVE_INFINITY, 0f),
-    end = Offset(0f, Float.POSITIVE_INFINITY),
-)
-val GradientPokemonName = Brush.verticalGradient(
-    colors = listOf(
-        Color(0x4DFFFFFF),
-        Color(0x00FFFFFF),
-    )
-)
-val GradientPokemonCircle = Brush.linearGradient(
-    colors = listOf(
-        Color(0x00FFFFFF),
-        Color(0x59FFFFFF),
-    ),
-    start = Offset(Float.POSITIVE_INFINITY, 0f),
-    end = Offset(0f, Float.POSITIVE_INFINITY),
-)
+val LightGrey = Color(0xFFCDCDCD)
+val GradientGrey = Color(0xFFE5E5E5)
+val GradientLightGrey = Color(0xFFECECEC)
+val GradientLightWhite = Color(0xFFF5F5F5)
 
 /* Text Colors */
 val TextWhite = Color(0xFFFFFFFF)

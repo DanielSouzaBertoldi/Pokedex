@@ -4,6 +4,7 @@ data class FilterOptions(
     var miscFilters: Map<String, List<PokemonFilterUIData>>,
     val numberRange: ClosedFloatingPointRange<Float> = 1F..1100F,
     val sortOption: SortOptions = SortOptions.SMALLEST_FIRST,
+    var generationOption: List<GenerationUIData> = emptyList(),
 )
 
 data class PokemonFilterUIData(
@@ -21,3 +22,9 @@ enum class SortOptions(val text: String) {
         fun parse(name: String) = values().find { it.name == name } ?: SMALLEST_FIRST
     }
 }
+
+data class GenerationUIData(
+    val generationName: String,
+    var isSelected: Boolean = false,
+    val currentPokemonsImage: List<String>,
+)

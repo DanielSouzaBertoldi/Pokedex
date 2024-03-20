@@ -36,6 +36,7 @@ import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.BottomSheetLayout
 import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
 import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
+import daniel.bertoldi.pokedex.presentation.model.filters.GenerationUIData
 import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
 import daniel.bertoldi.pokedex.presentation.model.filters.SortOptions
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
                         filterOptions = viewModel.filterOptions,
                         onFilterClick = ::onMainFiltersClicked,
                         onSortClick = ::onSortClicked,
+                        onGenerationClicked = ::onGenerationClicked,
                     )
                 }
             }
@@ -117,6 +119,19 @@ class MainActivity : ComponentActivity() {
             sortOption = SortOptions.parse(sortOptionName)
         )
     }
+
+    private fun onGenerationClicked(generationClicked: GenerationUIData) {
+        viewModel.filterOptions.value = viewModel.filterOptions.value.copy(
+            generationOption = viewModel.filterOptions.value.generationOption.toMutableList().apply {
+                set(
+                    index = this.indexOf(generationClicked),
+                    element = generationClicked.copy(
+                        isSelected = !generationClicked.isSelected
+                    )
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -130,7 +145,8 @@ fun MyAppNavHost(
     filterOptions: MutableStateFlow<FilterOptions>,
     onFilterClick: (Int, String) -> Unit = { _, _ -> },
     onSortClick: (String) -> Unit,
-    ) {
+    onGenerationClicked: (GenerationUIData) -> Unit,
+) {
     NavHost(
         modifier = modifier,
         navController = navHostController,
@@ -144,6 +160,7 @@ fun MyAppNavHost(
                 filterOptions = filterOptions,
                 onMainFilterClick = onFilterClick,
                 onSortClick = onSortClick,
+                onGenerationClicked = onGenerationClicked,
             )
         }
     }
@@ -158,6 +175,7 @@ fun PokemonListComponent(
     filterOptions: MutableStateFlow<FilterOptions>,
     onMainFilterClick: (Int, String) -> Unit,
     onSortClick: (String) -> Unit,
+    onGenerationClicked: (GenerationUIData) -> Unit,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
@@ -167,25 +185,30 @@ fun PokemonListComponent(
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetContent = {
-            if (sheetContent.value == BottomSheetLayout.Generations) {
-                Spacer(modifier = Modifier.height(50.dp))
-                Text("You've opened the GENERATIONS option!")
-                Spacer(modifier = Modifier.height(50.dp))
-            } else if (sheetContent.value == BottomSheetLayout.Sort) {
-                SortComponent(
-                    filterOptions = filterOptions,
-                    onButtonClicked = onSortClick,
-                )
-            } else {
-                FilterComponent(
-                    filterOptions = filterOptions,
-                    onFilterClicked = onMainFilterClick,
-                    onConfirmClicked = {
-                        scope.launch {
-                            modalBottomSheetState.hide()
+            when (sheetContent.value) {
+                BottomSheetLayout.Generations -> {
+                    GenerationsComponent(
+                        filterOptions = filterOptions,
+                        onGenerationClicked = onGenerationClicked,
+                    )
+                }
+                BottomSheetLayout.Sort -> {
+                    SortComponent(
+                        filterOptions = filterOptions,
+                        onButtonClicked = onSortClick,
+                    )
+                }
+                else -> {
+                    FilterComponent(
+                        filterOptions = filterOptions,
+                        onFilterClicked = onMainFilterClick,
+                        onConfirmClicked = {
+                            scope.launch {
+                                modalBottomSheetState.hide()
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         },
         sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),

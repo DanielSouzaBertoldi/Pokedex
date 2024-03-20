@@ -1,0 +1,15 @@
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - 'Composable'
+style:
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreEnums: true
+  WildcardImport:
+    excludeImports:
+      - 'daniel.bertoldi.pokedex.data.api.response.*'
+      - 'daniel.bertoldi.pokedex.domain.model.*'
+      - 'androidx.compose.material.*'
+      - 'androidx.compose.foundation.layout.*'
+      - 'daniel.bertoldi.pokedex.presentation.model.*'

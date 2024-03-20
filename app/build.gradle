@@ -107,4 +107,6 @@ kapt {
 detekt {
     allRules = true
     source = files("src/main/java/")
+    config = files("config/detekt.yml")
+    buildUponDefaultConfig = true
 }

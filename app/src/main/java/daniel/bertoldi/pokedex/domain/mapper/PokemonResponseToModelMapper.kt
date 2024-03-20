@@ -38,14 +38,17 @@ class PokemonResponseToModelMapper @Inject constructor() {
         artworkImageUrl = "$SPRITES_BASE_URL/other/official-artwork/$id.png",
     )
 
-    private fun mapStats(stats: StatsResponse) = Stats(
-        baseStat = stats.baseStat,
-        effort = stats.effort,
-        stat = Stat(
-            name = stats.stat.name,
-            url = stats.stat.url,
+    private fun mapStats(stats: StatsResponse): Stats {
+        val stats1 = Stats(
+            baseStat = stats.baseStat,
+            effort = stats.effort,
+            stat = Stat(
+                name = stats.stat.name,
+                url = stats.stat.url,
+            )
         )
-    )
+        return stats1
+    }
 
     private fun mapTypes(types: TypesResponse) = Types(
         slot = types.slot,

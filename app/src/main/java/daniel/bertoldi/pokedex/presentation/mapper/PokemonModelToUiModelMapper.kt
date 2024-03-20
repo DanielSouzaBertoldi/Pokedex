@@ -1,10 +1,9 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
-import androidx.compose.ui.text.capitalize
 import daniel.bertoldi.pokedex.domain.model.*
 import daniel.bertoldi.pokedex.presentation.model.*
 import daniel.bertoldi.pokedex.ui.theme.PokemonUIData
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class PokemonModelToUiModelMapper @Inject constructor() {
@@ -13,7 +12,7 @@ class PokemonModelToUiModelMapper @Inject constructor() {
         abilities = pokemonModel.abilities.map { mapAbilities(it) },
         height = pokemonModel.height,
         id = pokemonModel.id,
-        pokedexNumber = String.format("#%03d", pokemonModel.id),
+        pokedexNumber = String.format(Locale.ROOT, "#%03d", pokemonModel.id),
         isDefault = pokemonModel.isDefault,
         name = pokemonModel.name.capitalize(),
         uiSprites = mapSprites(pokemonModel.sprites),

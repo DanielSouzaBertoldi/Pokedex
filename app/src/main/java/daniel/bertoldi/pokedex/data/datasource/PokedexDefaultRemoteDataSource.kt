@@ -90,10 +90,10 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 isDefault = pokemon.isDefault,
                 sprites = Sprites(
                     backDefault = pokemon.sprites.backDefault,
-                    backShiny = pokemon.sprites.backDefault,
-                    frontDefault = pokemon.sprites.backDefault,
-                    frontShiny = pokemon.sprites.backDefault,
-                    officialArtwork = pokemon.sprites.backDefault,
+                    backShiny = pokemon.sprites.backShiny,
+                    frontDefault = pokemon.sprites.frontDefault,
+                    frontShiny = pokemon.sprites.frontShiny,
+                    officialArtwork = pokemon.sprites.otherSprites.officialArtworkSprites.frontDefault,
                 ),
                 stats = pokemon.stats.map {
                     // should add base_stat and effort here too

@@ -1,14 +1,14 @@
 package daniel.bertoldi.pokedex.usecase
 
 import androidx.datastore.core.DataStore
-import daniel.bertoldi.pokedex.GenerationData
-import daniel.bertoldi.pokedex.GenerationsData
 import daniel.bertoldi.pokedex.data.repository.PokedexRepository
+import daniel.bertoldi.pokedex.domain.model.GenerationData
+import daniel.bertoldi.pokedex.domain.model.GenerationsData
 import kotlinx.collections.immutable.mutate
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class DefaultGetPokemonGenerations @Inject constructor(
+class GetPokemonGenerationsDefault @Inject constructor(
     private val pokedexRepository: PokedexRepository,
     private val generationsDataStore: DataStore<GenerationsData>,
 ) : GetPokemonGenerationsUseCase {

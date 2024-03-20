@@ -1,6 +1,7 @@
 package daniel.bertoldi.pokedex
 
 import androidx.datastore.core.Serializer
+import daniel.bertoldi.pokedex.domain.model.GenerationsData
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.InputStream

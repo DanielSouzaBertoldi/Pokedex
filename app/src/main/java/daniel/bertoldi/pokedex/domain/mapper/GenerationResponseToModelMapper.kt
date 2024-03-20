@@ -1,7 +1,7 @@
 package daniel.bertoldi.pokedex.domain.mapper
 
-import daniel.bertoldi.pokedex.GenerationData
 import daniel.bertoldi.pokedex.data.api.response.GenerationResponse
+import daniel.bertoldi.pokedex.domain.model.GenerationData
 import javax.inject.Inject
 
 

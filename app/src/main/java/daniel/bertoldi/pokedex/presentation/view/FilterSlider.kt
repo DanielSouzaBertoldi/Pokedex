@@ -85,7 +85,7 @@ fun FilterSlider(
             if (sliderPosition.endInclusive > valueRange.start) {
                 SliderLabel(
                     label = sliderPosition.endInclusive.toInt().toString(),
-                    minWidth = labelMinWidth + 180.dp,
+                    minWidth = labelMinWidth,
                     modifier = Modifier.padding(start = endOffset)
                 )
             }

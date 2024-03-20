@@ -175,7 +175,6 @@ private fun FilterButton(
     buttonColor: Color = BgDefaultInput,
     textColor: Color = TextGrey,
     buttonText: String,
-    // add callback parameter
 ) {
     Button(
         modifier = modifier

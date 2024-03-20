@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,15 +25,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.bertoldi.pokedex.R
@@ -84,6 +88,7 @@ class MainActivity : ComponentActivity() {
                         onFilterClick = ::onMainFiltersClicked,
                         onSortClick = ::onSortClicked,
                         onGenerationClicked = ::onGenerationClicked,
+                        onFilterApply = ::onFilterApply,
                     )
                 }
             }
@@ -132,12 +137,17 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
+
+    private fun onFilterApply() {
+        viewModel.applyFilters()
+    }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController = rememberNavController(),
+    navHostController: NavHostController = rememberAnimatedNavController(),
     startDestinationName: String = "home",
     lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
     sheetContent: State<BottomSheetLayout>,
@@ -146,13 +156,30 @@ fun MyAppNavHost(
     onFilterClick: (Int, String) -> Unit = { _, _ -> },
     onSortClick: (String) -> Unit,
     onGenerationClicked: (GenerationUIData) -> Unit,
+    onFilterApply: () -> Unit,
 ) {
-    NavHost(
+    AnimatedNavHost(
         modifier = modifier,
         navController = navHostController,
         startDestination = startDestinationName,
     ) {
-        composable("home") {
+        composable(
+            route = "home",
+            enterTransition = {
+                when (initialState.destination.route) {
+                    "details" ->
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "details" ->
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                    else -> null
+                }
+            },
+        ) {
             PokemonListComponent(
                 lazyPokemonPagingItems = lazyPokemonPagingItems,
                 sheetContent = sheetContent,
@@ -161,7 +188,28 @@ fun MyAppNavHost(
                 onMainFilterClick = onFilterClick,
                 onSortClick = onSortClick,
                 onGenerationClicked = onGenerationClicked,
+                onFilterApply = onFilterApply,
+                navHostController = navHostController,
             )
+        }
+        composable(
+            route = "details",
+            enterTransition = {
+                when (initialState.destination.route) {
+                    "home" ->
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = spring(4f))
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "home" ->
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = spring(4f))
+                    else -> null
+                }
+            }
+        ) {
+            PokemonDetailsScreen()
         }
     }
 }
@@ -176,6 +224,8 @@ fun PokemonListComponent(
     onMainFilterClick: (Int, String) -> Unit,
     onSortClick: (String) -> Unit,
     onGenerationClicked: (GenerationUIData) -> Unit,
+    onFilterApply: () -> Unit,
+    navHostController: NavHostController,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
@@ -204,6 +254,7 @@ fun PokemonListComponent(
                         onFilterClicked = onMainFilterClick,
                         onConfirmClicked = {
                             scope.launch {
+                                onFilterApply()
                                 modalBottomSheetState.hide()
                             }
                         }
@@ -229,7 +280,12 @@ fun PokemonListComponent(
                 }
 
                 items(lazyPokemonPagingItems) { pokemonUiModel ->
-                    PokemonCardComponent(pokemonUiModel = pokemonUiModel)
+                    PokemonCardComponent(
+                        pokemonUiModel = pokemonUiModel,
+                        onNavigateToDetails = {
+                            navHostController.navigate("details") { launchSingleTop = true }
+                        }
+                    )
                 }
 
                 if (lazyPokemonPagingItems.loadState.append == LoadState.Loading) {
@@ -283,6 +339,16 @@ private fun AppendingScreen() {
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Fit,
+        )
+    }
+}
+
+@Composable
+private fun PokemonDetailsScreen() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = "Olá, sou a tela de detalhes do pokemon!"
         )
     }
 }

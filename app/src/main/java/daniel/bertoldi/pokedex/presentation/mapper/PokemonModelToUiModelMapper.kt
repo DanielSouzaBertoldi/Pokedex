@@ -44,7 +44,7 @@ class PokemonModelToUiModelMapper @Inject constructor() {
         val typeUiData = PokemonUIData.values().first { it.name == types.type.name.uppercase() }
         return UiType(
             slot = types.slot,
-            name = types.type.name.capitalize(),
+            name = types.type.name.uppercase(),
             url = types.type.url,
             backgroundColor = typeUiData.typeColor,
             icon = typeUiData.icon,

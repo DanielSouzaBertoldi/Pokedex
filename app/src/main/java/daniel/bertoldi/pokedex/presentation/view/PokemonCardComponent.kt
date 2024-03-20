@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -28,13 +30,18 @@ import daniel.bertoldi.pokedex.ui.theme.TextNumber
 import daniel.bertoldi.pokedex.ui.theme.TextWhite
 import daniel.bertoldi.pokedex.ui.theme.Typography
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PokemonCardComponent(pokemonUiModel: PokemonUiModel?) {
+fun PokemonCardComponent(
+    pokemonUiModel: PokemonUiModel?,
+    onNavigateToDetails: () -> Unit,
+) {
     Card(
         modifier = Modifier.padding(10.dp),
         elevation = 5.dp,
         backgroundColor = pokemonUiModel!!.backgroundColors.backgroundTypeColor,
         shape = Shapes.medium,
+        onClick = { onNavigateToDetails()  }
     ) {
         Box(
             modifier = Modifier

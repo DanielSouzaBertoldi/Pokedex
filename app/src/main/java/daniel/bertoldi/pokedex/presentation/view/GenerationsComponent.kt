@@ -121,15 +121,14 @@ fun GenerationComponent(
     Box(
         modifier = Modifier
             .width(160.dp)
-            .height(129.dp)
+            .wrapContentHeight()
             .padding(top = 14.dp)
+            .clip(RoundedCornerShape(10.dp))
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(cardBackgroundColor.value, cardBackgroundColor.value),
-                ),
-                shape = RoundedCornerShape(10.dp),
+                )
             )
-            .clip(RectangleShape)
             .clickable {
                 onGenerationClicked(generationUIData)
             },
@@ -138,9 +137,10 @@ fun GenerationComponent(
         BackgroundDots(generationTransition)
         BackgroundPokeBall(generationTransition)
         Row(
-            modifier = Modifier
-                .width(125.dp)
-                .align(Alignment.Center),
+            modifier = Modifier.align(Alignment.TopCenter)
+                .padding(top = 25.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             generationUIData.currentPokemonsImage.forEach { url ->
                 AsyncImage(

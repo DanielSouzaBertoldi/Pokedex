@@ -96,9 +96,10 @@ dependencyResolutionManagement {
             library("accompanist-systemuicontroller", "com.google.accompanist", "accompanist-systemuicontroller").versionRef("accompanist")
             library("accompanist-placeholder", "com.google.accompanist", "accompanist-placeholder").versionRef("accompanist")
             library("accompanist-pager", "com.google.accompanist", "accompanist-pager").versionRef("accompanist")
+            library("accompanist-navigation-animation", "com.google.accompanist", "accompanist-navigation-animation").versionRef("accompanist")
             bundle(
                 "accompanist",
-                listOf("accompanist-systemuicontroller", "accompanist-placeholder", "accompanist-pager")
+                listOf("accompanist-systemuicontroller", "accompanist-placeholder", "accompanist-pager", "accompanist-navigation-animation")
             )
 
             library("logging-interceptor", "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10")

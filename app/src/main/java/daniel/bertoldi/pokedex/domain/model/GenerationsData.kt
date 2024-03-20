@@ -1,11 +1,13 @@
 package daniel.bertoldi.pokedex.domain.model
 
+import androidx.datastore.core.Serializer as DataStoreSerializer
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -17,6 +19,9 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.json.Json
+import java.io.InputStream
+import java.io.OutputStream
 
 @Serializable
 data class GenerationsData(
@@ -31,6 +36,32 @@ data class GenerationData(
     val range: IntRange,
     val currentPokemons: List<Int>,
 )
+
+object GenerationsDataSerializer : DataStoreSerializer<GenerationsData> {
+    override val defaultValue: GenerationsData
+        get() = GenerationsData()
+
+    override suspend fun readFrom(input: InputStream): GenerationsData {
+        return try {
+            Json.decodeFromString(
+                deserializer = GenerationsData.serializer(),
+                string = input.readBytes().decodeToString()
+            )
+        } catch (e: SerializationException) {
+            e.printStackTrace()
+            defaultValue
+        }
+    }
+
+    override suspend fun writeTo(t: GenerationsData, output: OutputStream) {
+        output.write(
+            Json.encodeToString(
+                serializer = GenerationsData.serializer(),
+                value = t,
+            ).encodeToByteArray()
+        )
+    }
+}
 
 object IntRangeSerializer : KSerializer<IntRange> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("IntRange") {

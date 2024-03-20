@@ -7,12 +7,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import daniel.bertoldi.pokedex.GenerationsSettingsSerializer
+import daniel.bertoldi.pokedex.domain.model.GenerationsDataSerializer
 import javax.inject.Singleton
 
 private val Context.dataStore by dataStore(
     fileName = "generations_settings",
-    serializer = GenerationsSettingsSerializer,
+    serializer = GenerationsDataSerializer,
 )
 
 @InstallIn(SingletonComponent::class)

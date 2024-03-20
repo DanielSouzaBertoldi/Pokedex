@@ -28,10 +28,10 @@ data class UiAbility(
 )
 
 data class UiSprites(
-    val backDefault: String,
-    val backShiny: String,
-    val frontDefault: String,
-    val frontShiny: String,
+    val backDefault: String?,
+    val backShiny: String?,
+    val frontDefault: String?,
+    val frontShiny: String?,
     val artwork: String,
 )
 

@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
@@ -15,7 +16,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +29,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -50,10 +54,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.getPokemons()
-
         setContent {
-            val pokemonUiModel = viewModel.pokemonData.collectAsState()
+            val lazyPokemonPagingItems = viewModel.pokemonFlow.collectAsLazyPagingItems()
 
             PokedexTheme {
                 // A surface container using the 'background' color from the theme
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-                    MyAppNavHost(pokemonUiModel = pokemonUiModel.value!!) // this nullable is kinda annoying me.
+                    MyAppNavHost(lazyPokemonPagingItems = lazyPokemonPagingItems)
                 }
             }
         }
@@ -73,7 +75,7 @@ fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navHostController: NavHostController = rememberNavController(),
     startDestinationName: String = "home",
-    pokemonUiModel: PokemonUiModel
+    lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
 ) {
     NavHost(
         modifier = modifier,
@@ -81,61 +83,112 @@ fun MyAppNavHost(
         startDestination = startDestinationName,
     ) {
         composable("home") {
-            PokemonCard(pokemonUiModel)
+            PokemonCard(lazyPokemonPagingItems)
         }
     }
 }
 
 @Composable
-fun PokemonCard(pokemonUiModel: PokemonUiModel) {
-    Card(
-        modifier = Modifier.padding(10.dp),
-        elevation = 5.dp,
-        backgroundColor = pokemonUiModel.backgroundColors.backgroundTypeColor,
-        shape = Shapes.medium,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(115.dp),
-        ) {
-            BackgroundPokeball(
-                modifier = Modifier
-                    .size(150.dp)
-                    .align(Alignment.CenterEnd)
-            )
-            BackgroundDots(modifier = Modifier)
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, top = 20.dp)
-            ) {
+fun PokemonCard(lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>) {
+    LazyColumn {
+        if (lazyPokemonPagingItems.loadState.refresh == LoadState.Loading) {
+            item {
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    PokemonInfo(pokemonUiModel)
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(200.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(R.drawable.pokeball)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                    )
+                    Text(
+                        text = "Loading Pokémons!",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
                 }
             }
-            AsyncImage(
-                modifier = Modifier
-                    .size(130.dp)
-                    .padding(end = 10.dp)
-                    .align(Alignment.CenterEnd),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(pokemonUiModel.uiSprites.artwork)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                placeholder = rememberAsyncImagePainter(
-                    model = R.drawable.pokeball,
-                ),
-                error = painterResource(
-                    id = R.drawable.missingno
-                ),
-            )
+        }
+
+        items(lazyPokemonPagingItems) { pokemonUiModel ->
+            Card(
+                modifier = Modifier.padding(10.dp),
+                elevation = 5.dp,
+                backgroundColor = pokemonUiModel!!.backgroundColors.backgroundTypeColor,
+                shape = Shapes.medium,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(115.dp),
+                ) {
+                    BackgroundPokeball(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .align(Alignment.CenterEnd)
+                    )
+                    BackgroundDots(modifier = Modifier)
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, top = 20.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                        ) {
+                            PokemonInfo(pokemonUiModel)
+                        }
+                    }
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(130.dp)
+                            .padding(end = 10.dp)
+                            .align(Alignment.CenterEnd),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(pokemonUiModel.uiSprites.artwork)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        placeholder = rememberAsyncImagePainter(
+                            model = R.drawable.pokeball,
+                        ),
+                        error = painterResource(
+                            id = R.drawable.missingno
+                        ),
+                    )
+                }
+            }
+        }
+
+        if (lazyPokemonPagingItems.loadState.append == LoadState.Loading) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(100.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(R.drawable.pikachu_running)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                    )
+                }
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 package daniel.bertoldi.pokedex.ui.theme
 
-import android.graphics.drawable.Drawable
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color

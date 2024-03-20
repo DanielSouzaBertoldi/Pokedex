@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
+import androidx.compose.ui.graphics.Color
 import daniel.bertoldi.pokedex.domain.model.PokemonBasicModel
 import daniel.bertoldi.pokedex.domain.model.SpritesModel
 import daniel.bertoldi.pokedex.domain.model.Types
@@ -34,13 +35,14 @@ class PokemonBasicModelToUiModelMapper @Inject constructor() {
     )
 
     private fun mapTypes(types: Types): UiType {
-        val typeUiData = PokemonUIData.values().first { it.name == types.type.name.uppercase() }
+        val typeUiData = PokemonUIData.findTypeUiData(types.type.name)
         return UiType(
             slot = types.slot,
-            name = types.type.name.uppercase(),
+            name = types.type.name.replaceFirstChar { it.uppercase() },
             url = types.type.url,
-            backgroundColor = typeUiData.typeColor,
-            icon = typeUiData.icon,
+            backgroundColor = typeUiData?.typeColor ?: Color.Transparent,
+            icon = typeUiData?.icon ?: -1,
+            typeColor = typeUiData?.typeColor ?: Color.Transparent,
         )
     }
 

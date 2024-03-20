@@ -28,6 +28,7 @@ data class UiType(
     val url: String,
     val backgroundColor: Color,
     val icon: Int,
+    val typeColor: Color,
 )
 
 data class BackgroundColors(

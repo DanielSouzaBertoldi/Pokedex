@@ -12,27 +12,27 @@ val Teal200 = Color(0xFF03DAC5)
 
 /* Pokémon UI Data by Type */
 enum class PokemonUIData(val typeColor: Color, val backgroundColor: Color, val icon: Int) {
-    BUG(Color(0xFF8CB230), Color(0xFF8BD674), R.drawable.ic_bug_type),
-    DARK(Color(0xFF58575F), Color(0xFF6F6E78), R.drawable.ic_dark_type),
-    DRAGON(Color(0xFF0F6AC0), Color(0xFF7383B9), R.drawable.ic_dragon_type),
-    ELECTRIC(Color(0xFFEED535), Color(0xFFF2CB55), R.drawable.ic_electric_type),
-    FAIRY(Color(0xFFED6EC7), Color(0xFFEBA8C3), R.drawable.ic_fairy_type),
-    FIGHTING(Color(0xFFD04164), Color(0xFFEB4971), R.drawable.ic_fighting_type),
-    FIRE(Color(0xFFFD7D24), Color(0xFFFFA756), R.drawable.ic_fire_type),
-    FLYING(Color(0xFF748FC9), Color(0xFF83A2E3), R.drawable.ic_flying_type),
-    GHOST(Color(0xFF556AAE), Color(0xFF8571BE), R.drawable.ic_ghost_type),
-    GRASS(Color(0xFF62B957), Color(0xFF8BBE8A), R.drawable.ic_grass_type),
-    GROUND(Color(0xFFDD7748), Color(0xFFF78551), R.drawable.ic_ground_type),
-    ICE(Color(0xFF61CEC0), Color(0xFF91D8DF), R.drawable.ic_ice_type),
     NORMAL(Color(0xFF9DA0AA), Color(0xFFB5B9C4), R.drawable.ic_normal_type),
+    FIRE(Color(0xFFFD7D24), Color(0xFFFFA756), R.drawable.ic_fire_type),
+    WATER(Color(0xFF4A90DA), Color(0xFF58ABF6), R.drawable.ic_water_type),
+    ELECTRIC(Color(0xFFEED535), Color(0xFFF2CB55), R.drawable.ic_electric_type),
+    GRASS(Color(0xFF62B957), Color(0xFF8BBE8A), R.drawable.ic_grass_type),
+    ICE(Color(0xFF61CEC0), Color(0xFF91D8DF), R.drawable.ic_ice_type),
+    FIGHTING(Color(0xFFD04164), Color(0xFFEB4971), R.drawable.ic_fighting_type),
     POISON(Color(0xFFA552CC), Color(0xFF9F6E97), R.drawable.ic_poison_type),
+    GROUND(Color(0xFFDD7748), Color(0xFFF78551), R.drawable.ic_ground_type),
+    FLYING(Color(0xFF748FC9), Color(0xFF83A2E3), R.drawable.ic_flying_type),
     PSYCHIC(Color(0xFFEA5D60), Color(0xFFFF6568), R.drawable.ic_psychic_type),
+    BUG(Color(0xFF8CB230), Color(0xFF8BD674), R.drawable.ic_bug_type),
     ROCK(Color(0xFFBAAB82), Color(0xFFD4C294), R.drawable.ic_rock_type),
+    GHOST(Color(0xFF556AAE), Color(0xFF8571BE), R.drawable.ic_ghost_type),
+    DRAGON(Color(0xFF0F6AC0), Color(0xFF7383B9), R.drawable.ic_dragon_type),
+    DARK(Color(0xFF58575F), Color(0xFF6F6E78), R.drawable.ic_dark_type),
     STEEL(Color(0xFF417D9A), Color(0xFF4C91B2), R.drawable.ic_steel_type),
-    WATER(Color(0xFF4A90DA), Color(0xFF58ABF6), R.drawable.ic_water_type);
+    FAIRY(Color(0xFFED6EC7), Color(0xFFEBA8C3), R.drawable.ic_fairy_type);
 
     companion object {
-        fun findTypeUiData(name: String) = values().firstOrNull { it.name == name }
+        fun findTypeUiData(name: String) = values().firstOrNull { it.name == name.uppercase() }
     }
 }
 

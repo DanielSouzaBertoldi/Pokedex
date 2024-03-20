@@ -40,12 +40,14 @@ data class StatsUiModel(
     val speed: StatDetailUiModel?,
     val accuracy: StatDetailUiModel?,
     val evasion: StatDetailUiModel?,
+    val total: String,
 )
 
 data class StatDetailUiModel(
-    val baseStat: Int?,
-    val minMaxStat: Int?, // cool name!
-    val maxStat: Int?,
+    val baseStat: String,
+    val baseStatFloat: Float,
+    val minMaxStat: String, // cool name!
+    val maxStat: String,
 )
 
 data class SpeciesUiModel(
@@ -61,7 +63,7 @@ data class SpeciesUiModel(
     val name: String,
 )
 
-data class TypeEffectivenessUiModel(
+data class TypeEffectivenessUiModel( // talvez seja melhor uma lista de TypeEffectiveness...
     val normal: Effectiveness?,
     val fighting: Effectiveness?,
     val flying: Effectiveness?,
@@ -114,6 +116,15 @@ data class TypeEffectivenessUiModel(
             }
         }
         return listOfEffectiveness
+    }
+
+    fun getTypeEffectivenessByName(name: String): Effectiveness? {
+        for ((key, value) in this) {
+            if (key == name) {
+                return value
+            }
+        }
+        return null
     }
 }
 

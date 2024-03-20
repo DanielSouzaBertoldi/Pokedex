@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -54,14 +55,15 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         artwork = sprites.artworkImageUrl,
     )
 
-    private fun mapTypes(types: Types): UiType {
-        val typeUiData = PokemonUIData.values().first { it.name == types.type.name.uppercase() }
+    private fun mapTypes(types: Types): UiType { // duped logic
+        val typeUiData = PokemonUIData.findTypeUiData(types.type.name)
         return UiType(
             slot = types.slot,
-            name = types.type.name.uppercase(),
+            name = types.type.name.replaceFirstChar { it.uppercase() },
             url = types.type.url,
-            backgroundColor = typeUiData.typeColor,
-            icon = typeUiData.icon,
+            backgroundColor = typeUiData?.typeColor ?: Color.Transparent, // TODO: maybe throw an error instead of this?
+            icon = typeUiData?.icon ?: -1,
+            typeColor = typeUiData?.typeColor ?: Color.Transparent,
         )
     }
 
@@ -81,13 +83,17 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         speed = stats.speed?.let { getStatDetail(it) },
         accuracy = stats.accuracy?.let { getStatDetail(it) },
         evasion = stats.evasion?.let { getStatDetail(it) },
+        total = ((stats.hp ?: 0) + (stats.attack ?: 0) + (stats.defense ?: 0) +
+                (stats.specialAttack ?: 0) + (stats.specialDefense ?: 0) + (stats.speed ?: 0) +
+                (stats.accuracy ?: 0) + (stats.evasion ?: 0)).toString() // TODO: ok, this is just filthy.
     )
 
     private fun getStatDetail(
         baseStat: Int,
         isHealthStat: Boolean = false
     ) = StatDetailUiModel(
-        baseStat = baseStat,
+        baseStat = baseStat.toString(),
+        baseStatFloat = baseStat.toFloat() / 100,
         minMaxStat = baseStat.calculateStat(isHealthStat = isHealthStat),
         maxStat = baseStat.calculateStat(maxed = true, isHealthStat = isHealthStat),
     )
@@ -175,15 +181,15 @@ class PokemonCompleteModelToUiModelMapper @Inject constructor() {
         else -> Effectiveness.NONE
     }
 
-    private fun Int.calculateStat(maxed: Boolean = false, isHealthStat: Boolean): Int {
+    private fun Int.calculateStat(maxed: Boolean = false, isHealthStat: Boolean): String {
         val ev = if (maxed) 252 else 0
         val iv = if (maxed) 31 else 0
         val nmod = if (maxed) 1.1 else 0.9
         val baseCalculation = (this * 2 + iv + (ev / 4)) * 100 / 100
         return if (isHealthStat) {
-            baseCalculation + 10 + 100
+            (baseCalculation + 10 + 100).toString()
         } else {
-            floor((baseCalculation + 5) * nmod).toInt()
+            floor((baseCalculation + 5) * nmod).toInt().toString()
         }
     }
 

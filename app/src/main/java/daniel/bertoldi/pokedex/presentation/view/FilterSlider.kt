@@ -38,7 +38,7 @@ fun FilterSlider(
     }
 
     Text(
-        modifier = modifier.padding(bottom = 20.dp),
+        modifier = modifier.padding(top = 35.dp, bottom = 20.dp),
         text = "Number Range",
         color = TextBlack,
         style = Typography.h4,
@@ -68,15 +68,15 @@ fun FilterSlider(
             val endOffset = getSliderOffset(
                 value = sliderPosition.endInclusive,
                 valueRange = valueRange,
-                boxWidth = maxWidth,
+                boxWidth = if (sliderPosition.endInclusive > 1090F) maxWidth - 5.dp else maxWidth, // honestly no ideia why this kinda works
                 labelWidth = labelMinWidth,
             )
 
             if (sliderPosition.start > valueRange.start) {
                 SliderLabel(
+                    modifier = Modifier.padding(start = offset),
                     label = sliderPosition.start.toInt().toString(),
                     minWidth = labelMinWidth,
-                    modifier = Modifier.padding(start = offset)
                 )
             } else {
                 SliderLabel(label = valueRange.start.toInt().toString(), minWidth = labelMinWidth)
@@ -84,9 +84,9 @@ fun FilterSlider(
 
             if (sliderPosition.endInclusive > valueRange.start) {
                 SliderLabel(
+                    modifier = Modifier.padding(start = endOffset),
                     label = sliderPosition.endInclusive.toInt().toString(),
                     minWidth = labelMinWidth,
-                    modifier = Modifier.padding(start = endOffset)
                 )
             }
         }

@@ -1,11 +1,14 @@
 package daniel.bertoldi.pokedex.presentation.view
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +35,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 fun FilterComponent(
     filterOptions: MutableStateFlow<FilterOptions>,
     onFilterClicked: (Int, String) -> Unit,
+    onConfirmClicked: () -> Unit,
+//    onResetClicked: () -> Unit,
 ) {
     val modifier = Modifier.padding(start = 40.dp, end = 40.dp)
     val filterOptionsState by filterOptions.collectAsState()
@@ -65,19 +71,19 @@ fun FilterComponent(
                 modifier = modifier.padding(top = 35.dp),
                 color = TextBlack,
                 style = Typography.h4,
-                text = key,
+                text = key.replaceFirstChar { it.uppercase() },
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(26.dp),
             ) {
                 filter.forEachIndexed { idx, pokemon ->
                     if (idx == 0) { // pulo do gato rawr
-                        BoxFiller(22.dp)
+                        BoxFiller(15.dp)
                     }
-                    FilterMaluco(
-                        modifier = modifier,
+                    FilterOptionButton(
                         idx = idx,
                         filterType = key,
                         filterData = pokemon,
@@ -98,52 +104,77 @@ fun FilterComponent(
             FilterButton(
                 modifier = Modifier.padding(end = 14.dp),
                 buttonText = "Reset",
+                onConfirmClicked = onConfirmClicked,
             )
             FilterButton(
                 buttonText = "Apply",
                 textColor = TextWhite,
                 buttonColor = PokemonUIData.PSYCHIC.typeColor,
+                elevation = 7.dp,
+                onConfirmClicked = onConfirmClicked,
             )
         }
     }
 }
 
 @Composable
-private fun FilterMaluco(
-    modifier: Modifier = Modifier,
+private fun FilterOptionButton(
     idx: Int,
     filterType: String,
     filterData: PokemonFilterUIData,
     onFilterClicked: (Int, String) -> Unit,
 ) {
-    val backgroundColor by animateColorAsState(
-        targetValue = if (filterData.isSelected) {
-            filterData.filterUiData.foregroundColor
-        } else BgWhite,
-        animationSpec = tween(400),
+    val filterTransition = updateTransition(
+        targetState = filterData.isSelected,
+        label = "filterTransition",
     )
-    val iconFill by animateColorAsState(
-        targetValue = if (filterData.isSelected) {
-            BgWhite
-        } else filterData.filterUiData.foregroundColor,
-        animationSpec = tween(400),
-    )
+    val backgroundColor by filterTransition.animateColor(
+        transitionSpec = { tween(400) },
+        label = "filterBackgroundColor",
+    ) { isSelected ->
+        if (isSelected) filterData.filterUiData.foregroundColor else BgWhite
+    }
+    val iconFillColor by filterTransition.animateColor(
+        transitionSpec = { tween(400) },
+        label = "iconFillColor"
+    ) { isSelected ->
+        if (isSelected) BgWhite else filterData.filterUiData.foregroundColor
+    }
+    val elevationDp by filterTransition.animateDp(
+        transitionSpec = { tween(400) },
+        label = "elevationDp"
+    ) { isSelected ->
+        if (isSelected) 7.dp else 0.dp
+    }
+
 
     IconButton(
-        onClick = { onFilterClicked(idx, filterType.lowercase()) }
+        modifier = Modifier
+            .size(50.dp)
+            .padding(top = 10.dp)
+            .shadow(
+                elevation = elevationDp,
+                shape = CircleShape,
+                ambientColor = backgroundColor,
+                spotColor = backgroundColor,
+            )
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(100),
+            ),
+        onClick = { onFilterClicked(idx, filterType) }
     ) {
         Icon(
             modifier = Modifier
-                .padding(30.dp)
                 .background(
-                    color = backgroundColor,
-                    shape = RoundedCornerShape(50)
+                    color = Color.Transparent,
                 ),
             painter = painterResource(id = filterData.filterUiData.icon),
             contentDescription = null,
-            tint = iconFill,
+            tint = iconFillColor,
         )
     }
+
 }
 
 @Composable
@@ -159,31 +190,33 @@ private fun FilterButton(
     buttonColor: Color = BgDefaultInput,
     textColor: Color = TextGrey,
     buttonText: String,
+    elevation: Dp = 0.dp,
+    onConfirmClicked: () -> Unit = {},
 ) {
     Button(
         modifier = modifier
             .width(160.dp)
-            .height(60.dp),
-        onClick = { /* Add callback */ },
+            .height(60.dp)
+            .shadow(
+                elevation = elevation,
+                ambientColor = PokemonUIData.PSYCHIC.typeColor,
+                spotColor = PokemonUIData.PSYCHIC.typeColor,
+            ),
+        onClick = { onConfirmClicked() },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = buttonColor,
             contentColor = textColor,
         ),
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(10),
+        elevation = ButtonDefaults.elevation(
+            defaultElevation = elevation,
+        ),
     ) {
         Text(
             modifier = Modifier,
             text = buttonText,
             style = Typography.body1,
         )
-    }
-}
-
-@Preview(backgroundColor = 0)
-@Composable
-fun FilterComponentPreview() {
-    PokedexTheme {
-//        FilterComponent(MutableStateFlow(FilterOptions(numberRange = 1F..1100F)))
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -39,6 +40,7 @@ import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
 import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -164,9 +166,15 @@ fun PokemonListComponent(
                 FilterComponent(
                     filterOptions = filterOptions,
                     onFilterClicked = onFilterClick,
+                    onConfirmClicked = {
+                        scope.launch {
+                            modalBottomSheetState.hide()
+                        }
+                    }
                 )
             }
-        }
+        },
+        sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
     ) {
         Scaffold(
             topBar = {

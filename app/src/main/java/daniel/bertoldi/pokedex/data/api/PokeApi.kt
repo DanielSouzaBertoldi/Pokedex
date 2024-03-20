@@ -1,11 +1,6 @@
 package daniel.bertoldi.pokedex.data.api
 
-import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
-import daniel.bertoldi.pokedex.data.api.response.GenerationResponse
-import daniel.bertoldi.pokedex.data.api.response.GenerationsListResponse
-import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
-import daniel.bertoldi.pokedex.data.api.response.PokemonSpeciesResponse
-import daniel.bertoldi.pokedex.data.api.response.PokemonTypeResponse
+import daniel.bertoldi.pokedex.data.api.response.*
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -43,5 +38,5 @@ interface PokeApi {
     @GET("evolution-chain/{evolutionChainId}")
     suspend fun getEvolutionChain(
         @Path("evolutionChainId") evolutionChainId: Int,
-    )
+    ): EvolutionChainResponse
 }

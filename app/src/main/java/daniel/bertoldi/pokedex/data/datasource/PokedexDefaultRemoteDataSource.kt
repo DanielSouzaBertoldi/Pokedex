@@ -3,12 +3,7 @@ package daniel.bertoldi.pokedex.data.datasource
 import android.util.Log
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.*
-import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
-import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
-import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
-import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
-import daniel.bertoldi.pokedex.data.database.dao.StatsDao
-import daniel.bertoldi.pokedex.data.database.dao.TypeEffectivenessDao
+import daniel.bertoldi.pokedex.data.database.dao.*
 import daniel.bertoldi.pokedex.data.database.model.*
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
@@ -32,6 +27,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private val pokemonResponseToCompleteModelMapper: PokemonResponseToCompleteModelMapper,
     private val speciesDao: SpeciesDao,
     private val typeEffectivenessDao: TypeEffectivenessDao,
+    private val evolutionsDao: EvolutionsDao,
 ) : PokedexRemoteDataSource {
 
     override suspend fun getBasicPokemonInfo(pokemonId: Int): PokemonBasicModel {
@@ -253,7 +249,52 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
 
     private suspend fun getEvolutionChain(evolutionChainId: Int) {
         val evolutionChainResponse = pokeApi.getEvolutionChain(evolutionChainId)
-        Log.d("EVOLUTION-CHAIN", evolutionChainResponse.toString())
+        if (evolutionsDao.isEvolutionInDatabase(evolutionChainId).not()) {
+            evolutionChainResponse.chain.addEvolutionDetailsToDatabase(evolutionChainId)
+            checkNextChainLinkLayer(evolutionChainResponse.chain.chain, evolutionChainId)
+        }
+    }
+
+    private suspend fun ChainLinkResponse.addEvolutionDetailsToDatabase(
+        evolutionChainId: Int,
+    ) {
+        evolutionsDao.insertEvolution(
+            Evolution(
+                evolutionId = evolutionChainId,
+                evolutionName = this.species.name,
+                isBaby = this.isBaby,
+                heldItem = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+                knownMove = this.evolutionDetails.firstOrNull()?.knownMove?.name,
+                knownMoveType = this.evolutionDetails.firstOrNull()?.knownMoveType?.name,
+                minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
+                minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
+                minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
+                minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
+                needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain
+                    ?: false,
+                partySpecies = this.evolutionDetails.firstOrNull()?.partySpecies?.name,
+                partyType = this.evolutionDetails.firstOrNull()?.partyType?.name,
+                relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
+                timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
+                turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
+                location = this.evolutionDetails.firstOrNull()?.location?.name,
+                trigger = this.evolutionDetails.firstOrNull()?.trigger?.name,
+                item = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+                gender = this.evolutionDetails.firstOrNull()?.gender,
+            )
+        )
+    }
+
+    private suspend fun checkNextChainLinkLayer(
+        chain: List<ChainLinkResponse>,
+        evolutionChainId: Int
+    ) {
+        if (chain.isNotEmpty()) {
+            chain.forEach {
+                it.addEvolutionDetailsToDatabase(evolutionChainId)
+                checkNextChainLinkLayer(it.chain, evolutionChainId)
+            }
+        }
     }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =

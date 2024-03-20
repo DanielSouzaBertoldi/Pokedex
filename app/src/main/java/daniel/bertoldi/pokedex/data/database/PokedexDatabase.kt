@@ -8,13 +8,9 @@ import daniel.bertoldi.pokedex.data.database.converters.FlavorTextConverter
 import daniel.bertoldi.pokedex.data.database.converters.GenericObjectConverter
 import daniel.bertoldi.pokedex.data.database.converters.SpritesConverter
 import daniel.bertoldi.pokedex.data.database.converters.StringListConverter
-import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
-import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
-import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
-import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
-import daniel.bertoldi.pokedex.data.database.dao.StatsDao
-import daniel.bertoldi.pokedex.data.database.dao.TypeEffectivenessDao
+import daniel.bertoldi.pokedex.data.database.dao.*
 import daniel.bertoldi.pokedex.data.database.model.Abilities
+import daniel.bertoldi.pokedex.data.database.model.Evolution
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.Species
 import daniel.bertoldi.pokedex.data.database.model.Stats
@@ -31,6 +27,7 @@ private const val DATABASE_VERSION = 1
         Stats::class,
         Species::class,
         TypeEffectiveness::class,
+        Evolution::class,
     ],
     version = DATABASE_VERSION,
 )
@@ -54,4 +51,6 @@ abstract class PokedexDatabase : RoomDatabase() {
     abstract fun speciesDao(): SpeciesDao
 
     abstract fun typeEffectivenessDao(): TypeEffectivenessDao
+
+    abstract fun evolutionsDao(): EvolutionsDao
 }

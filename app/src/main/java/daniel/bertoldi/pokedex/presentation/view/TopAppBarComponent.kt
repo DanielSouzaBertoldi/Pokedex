@@ -8,6 +8,7 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import daniel.bertoldi.pokedex.R
 import daniel.bertoldi.pokedex.presentation.model.BottomSheetLayout
@@ -21,7 +22,10 @@ fun PokedexTopAppBar(
     modalBottomSheetState: ModalBottomSheetState,
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
 ) {
-    TopAppBar {
+    TopAppBar(
+        backgroundColor = Color.Red,
+        contentColor = Color.White,
+    ) {
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
             onClick = {

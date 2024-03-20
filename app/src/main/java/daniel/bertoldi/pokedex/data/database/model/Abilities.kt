@@ -12,7 +12,6 @@ data class Abilities(
     @ColumnInfo(name = "flavor_text_entries") val flavorTextEntries: List<FlavorTextEntry>,
     @ColumnInfo(name = "generation_name") val generationName: String,
     @ColumnInfo(name = "is_main_series") val isMainSeries: Boolean,
-    @ColumnInfo(name = "pokemons_with_ability") val pokemonsWithAbility: List<PokemonEntry>,
 )
 
 data class EffectEntry(
@@ -25,11 +24,4 @@ data class FlavorTextEntry(
     @ColumnInfo(name = "flavor_text") val flavorText: String,
     val language: String,
     @ColumnInfo(name = "version_group_name") val versionGroupName: String,
-)
-
-data class PokemonEntry(
-    @ColumnInfo(name = "pokemon_id") val pokemonId: Int,
-    @ColumnInfo(name = "pokemon_name") val pokemonName: String,
-    @ColumnInfo(name = "is_hidden") val isHidden: Boolean,
-    val slot: Int,
 )

@@ -3,10 +3,11 @@ package daniel.bertoldi.pokedex.data.datasource
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.AbilityResponse
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
+import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.EffectEntry
 import daniel.bertoldi.pokedex.data.database.model.FlavorTextEntry
-import daniel.bertoldi.pokedex.data.database.model.PokemonEntry
+import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 import daniel.bertoldi.pokedex.domain.mapper.PokemonResponseToModelMapper
 import daniel.bertoldi.pokedex.domain.model.PokemonModel
 import javax.inject.Inject
@@ -17,6 +18,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private val pokeApi: PokeApi,
     private val pokemonResponseToModelMapper: PokemonResponseToModelMapper,
     private val abilitiesDao: AbilitiesDao,
+    private val pokemonAbilitiesCrossRefDao: PokemonAbilitiesCrossRefDao,
 ) : PokedexRemoteDataSource {
 
     override suspend fun getPokemon(pokemonId: Int): PokemonModel {
@@ -29,7 +31,6 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 addAbilityToRoom(abilityResponse)
             }
         }
-
 
         return pokemonResponseToModelMapper.mapFrom(pokemonResponse)
     }
@@ -55,15 +56,19 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 },
                 generationName = abilityResponse.generation.name,
                 isMainSeries = abilityResponse.isMainSeries,
-                pokemonsWithAbility = abilityResponse.pokemon.map { pokemon ->
-                    PokemonEntry(
-                        pokemonId = fetchIdRegex.findAll(pokemon.data.url).last().value.toInt(),
-                        pokemonName = pokemon.data.name,
-                        isHidden = pokemon.isHidden,
-                        slot = pokemon.slot,
-                    )
-                }
             )
         )
+
+        abilityResponse.pokemon.map { pokemon ->
+            pokemonAbilitiesCrossRefDao.insertPokemonAbilityCrossRef(
+                PokemonAbilitiesCrossRef(
+                    abilityId = abilityResponse.id,
+                    pokemonId = fetchIdRegex.findAll(pokemon.data.url).last().value.toInt(),
+//                    pokemonName = pokemon.data.name,
+//                    isHidden = pokemon.isHidden,
+//                    slot = pokemon.slot,
+                )
+            )
+        }
     }
 }

@@ -32,9 +32,40 @@ data class PokemonAbilityResponse(
 @JsonClass(generateAdapter = true)
 data class SpritesResponse(
     @Json(name = "back_default") val backDefault: String?,
+    @Json(name = "back_female") val backFemale: String?,
     @Json(name = "back_shiny") val backShiny: String?,
+    @Json(name = "back_shiny_female") val backShinyFemale: String?,
     @Json(name = "front_default") val frontDefault: String?,
+    @Json(name = "front_female") val frontFemale: String?,
     @Json(name = "front_shiny") val frontShiny: String?,
+    @Json(name = "front_shiny_female") val frontShinyFemale: String?,
+    @Json(name = "other") val otherSprites: OtherSpritesResponse,
+)
+
+@JsonClass(generateAdapter = true)
+data class OtherSpritesResponse(
+    @Json(name = "dream_world") val dreamWorldSprites: DreamWorldSprites,
+    @Json(name = "home") val homeSprites: HomeSprites,
+    @Json(name = "official-artwork") val officialArtworkSprites: OfficialArtworkSprites,
+)
+
+@JsonClass(generateAdapter = true)
+data class DreamWorldSprites(
+    @Json(name = "front_default") val frontDefault: String?,
+    @Json(name = "front_female") val frontFemale: String?,
+)
+
+@JsonClass(generateAdapter = true)
+data class HomeSprites(
+    @Json(name = "front_default") val frontDefault: String?,
+    @Json(name = "front_female") val frontFemale: String?,
+    @Json(name = "front_shiny") val frontShiny: String?,
+    @Json(name = "front_shiny_female") val frontShinyFemale: String?,
+)
+
+@JsonClass(generateAdapter = true)
+data class OfficialArtworkSprites(
+    @Json(name = "front_default") val frontDefault: String?,
 )
 
 @JsonClass(generateAdapter = true)

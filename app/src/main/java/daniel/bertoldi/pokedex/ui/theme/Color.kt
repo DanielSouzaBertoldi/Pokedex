@@ -1,8 +1,11 @@
 package daniel.bertoldi.pokedex.ui.theme
 
+import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import daniel.bertoldi.pokedex.R
 
 // Delete this after all colors have been added.
 val Purple200 = Color(0xFFBB86FC)
@@ -10,45 +13,28 @@ val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 
-/* Pokémon Type Colors */
-val TypeBug = Color(0xFF8CB230)
-val TypeDark = Color(0xFF58575F)
-val TypeDragon = Color(0xFF0F6AC0)
-val TypeElectric = Color(0xFFEED535)
-val TypeFairy = Color(0xFFED6EC7)
-val TypeFighting = Color(0xFFD04164)
-val TypeFire = Color(0xFFFD7D24)
-val TypeFlying = Color(0xFF748FC9)
-val TypeGhost = Color(0xFF556AAE)
-val TypeGrass = Color(0xFF62B957)
-val TypeGround = Color(0xFFDD7748)
-val TypeIce = Color(0xFF61CEC0)
-val TypeNormal = Color(0xFF61CEC0)
-val TypePoison = Color(0xFFA552CC)
-val TypePsychic = Color(0xFFEA5D60)
-val TypeRock = Color(0xFFBAAB82)
-val TypeSteel = Color(0xFF417D9A)
-val TypeWater = Color(0xFF4A90DA)
 
-/* Pokémon Background Type Colors */
-val BgTypeBug = Color(0xFF8BD674)
-val BgTypeDark = Color(0xFF6F6E78)
-val BgTypeDragon = Color(0xFF7383B9)
-val BgTypeElectric = Color(0xFFF2CB55)
-val BgTypeFairy = Color(0xFFEBA8C3)
-val BgTypeFighting = Color(0xFFEB4971)
-val BgTypeFire = Color(0xFFFFA756)
-val BgTypeFlying = Color(0xFF83A2E3)
-val BgTypeGhost = Color(0xFF8571BE)
-val BgTypeGrass = Color(0xFF8BBE8A)
-val BgTypeGround = Color(0xFFF78551)
-val BgTypeIce = Color(0xFF91D8DF)
-val BgTypeNormal = Color(0xFFB5B9C4)
-val BgTypePoison = Color(0xFF9F6E97)
-val BgTypePsychic = Color(0xFFFF6568)
-val BgTypeRock = Color(0xFFD4C294)
-val BgTypeSteel = Color(0xFF4C91B2)
-val BgTypeWater = Color(0xFF58ABF6)
+/* Pokémon UI Data by Type */
+enum class PokemonUIData(val typeColor: Color, val backgroundColor: Color, val icon: Int) {
+    BUG(Color(0xFF8CB230), Color(0xFF8BD674), R.drawable.ic_grass_type),
+    DARK(Color(0xFF58575F), Color(0xFF6F6E78), R.drawable.ic_grass_type),
+    DRAGON(Color(0xFF0F6AC0), Color(0xFF7383B9), R.drawable.ic_grass_type),
+    ELECTRIC(Color(0xFFEED535), Color(0xFFF2CB55), R.drawable.ic_grass_type),
+    FAIRY(Color(0xFFED6EC7), Color(0xFFEBA8C3), R.drawable.ic_grass_type),
+    FIGHTING(Color(0xFFD04164), Color(0xFFEB4971), R.drawable.ic_grass_type),
+    FIRE(Color(0xFFFD7D24), Color(0xFFFFA756), R.drawable.ic_grass_type),
+    FLYING(Color(0xFF748FC9), Color(0xFF83A2E3), R.drawable.ic_grass_type),
+    GHOST(Color(0xFF556AAE), Color(0xFF8571BE), R.drawable.ic_grass_type),
+    GRASS(Color(0xFF62B957), Color(0xFF8BBE8A), R.drawable.ic_grass_type),
+    GROUND(Color(0xFFDD7748), Color(0xFFF78551), R.drawable.ic_grass_type),
+    ICE(Color(0xFF61CEC0), Color(0xFF91D8DF), R.drawable.ic_grass_type),
+    NORMAL(Color(0xFF9DA0AA), Color(0xFFB5B9C4), R.drawable.ic_grass_type),
+    POISON(Color(0xFFA552CC), Color(0xFF9F6E97), R.drawable.ic_poison_type),
+    PSYCHIC(Color(0xFFEA5D60), Color(0xFFFF6568), R.drawable.ic_grass_type),
+    ROCK(Color(0xFFBAAB82), Color(0xFFD4C294), R.drawable.ic_grass_type),
+    STEEL(Color(0xFF417D9A), Color(0xFF4C91B2), R.drawable.ic_grass_type),
+    WATER(Color(0xFF4A90DA), Color(0xFF58ABF6), R.drawable.ic_grass_type),
+}
 
 /* Generic Background Colors */
 val BgWhite = Color(0xFFFFFFFF)

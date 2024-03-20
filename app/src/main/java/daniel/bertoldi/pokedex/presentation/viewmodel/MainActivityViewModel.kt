@@ -4,11 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import daniel.bertoldi.pokedex.domain.model.PokemonModel
 import daniel.bertoldi.pokedex.presentation.mapper.PokemonModelToUiModelMapper
+import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
 import daniel.bertoldi.pokedex.usecase.GetPokemonUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +20,7 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
 
     var errorScreen = false
+    var pokemonData = MutableStateFlow<PokemonUiModel?>(null)
 
     // Improve this error handling!
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -30,10 +32,9 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun getPokemons() {
-        var pokemonList: PokemonModel
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            pokemonList = getPokemon(1)
-            Log.d("pokemon", pokemonList.toString())
+            pokemonData.value = pokemonModelToUiModelMapper.mapFrom(getPokemon(1))
+            Log.d("pokemon", pokemonData.value.toString())
         }
     }
 }

@@ -117,18 +117,16 @@ fun PokemonListComponent(
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetContent = {
-            if (sheetContent.value == BottomSheetLayout.Filter) {
-                Spacer(modifier = Modifier.height(50.dp))
-                Text("You've opened the FILTERS option!")
-                Spacer(modifier = Modifier.height(50.dp))
-            } else if (sheetContent.value == BottomSheetLayout.Generations) {
+            if (sheetContent.value == BottomSheetLayout.Generations) {
                 Spacer(modifier = Modifier.height(50.dp))
                 Text("You've opened the GENERATIONS option!")
                 Spacer(modifier = Modifier.height(50.dp))
-            } else {
+            } else if (sheetContent.value == BottomSheetLayout.Sort) {
                 Spacer(modifier = Modifier.height(50.dp))
                 Text("You've opened the SORT option!")
                 Spacer(modifier = Modifier.height(50.dp))
+            } else {
+                FilterComponent()
             }
         }
     ) {

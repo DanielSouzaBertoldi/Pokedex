@@ -9,7 +9,6 @@ import daniel.bertoldi.pokedex.data.api.response.GenericObject
 data class Pokemon(
     @PrimaryKey val id: Int,
     val name: String,
-    val pokedexEntry: String,
     val height: Int,
     val weight: Int,
     @ColumnInfo(name = "is_default") val isDefault: Boolean,

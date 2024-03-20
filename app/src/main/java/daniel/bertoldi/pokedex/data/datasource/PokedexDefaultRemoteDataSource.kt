@@ -45,7 +45,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     override suspend fun getCompletePokemonInfo(pokemonId: Int): PokemonCompleteModel {
         val pokemonResponse = pokeApi.getPokemon(pokemonId)
         getPokemonAbilities(pokemonResponse.abilities)
-        getPokemonPokedexEntry(pokemonResponse.species.url)
+        getPokemonSpecies(pokemonResponse.species.url)
 
         return pokemonResponseToCompleteModelMapper.mapFrom(pokemonResponse)
     }
@@ -61,7 +61,6 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
             Pokemon(
                 id = pokemon.id,
                 name = pokemon.name,
-                pokedexEntry = "",
                 height = pokemon.height,
                 weight = pokemon.weight,
                 isDefault = pokemon.isDefault,
@@ -137,36 +136,36 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
             pokemonAbilitiesCrossRefDao.insertPokemonAbilityCrossRef(
                 PokemonAbilitiesCrossRef(
                     abilityId = abilityResponse.id,
-                    pokemonId = fetchIdRegex.findAll(pokemon.data.url).last().value.toInt(),
+                    pokemonId = pokemon.data.url.fetchIdFromUrl(),
                 )
             )
         }
     }
 
-    private suspend fun getPokemonPokedexEntry(speciesUrl: String) {
+    private suspend fun getPokemonSpecies(speciesUrl: String) {
         val speciesId = speciesUrl.fetchIdFromUrl()
         val speciesResponse = pokeApi.getPokemonSpecies(speciesId)
 
-        speciesDao.insertSpecies(
-            Species(
-                speciesId = speciesResponse.id,
-                baseHappiness = speciesResponse.baseHappiness,
-                captureRate = speciesResponse.captureRate,
-                eggGroups = speciesResponse.eggGroups.map { it.name },
-                genderRate = speciesResponse.genderRate,
-                flavorTextEntries = speciesResponse.flavorTextEntries.map { flavorEntry ->
-                    FlavorTextEntry(
-                        flavorText = flavorEntry.flavorText,
-                        language = flavorEntry.language.name,
-                    )
-                },
-                growthRate = speciesResponse.growthRate.name,
-                isBaby = speciesResponse.isBaby,
-                isLegendary = speciesResponse.isLegendary,
-                isMythical = speciesResponse.isMythical,
-                hatchCounter = speciesResponse.hatchCounter,
+        if (speciesDao.isSpeciesInDatabase(speciesId).not()) {
+            speciesDao.insertSpecies(
+                Species(
+                    speciesId = speciesResponse.id,
+                    baseHappiness = speciesResponse.baseHappiness,
+                    captureRate = speciesResponse.captureRate,
+                    eggGroups = speciesResponse.eggGroups.map { it.name },
+                    genderRate = speciesResponse.genderRate,
+                    pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
+                        flavorEntry.language.name == "en"
+                    }.maxBy { it.flavorText.length }.flavorText,
+                    growthRate = speciesResponse.growthRate.name,
+                    isBaby = speciesResponse.isBaby,
+                    isLegendary = speciesResponse.isLegendary,
+                    isMythical = speciesResponse.isMythical,
+                    hatchCounter = speciesResponse.hatchCounter,
+                    genera = speciesResponse.genera.first { it.language.name == "en" }.genus,
+                )
             )
-        )
+        }
     }
 
     private fun List<StatsResponse>.getBaseStat(stat: String) =

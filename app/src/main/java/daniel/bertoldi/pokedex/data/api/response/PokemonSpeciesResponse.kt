@@ -1,7 +1,9 @@
 package daniel.bertoldi.pokedex.data.api.response
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class PokemonSpeciesResponse(
     val id: Int,
     @Json(name = "base_happiness") val baseHappiness: Int,
@@ -14,4 +16,11 @@ data class PokemonSpeciesResponse(
     @Json(name = "is_legendary") val isLegendary: Boolean,
     @Json(name = "is_mythical") val isMythical: Boolean,
     @Json(name = "hatch_counter") val hatchCounter: Int,
+    val genera: List<GeneraResponse>,
+)
+
+@JsonClass(generateAdapter = true)
+data class GeneraResponse(
+    val genus: String,
+    val language: GenericObject
 )

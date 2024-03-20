@@ -13,10 +13,11 @@ data class Species(
     @ColumnInfo(name = "capture_rate") val captureRate: Int,
     @ColumnInfo(name = "egg_groups") val eggGroups: List<String>,
     @ColumnInfo(name = "gender_rate") val genderRate: Int,
-    @ColumnInfo(name = "flavor_text_entries") val flavorTextEntries: List<FlavorTextEntry>,
+    @ColumnInfo(name = "pokedex_entry") val pokedexEntry: String,
     @ColumnInfo(name = "growth_rate") val growthRate: String,
     @ColumnInfo(name = "is_baby") val isBaby: Boolean,
     @ColumnInfo(name = "is_legendary") val isLegendary: Boolean,
     @ColumnInfo(name = "is_mythical") val isMythical: Boolean,
     @ColumnInfo(name = "hatch_counter") val hatchCounter: Int,
+    val genera: String,
 )

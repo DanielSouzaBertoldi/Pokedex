@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.domain.mapper
 
+import daniel.bertoldi.pokedex.data.api.response.ChainLinkResponse
 import daniel.bertoldi.pokedex.data.api.response.GenericObject
 import daniel.bertoldi.pokedex.data.database.model.*
 import daniel.bertoldi.pokedex.domain.model.*
@@ -13,6 +14,7 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         statsEntity: Stats,
         speciesEntity: Species,
         typeEffectivenessEntity: TypeEffectiveness,
+        evolutionChain: Evolution,
     ) = PokemonCompleteModel(
         id = pokemonEntity.pokemonId,
         baseExperience = pokemonEntity.baseExperience,
@@ -25,7 +27,8 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         abilities = mapAbilities(pokemonAbilities),
         stats = mapStats(statsEntity),
         species = mapSpecies(speciesEntity),
-        typeEffectiveness = mapTypeEffectiveness(typeEffectivenessEntity)
+        typeEffectiveness = mapTypeEffectiveness(typeEffectivenessEntity),
+        evolutionChain = evolutionChain.chainDetails.parseEvolution()
     )
 
     private fun mapSprites(sprites: Sprites) = SpritesModel(
@@ -114,6 +117,64 @@ class PokemonEntityToCompleteModelMapper @Inject constructor() {
         unknown = typeEffectivenessEntity.unknown,
         shadow = typeEffectivenessEntity.shadow,
     )
+
+    private fun ChainLinkResponse.parseEvolution() = EvolutionChainDetailsModel(
+        name = this.species.name,
+        isBaby = this.isBaby,
+        heldItem = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        knownMove = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        knownMoveType = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
+        minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
+        minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
+        minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
+        needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain ?: false,
+        partySpecies = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        partyType = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
+        timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
+        turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
+        location = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        trigger = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        item = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        gender = this.evolutionDetails.firstOrNull()?.gender,
+        nextEvolution = getNextChainLayer(this.chain),
+    )
+
+    private fun getNextChainLayer(
+        chain: List<ChainLinkResponse>,
+    ): List<EvolutionChainDetailsModel> = chain.map {
+        it.parseEvolution()
+    }
+
+    private fun ChainDetails.parseEvolution() = EvolutionChainDetailsModel(
+        name = this.evolutionName,
+        isBaby = this.isBaby,
+        heldItem = this.evolutionDetails.firstOrNull()?.heldItem, // I shouldn't be using first or Null actually. I should parse them all!!!
+        knownMove = this.evolutionDetails.firstOrNull()?.heldItem,
+        knownMoveType = this.evolutionDetails.firstOrNull()?.heldItem,
+        minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
+        minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
+        minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
+        minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
+        needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain ?: false,
+        partySpecies = this.evolutionDetails.firstOrNull()?.heldItem,
+        partyType = this.evolutionDetails.firstOrNull()?.heldItem,
+        relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
+        timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
+        turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
+        location = this.evolutionDetails.firstOrNull()?.heldItem,
+        trigger = this.evolutionDetails.firstOrNull()?.heldItem,
+        item = this.evolutionDetails.firstOrNull()?.heldItem,
+        gender = this.evolutionDetails.firstOrNull()?.gender,
+        nextEvolution = getNextChainDetailsLayer(this.evolvesTo),
+    )
+
+    private fun getNextChainDetailsLayer(
+        chain: List<ChainDetails>,
+    ): List<EvolutionChainDetailsModel> = chain.map {
+        it.parseEvolution()
+    }
 
     private fun formatGrowthRate(growthRate: String) = growthRate // duped logic
         .split("-")

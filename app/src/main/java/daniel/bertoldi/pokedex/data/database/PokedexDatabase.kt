@@ -3,6 +3,7 @@ package daniel.bertoldi.pokedex.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import daniel.bertoldi.pokedex.data.database.converters.ChainDetailsConverter
 import daniel.bertoldi.pokedex.data.database.converters.EffectEntryConverter
 import daniel.bertoldi.pokedex.data.database.converters.FlavorTextConverter
 import daniel.bertoldi.pokedex.data.database.converters.GenericObjectConverter
@@ -37,6 +38,7 @@ private const val DATABASE_VERSION = 1
     SpritesConverter::class,
     GenericObjectConverter::class,
     StringListConverter::class,
+    ChainDetailsConverter::class,
 )
 abstract class PokedexDatabase : RoomDatabase() {
 

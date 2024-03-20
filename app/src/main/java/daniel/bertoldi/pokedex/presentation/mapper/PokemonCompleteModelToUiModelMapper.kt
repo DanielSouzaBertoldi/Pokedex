@@ -1,5 +1,6 @@
 package daniel.bertoldi.pokedex.presentation.mapper
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -16,25 +17,28 @@ import kotlin.math.floor
 
 class PokemonCompleteModelToUiModelMapper @Inject constructor() {
 
-    fun mapFrom(pokemonModel: PokemonCompleteModel) = PokemonCompleteUiModel(
-        abilities = pokemonModel.abilities.map { mapAbilities(it) }.sortedBy { it.slot },
-        height = pokemonModel.height.calculateHeight(),
-        id = pokemonModel.id,
-        pokedexNumber = String.format(Locale.ROOT, "#%03d", pokemonModel.id),
-        pokedexEntry = pokemonModel.species.pokedexEntry,
-        isDefault = pokemonModel.isDefault,
-        name = pokemonModel.name.capitalize(),
-        uiSprites = mapSprites(pokemonModel.sprites),
-        types = pokemonModel.types.map { mapTypes(it) },
-        weight = pokemonModel.weight.calculateWeight(),
-        backgroundColors = mapCardBackgroundColors(
-            pokemonModel.types.first().type.name.uppercase()
-        ),
-        baseExperience = pokemonModel.baseExperience,
-        stats = mapStats(pokemonModel.stats),
-        species = mapSpecies(pokemonModel.species),
-        typeEffectiveness = mapTypeEffectiveness(pokemonModel.typeEffectiveness)
-    )
+    fun mapFrom(pokemonModel: PokemonCompleteModel): PokemonCompleteUiModel {
+        Log.d("EVOLUTION", pokemonModel.evolutionChain.toString())
+        return PokemonCompleteUiModel(
+            abilities = pokemonModel.abilities.map { mapAbilities(it) }.sortedBy { it.slot },
+            height = pokemonModel.height.calculateHeight(),
+            id = pokemonModel.id,
+            pokedexNumber = String.format(Locale.ROOT, "#%03d", pokemonModel.id),
+            pokedexEntry = pokemonModel.species.pokedexEntry,
+            isDefault = pokemonModel.isDefault,
+            name = pokemonModel.name.capitalize(),
+            uiSprites = mapSprites(pokemonModel.sprites),
+            types = pokemonModel.types.map { mapTypes(it) },
+            weight = pokemonModel.weight.calculateWeight(),
+            backgroundColors = mapCardBackgroundColors(
+                pokemonModel.types.first().type.name.uppercase()
+            ),
+            baseExperience = pokemonModel.baseExperience,
+            stats = mapStats(pokemonModel.stats),
+            species = mapSpecies(pokemonModel.species),
+            typeEffectiveness = mapTypeEffectiveness(pokemonModel.typeEffectiveness)
+        )
+    }
 
     private fun mapAbilities(abilityModel: AbilityModel) = PokemonUiAbility(
         name = abilityModel.name.replaceFirstChar { it.uppercase() },

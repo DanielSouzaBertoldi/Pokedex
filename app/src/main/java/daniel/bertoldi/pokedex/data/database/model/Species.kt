@@ -19,5 +19,6 @@ data class Species(
     @ColumnInfo(name = "is_legendary") val isLegendary: Boolean,
     @ColumnInfo(name = "is_mythical") val isMythical: Boolean,
     @ColumnInfo(name = "hatch_counter") val hatchCounter: Int,
+    @ColumnInfo(name = "evolution_id") val evolutionId: Int,
     val genera: String,
 )

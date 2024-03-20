@@ -3,29 +3,40 @@ package daniel.bertoldi.pokedex.data.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.squareup.moshi.Json
+import daniel.bertoldi.pokedex.data.api.response.GenericObject
 
 @Entity(
     tableName = "evolutions",
 )
 data class Evolution(
-    @ColumnInfo(name = "evolution_name") @PrimaryKey val evolutionName: String,
-    @ColumnInfo(name = "evolution_id") val evolutionId: Int,
-    @ColumnInfo(name = "is_baby") val isBaby: Boolean,
-    @ColumnInfo(name = "held_item") val heldItem: String?,
-    @ColumnInfo(name = "known_move") val knownMove: String?,
-    @ColumnInfo(name = "known_move_type") val knownMoveType: String?,
-    @ColumnInfo(name = "min_level") val minLevel: Int?,
-    @ColumnInfo(name = "min_happiness") val minHappiness: Int?,
-    @ColumnInfo(name = "min_beauty") val minBeauty: Int?,
-    @ColumnInfo(name = "min_affection") val minAffection: Int?,
-    @ColumnInfo(name = "needs_overworld_rain") val needsOverworldRain: Boolean,
-    @ColumnInfo(name = "party_species") val partySpecies: String?,
-    @ColumnInfo(name = "party_type") val partyType: String?,
-    @ColumnInfo(name = "relative_physical_stats") val relativePhysicalStats: Int?,
-    @ColumnInfo(name = "time_of_day") val timeOfDay: String,
-    @ColumnInfo(name = "turn_upside_down") val turnUpsideDown: Boolean,
-    val location: String?,
-    val trigger: String?,
+    @ColumnInfo(name = "evolution_chain_id") @PrimaryKey val evolutionChainId: Int,
+    val chainDetails: ChainDetails,
+)
+
+data class ChainDetails(
+    val evolutionName: String,
+    val isBaby: Boolean,
+    val evolutionDetails: List<EvolutionDetails>,
+    val evolvesTo: List<ChainDetails>
+)
+
+data class EvolutionDetails(
     val item: String?,
+    val trigger: String?,
     val gender: Int?,
+    val knownMove: String?,
+    val heldItem: String?,
+    val knownMoveType: String?,
+    val location: String?,
+    val minLevel: Int?,
+    val minHappiness: Int?,
+    val minBeauty: Int?,
+    val minAffection: Int?,
+    val needsOverworldRain: Boolean,
+    val partySpecies: String?,
+    val partyType: String?,
+    val relativePhysicalStats: Int?,
+    val timeOfDay: String,
+    val turnUpsideDown: Boolean,
 )

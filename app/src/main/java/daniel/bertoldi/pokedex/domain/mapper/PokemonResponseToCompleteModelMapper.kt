@@ -12,6 +12,7 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         abilitiesResponse: List<AbilityResponse>,
         speciesResponse: PokemonSpeciesResponse,
         typeEffectiveness: TypeEffectiveness,
+        evolutionChain: EvolutionChainResponse,
     ) = PokemonCompleteModel(
         id = pokemonEntity.id,
         baseExperience = pokemonEntity.baseExperience ?: -1,
@@ -25,6 +26,7 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         stats = mapStats(pokemonEntity.stats),
         species = mapSpecies(speciesResponse),
         typeEffectiveness = mapTypeEffectiveness(typeEffectiveness),
+        evolutionChain = mapEvolutionChain(evolutionChain)
     )
 
     private fun mapAbilities(abilities: List<AbilityResponse>) = abilities.map {
@@ -75,23 +77,24 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         evasion = stats.getBaseStat("evasion"),
     )
 
-    private fun mapSpecies(speciesResponse: PokemonSpeciesResponse) = SpeciesModel( // duplicated logic
-        baseHappiness = speciesResponse.baseHappiness,
-        captureRate = speciesResponse.captureRate,
-        eggGroups = speciesResponse.eggGroups.map { it.name },
-        genderRate = speciesResponse.genderRate,
-        pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
-            flavorEntry.language.name == "en"
-        }.maxBy { it.flavorText.length }.flavorText.replace("\n", " "),
-        growthRate = formatGrowthRate(speciesResponse.growthRate.name), // TODO: should I be formating it here? Isn't it best to format it in Model -> Ui layer? hmm
-        isBaby = speciesResponse.isBaby,
-        isLegendary = speciesResponse.isLegendary,
-        isMythical = speciesResponse.isMythical,
-        hatchCounter = speciesResponse.hatchCounter,
-        name = speciesResponse.genera.firstOrNull { generaEntry ->
-            generaEntry.language.name == "en"
-        }?.genus.orEmpty()
-    )
+    private fun mapSpecies(speciesResponse: PokemonSpeciesResponse) =
+        SpeciesModel( // duplicated logic
+            baseHappiness = speciesResponse.baseHappiness,
+            captureRate = speciesResponse.captureRate,
+            eggGroups = speciesResponse.eggGroups.map { it.name },
+            genderRate = speciesResponse.genderRate,
+            pokedexEntry = speciesResponse.flavorTextEntries.filter { flavorEntry ->
+                flavorEntry.language.name == "en"
+            }.maxBy { it.flavorText.length }.flavorText.replace("\n", " "),
+            growthRate = formatGrowthRate(speciesResponse.growthRate.name), // TODO: should I be formating it here? Isn't it best to format it in Model -> Ui layer? hmm
+            isBaby = speciesResponse.isBaby,
+            isLegendary = speciesResponse.isLegendary,
+            isMythical = speciesResponse.isMythical,
+            hatchCounter = speciesResponse.hatchCounter,
+            name = speciesResponse.genera.firstOrNull { generaEntry ->
+                generaEntry.language.name == "en"
+            }?.genus.orEmpty()
+        )
 
     private fun mapTypeEffectiveness(
         typeEffectivenessEntity: TypeEffectiveness,
@@ -117,6 +120,40 @@ class PokemonResponseToCompleteModelMapper @Inject constructor() {
         unknown = typeEffectivenessEntity.unknown,
         shadow = typeEffectivenessEntity.shadow,
     )
+
+    private fun mapEvolutionChain(
+        evolutionChain: EvolutionChainResponse,
+    ) = evolutionChain.chain.addEvolution()
+
+    private fun ChainLinkResponse.addEvolution() = EvolutionChainDetailsModel(
+        name = this.species.name,
+        isBaby = this.isBaby,
+        heldItem = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        knownMove = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        knownMoveType = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
+        minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
+        minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
+        minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
+        needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain ?: false,
+        partySpecies = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        partyType = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
+        timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
+        turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
+        location = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        trigger = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        item = this.evolutionDetails.firstOrNull()?.heldItem?.name,
+        gender = this.evolutionDetails.firstOrNull()?.gender,
+        nextEvolution = getNextChainLayer(this.chain),
+    )
+
+    private fun getNextChainLayer(
+        chain: List<ChainLinkResponse>,
+    ): List<EvolutionChainDetailsModel> = chain.map {
+        it.addEvolution()
+    }
+
 
     private fun formatGrowthRate(growthRate: String) = growthRate
         .split("-")

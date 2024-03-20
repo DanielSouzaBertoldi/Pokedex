@@ -1,6 +1,7 @@
 package daniel.bertoldi.pokedex.data.datasource
 
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
+import daniel.bertoldi.pokedex.data.database.dao.EvolutionsDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
 import daniel.bertoldi.pokedex.data.database.dao.StatsDao
@@ -16,6 +17,7 @@ class PokedexDefaultLocalDataSource @Inject constructor(
     private val statsDao: StatsDao,
     private val speciesDao: SpeciesDao,
     private val typeEffectivenessDao: TypeEffectivenessDao,
+    private val evolutionsDao: EvolutionsDao,
     private val pokemonEntityToBasicModelMapper: PokemonEntityToBasicModelMapper,
     private val pokemonEntityToCompleteModelMapper: PokemonEntityToCompleteModelMapper,
 ) : PokedexLocalDataSource {
@@ -33,6 +35,7 @@ class PokedexDefaultLocalDataSource @Inject constructor(
             pokemonBasicInfo.types[0].name,
             pokemonBasicInfo.types.getOrNull(1)?.name ?: "",
         )
+        val evolutions = evolutionsDao.getEvolutionChainOfAPokemon(species.evolutionId)
 
         return pokemonEntityToCompleteModelMapper.mapFrom(
             pokemonEntity = pokemonBasicInfo,
@@ -40,6 +43,7 @@ class PokedexDefaultLocalDataSource @Inject constructor(
             statsEntity = stats,
             speciesEntity = species,
             typeEffectivenessEntity = typeEffectiveness,
+            evolutionChain = evolutions,
         )
     }
 }

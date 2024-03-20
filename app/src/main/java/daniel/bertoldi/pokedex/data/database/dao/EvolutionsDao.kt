@@ -12,11 +12,9 @@ interface EvolutionsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertEvolution(evolution: Evolution)
 
-    @Query("SELECT EXISTS (SELECT * FROM evolutions WHERE evolution_id = :evolutionId)")
+    @Query("SELECT EXISTS (SELECT * FROM evolutions WHERE evolution_chain_id = :evolutionId)")
     suspend fun isEvolutionInDatabase(evolutionId: Int): Boolean
 
-    @Query(
-        "SELECT * FROM evolutions WHERE evolution_id = :evolutionId"
-    )
-    fun getEvolutionsOfAPokemon(evolutionId: Int): List<Evolution>
+    @Query("SELECT * FROM evolutions WHERE evolution_chain_id = :evolutionId")
+    suspend fun getEvolutionChainOfAPokemon(evolutionId: Int): Evolution
 }

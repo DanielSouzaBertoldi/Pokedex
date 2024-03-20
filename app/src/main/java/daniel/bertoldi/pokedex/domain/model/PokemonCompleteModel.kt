@@ -13,6 +13,7 @@ data class PokemonCompleteModel(
     val stats: StatsModel,
     val species: SpeciesModel,
     val typeEffectiveness: TypeEffectivenessModel,
+    val evolutionChain: EvolutionChainDetailsModel,
 )
 
 data class AbilityModel(
@@ -73,4 +74,27 @@ data class TypeEffectivenessModel(
     val fairy: Float?,
     val unknown: Float?,
     val shadow: Float?,
+)
+
+data class EvolutionChainDetailsModel(
+    val name: String,
+    val isBaby: Boolean,
+    val heldItem: String? = null,
+    val knownMove: String? = null,
+    val knownMoveType: String? = null,
+    val minLevel: Int? = null,
+    val minHappiness: Int? = null,
+    val minBeauty: Int? = null,
+    val minAffection: Int? = null,
+    val needsOverworldRain: Boolean,
+    val partySpecies: String? = null,
+    val partyType: String? = null,
+    val relativePhysicalStats: Int? = null,
+    val timeOfDay: String,
+    val turnUpsideDown: Boolean,
+    val location: String? = null,
+    val trigger: String? = null,
+    val item: String? = null,
+    val gender: Int? = null,
+    val nextEvolution: List<EvolutionChainDetailsModel>,
 )

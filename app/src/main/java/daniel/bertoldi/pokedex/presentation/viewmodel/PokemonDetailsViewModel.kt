@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daniel.bertoldi.pokedex.presentation.mapper.PokemonCompleteModelToUiModelMapper
-import daniel.bertoldi.pokedex.presentation.model.PokemonBasicUiModel
 import daniel.bertoldi.pokedex.presentation.model.PokemonCompleteUiModel
 import daniel.bertoldi.pokedex.usecase.GetPokemonDefaultUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

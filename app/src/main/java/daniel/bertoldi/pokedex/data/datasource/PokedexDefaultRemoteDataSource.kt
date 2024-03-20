@@ -1,6 +1,5 @@
 package daniel.bertoldi.pokedex.data.datasource
 
-import android.util.Log
 import daniel.bertoldi.pokedex.data.api.PokeApi
 import daniel.bertoldi.pokedex.data.api.response.*
 import daniel.bertoldi.pokedex.data.database.dao.*
@@ -51,6 +50,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
             abilitiesResponse = abilitiesResponse,
             speciesResponse = speciesResponse,
             typeEffectiveness = typeEffectivenessResponse,
+            evolutionChain = evolutionChain,
         )
     }
 
@@ -178,6 +178,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                     genera = speciesResponse.genera.firstOrNull {
                         it.language.name == "en"
                     }?.genus.orEmpty(),
+                    evolutionId = speciesResponse.evolutionChain.url.fetchIdFromUrl(),
                 )
             )
         }
@@ -247,12 +248,13 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         return typeEffectiveness
     }
 
-    private suspend fun getEvolutionChain(evolutionChainId: Int) {
+    private suspend fun getEvolutionChain(evolutionChainId: Int): EvolutionChainResponse {
         val evolutionChainResponse = pokeApi.getEvolutionChain(evolutionChainId)
         if (evolutionsDao.isEvolutionInDatabase(evolutionChainId).not()) {
             evolutionChainResponse.chain.addEvolutionDetailsToDatabase(evolutionChainId)
             checkNextChainLinkLayer(evolutionChainResponse.chain.chain, evolutionChainId)
         }
+        return evolutionChainResponse
     }
 
     private suspend fun ChainLinkResponse.addEvolutionDetailsToDatabase(
@@ -260,30 +262,41 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     ) {
         evolutionsDao.insertEvolution(
             Evolution(
-                evolutionId = evolutionChainId,
-                evolutionName = this.species.name,
-                isBaby = this.isBaby,
-                heldItem = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-                knownMove = this.evolutionDetails.firstOrNull()?.knownMove?.name,
-                knownMoveType = this.evolutionDetails.firstOrNull()?.knownMoveType?.name,
-                minLevel = this.evolutionDetails.firstOrNull()?.minLevel,
-                minHappiness = this.evolutionDetails.firstOrNull()?.minHappiness,
-                minBeauty = this.evolutionDetails.firstOrNull()?.minBeauty,
-                minAffection = this.evolutionDetails.firstOrNull()?.minAffection,
-                needsOverworldRain = this.evolutionDetails.firstOrNull()?.needsOverworldRain
-                    ?: false,
-                partySpecies = this.evolutionDetails.firstOrNull()?.partySpecies?.name,
-                partyType = this.evolutionDetails.firstOrNull()?.partyType?.name,
-                relativePhysicalStats = this.evolutionDetails.firstOrNull()?.relativePhysicalStats,
-                timeOfDay = this.evolutionDetails.firstOrNull()?.timeOfDay ?: "",
-                turnUpsideDown = this.evolutionDetails.firstOrNull()?.turnUpsideDown ?: false,
-                location = this.evolutionDetails.firstOrNull()?.location?.name,
-                trigger = this.evolutionDetails.firstOrNull()?.trigger?.name,
-                item = this.evolutionDetails.firstOrNull()?.heldItem?.name,
-                gender = this.evolutionDetails.firstOrNull()?.gender,
+                evolutionChainId = evolutionChainId,
+                chainDetails = mapChainDetails(listOf(this))[0] // talvez ter um map pra chain e uma fun pra map chain
             )
         )
     }
+
+    private fun mapChainDetails(chainResponse: List<ChainLinkResponse>): List<ChainDetails> =
+        chainResponse.map {
+            ChainDetails(
+                evolutionName = it.species.name,
+                isBaby = it.isBaby,
+                evolutionDetails = it.evolutionDetails.map { evolutionDetails ->
+                    EvolutionDetails(
+                        heldItem = evolutionDetails.heldItem?.name,
+                        knownMove = evolutionDetails.knownMove?.name,
+                        knownMoveType = evolutionDetails.knownMoveType?.name,
+                        minLevel = evolutionDetails.minLevel,
+                        minHappiness = evolutionDetails.minHappiness,
+                        minBeauty = evolutionDetails.minBeauty,
+                        minAffection = evolutionDetails.minAffection,
+                        needsOverworldRain = evolutionDetails.needsOverworldRain,
+                        partySpecies = evolutionDetails.partySpecies?.name,
+                        partyType = evolutionDetails.partyType?.name,
+                        relativePhysicalStats = evolutionDetails.relativePhysicalStats,
+                        timeOfDay = evolutionDetails.timeOfDay,
+                        turnUpsideDown = evolutionDetails.turnUpsideDown,
+                        location = evolutionDetails.location?.name,
+                        trigger = evolutionDetails.trigger?.name,
+                        item = evolutionDetails.heldItem?.name,
+                        gender = evolutionDetails.gender,
+                    )
+                },
+                evolvesTo = mapChainDetails(it.chain),
+            )
+        }
 
     private suspend fun checkNextChainLinkLayer(
         chain: List<ChainLinkResponse>,

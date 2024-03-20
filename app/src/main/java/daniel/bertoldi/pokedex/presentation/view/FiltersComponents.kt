@@ -1,5 +1,7 @@
 package daniel.bertoldi.pokedex.presentation.view
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -9,19 +11,30 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
+import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
 import daniel.bertoldi.pokedex.ui.theme.*
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun FilterComponent() {
+fun FilterComponent(
+    filterOptions: MutableStateFlow<FilterOptions>,
+    onFilterClicked: (Int, String) -> Unit,
+) {
     val modifier = Modifier.padding(start = 40.dp, end = 40.dp)
+    val filterOptionsState by filterOptions.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,17 +60,41 @@ fun FilterComponent() {
             text = "Use advanced search to explore Pokémon by type, weakness, height and more!",
         )
 
-        TypeListComponent(modifier, title = "Types")
-        TypeListComponent(modifier, title = "Weaknesses")
-        HeightListComponent(modifier)
-        WeightListComponent(modifier)
+        filterOptionsState.mainFilters.forEach { (key, filter) ->
+            Text(
+                modifier = modifier.padding(top = 35.dp),
+                color = TextBlack,
+                style = Typography.h4,
+                text = key,
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+            ) {
+                filter.forEachIndexed { idx, pokemon ->
+                    if (idx == 0) { // pulo do gato rawr
+                        BoxFiller(22.dp)
+                    }
+                    FilterMaluco(
+                        modifier = modifier,
+                        idx = idx,
+                        filterType = key,
+                        filterData = pokemon,
+                        onFilterClicked = onFilterClicked,
+                    )
+                }
+            }
+        }
+
         FilterSlider(
             modifier = modifier,
             valueRange = 1F..1100F,
         )
 
         Row(
-            modifier = modifier.padding(top = 50.dp)) {
+            modifier = modifier.padding(top = 50.dp)
+        ) {
             FilterButton(
                 modifier = Modifier.padding(end = 14.dp),
                 buttonText = "Reset",
@@ -72,93 +109,40 @@ fun FilterComponent() {
 }
 
 @Composable
-private fun TypeListComponent(
-    modifier: Modifier,
-    title: String,
+private fun FilterMaluco(
+    modifier: Modifier = Modifier,
+    idx: Int,
+    filterType: String,
+    filterData: PokemonFilterUIData,
+    onFilterClicked: (Int, String) -> Unit,
 ) {
-    Text(
-        modifier = modifier.padding(top = 35.dp),
-        color = TextBlack,
-        style = Typography.h4,
-        text = title,
+    val backgroundColor by animateColorAsState(
+        targetValue = if (filterData.isSelected) {
+            filterData.filterUiData.foregroundColor
+        } else BgWhite,
+        animationSpec = tween(400),
+    )
+    val iconFill by animateColorAsState(
+        targetValue = if (filterData.isSelected) {
+            BgWhite
+        } else filterData.filterUiData.foregroundColor,
+        animationSpec = tween(400),
     )
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
+    IconButton(
+        onClick = { onFilterClicked(idx, filterType.lowercase()) }
     ) {
-        PokemonUIData.values().forEachIndexed { idx, pokemonUiData ->
-            if (idx == 0) { // pulo do gato rawr
-                BoxFiller(22.dp)
-            }
-            Icon(
-                modifier = Modifier.padding(30.dp),
-                painter = painterResource(id = pokemonUiData.icon),
-                contentDescription = null,
-                tint = pokemonUiData.typeColor,
-            )
-        }
-    }
-}
-
-@Composable
-private fun HeightListComponent(
-    modifier: Modifier,
-) {
-    Text(
-        modifier = modifier.padding(top = 35.dp),
-        color = TextBlack,
-        style = Typography.h4,
-        text = "Height",
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-    ) {
-        HeightUIData.values().forEachIndexed { idx, heightUiData ->
-            if (idx == 0) { // pulo do gato rawr
-                BoxFiller(26.dp)
-            }
-            Icon(
-                modifier = Modifier.padding(30.dp),
-                painter = painterResource(id = heightUiData.iconUnselected),
-                contentDescription = null,
-                tint = heightUiData.color,
-            )
-        }
-    }
-}
-
-@Composable
-private fun WeightListComponent(
-    modifier: Modifier,
-) {
-    Text(
-        modifier = modifier.padding(top = 35.dp),
-        color = TextBlack,
-        style = Typography.h4,
-        text = "Weight",
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-    ) {
-        WeightUIData.values().forEachIndexed { idx, weightUiData ->
-            if (idx == 0) { // pulo do gato rawr
-                BoxFiller(26.dp)
-            }
-            Icon(
-                modifier = Modifier.padding(30.dp),
-                painter = painterResource(id = weightUiData.iconUnselected),
-                contentDescription = null,
-                tint = weightUiData.color,
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .padding(30.dp)
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(50)
+                ),
+            painter = painterResource(id = filterData.filterUiData.icon),
+            contentDescription = null,
+            tint = iconFill,
+        )
     }
 }
 
@@ -199,7 +183,7 @@ private fun FilterButton(
 @Composable
 fun FilterComponentPreview() {
     PokedexTheme {
-        FilterComponent()
+//        FilterComponent(MutableStateFlow(FilterOptions(numberRange = 1F..1100F)))
     }
 }
 

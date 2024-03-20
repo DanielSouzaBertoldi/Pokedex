@@ -32,10 +32,13 @@ import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.bertoldi.pokedex.R
+import daniel.bertoldi.pokedex.presentation.model.BottomSheetLayout
 import daniel.bertoldi.pokedex.presentation.model.PokemonUiModel
-import daniel.bertoldi.pokedex.presentation.viewmodel.BottomSheetLayout
+import daniel.bertoldi.pokedex.presentation.model.filters.FilterOptions
+import daniel.bertoldi.pokedex.presentation.model.filters.PokemonFilterUIData
 import daniel.bertoldi.pokedex.presentation.viewmodel.MainActivityViewModel
 import daniel.bertoldi.pokedex.ui.theme.PokedexTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -70,7 +73,9 @@ class MainActivity : ComponentActivity() {
                     MyAppNavHost(
                         lazyPokemonPagingItems = lazyPokemonPagingItems,
                         sheetContent = sheetContent,
-                        onIconClick = ::topBarIconClickCallback
+                        onIconClick = ::topBarIconClickCallback,
+                        filterOptions = viewModel.filterOptions,
+                        onFilterClick = ::onFilterClicked,
                     )
                 }
             }
@@ -79,6 +84,26 @@ class MainActivity : ComponentActivity() {
 
     private fun topBarIconClickCallback(iconType: BottomSheetLayout) {
         viewModel.bottomSheetContent.value = iconType
+    }
+
+    private fun onFilterClicked(idx: Int, name: String) {
+        viewModel.filterOptions.value = viewModel.filterOptions.value.copy(
+            mainFilters = viewModel.filterOptions.value.mainFilters.toMutableMap().mapValues {
+                if (it.key == name) {
+                    it.value.toMutableList().apply {
+                        set(
+                            index = idx,
+                            element = PokemonFilterUIData(
+                                isSelected = !this[idx].isSelected,
+                                filterUiData = this[idx].filterUiData,
+                            )
+                        )
+                    }
+                } else {
+                    it.value
+                }
+            }
+        )
     }
 }
 
@@ -90,6 +115,8 @@ fun MyAppNavHost(
     lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
     sheetContent: State<BottomSheetLayout>,
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
+    filterOptions: MutableStateFlow<FilterOptions>,
+    onFilterClick: (Int, String) -> Unit = { _, _ -> },
 ) {
     NavHost(
         modifier = modifier,
@@ -97,7 +124,13 @@ fun MyAppNavHost(
         startDestination = startDestinationName,
     ) {
         composable("home") {
-            PokemonListComponent(lazyPokemonPagingItems, sheetContent, onIconClick)
+            PokemonListComponent(
+                lazyPokemonPagingItems = lazyPokemonPagingItems,
+                sheetContent = sheetContent,
+                onIconClick = onIconClick,
+                filterOptions = filterOptions,
+                onFilterClick = onFilterClick,
+            )
         }
     }
 }
@@ -108,6 +141,8 @@ fun PokemonListComponent(
     lazyPokemonPagingItems: LazyPagingItems<PokemonUiModel>,
     sheetContent: State<BottomSheetLayout>,
     onIconClick: (iconType: BottomSheetLayout) -> Unit = {},
+    filterOptions: MutableStateFlow<FilterOptions>,
+    onFilterClick: (Int, String) -> Unit,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden
@@ -126,7 +161,10 @@ fun PokemonListComponent(
                 Text("You've opened the SORT option!")
                 Spacer(modifier = Modifier.height(50.dp))
             } else {
-                FilterComponent()
+                FilterComponent(
+                    filterOptions = filterOptions,
+                    onFilterClicked = onFilterClick,
+                )
             }
         }
     ) {

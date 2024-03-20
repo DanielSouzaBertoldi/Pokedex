@@ -118,25 +118,21 @@ enum class HeightUIData(
     val heightLimit: Int,
     val color: Color,
     val iconUnselected: Int,
-    val iconSelected: Int,
 ) {
     SHORT(
         heightLimit = 10,
         color = Color(0xFFFFC5E6),
         iconUnselected = R.drawable.ic_height_short,
-        iconSelected = R.drawable.ic_height_short_selected,
     ),
     MEDIUM(
         heightLimit = 100,
         color = Color(0xFFAEBFD7),
         iconUnselected = R.drawable.ic_height_medium,
-        iconSelected = R.drawable.ic_height_medium_selected,
     ),
     TALL(
         heightLimit = 1000,
         color = Color(0xFFAAACB8),
         iconUnselected = R.drawable.ic_height_tall,
-        iconSelected = R.drawable.ic_height_tall_selected,
     ),
 }
 
@@ -145,24 +141,20 @@ enum class WeightUIData(
     val weightLimit: Int,
     val color: Color,
     val iconUnselected: Int,
-    val iconSelected: Int,
 ) {
     LIGHT(
         weightLimit = 10,
         color = Color(0xFF99CD7C),
         iconUnselected = R.drawable.ic_weight_light,
-        iconSelected = R.drawable.ic_weight_light_selected,
     ),
     NORMAL(
         weightLimit = 100,
         color = Color(0xFF57B2DC),
         iconUnselected = R.drawable.ic_weight_normal,
-        iconSelected = R.drawable.ic_weight_normal_selected,
     ),
     HEAVY(
         weightLimit = 1000,
         color = Color(0xFF5A92A5),
         iconUnselected = R.drawable.ic_weight_heavy,
-        iconSelected = R.drawable.ic_weight_heavy_selected,
     ),
 }

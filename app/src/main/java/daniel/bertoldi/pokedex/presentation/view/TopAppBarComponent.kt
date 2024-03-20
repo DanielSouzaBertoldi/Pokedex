@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import daniel.bertoldi.pokedex.R
-import daniel.bertoldi.pokedex.presentation.viewmodel.BottomSheetLayout
+import daniel.bertoldi.pokedex.presentation.model.BottomSheetLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

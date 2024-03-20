@@ -13,10 +13,12 @@ import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
 import daniel.bertoldi.pokedex.data.database.dao.StatsDao
+import daniel.bertoldi.pokedex.data.database.dao.TypeEffectivenessDao
 import daniel.bertoldi.pokedex.data.database.model.Abilities
 import daniel.bertoldi.pokedex.data.database.model.Pokemon
 import daniel.bertoldi.pokedex.data.database.model.Species
 import daniel.bertoldi.pokedex.data.database.model.Stats
+import daniel.bertoldi.pokedex.data.database.model.TypeEffectiveness
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 
 private const val DATABASE_VERSION = 1
@@ -28,6 +30,7 @@ private const val DATABASE_VERSION = 1
         PokemonAbilitiesCrossRef::class,
         Stats::class,
         Species::class,
+        TypeEffectiveness::class,
     ],
     version = DATABASE_VERSION,
 )
@@ -49,4 +52,6 @@ abstract class PokedexDatabase : RoomDatabase() {
     abstract fun statsDao(): StatsDao
 
     abstract fun speciesDao(): SpeciesDao
+
+    abstract fun typeEffectivenessDao(): TypeEffectivenessDao
 }

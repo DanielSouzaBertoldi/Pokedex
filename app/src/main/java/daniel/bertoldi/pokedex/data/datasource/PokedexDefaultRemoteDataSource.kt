@@ -6,11 +6,13 @@ import daniel.bertoldi.pokedex.data.api.response.GenericObject
 import daniel.bertoldi.pokedex.data.api.response.PokemonAbilitiesResponse
 import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
 import daniel.bertoldi.pokedex.data.api.response.StatsResponse
+import daniel.bertoldi.pokedex.data.api.response.TypesResponse
 import daniel.bertoldi.pokedex.data.database.dao.AbilitiesDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonAbilitiesCrossRefDao
 import daniel.bertoldi.pokedex.data.database.dao.PokemonDao
 import daniel.bertoldi.pokedex.data.database.dao.SpeciesDao
 import daniel.bertoldi.pokedex.data.database.dao.StatsDao
+import daniel.bertoldi.pokedex.data.database.dao.TypeEffectivenessDao
 import daniel.bertoldi.pokedex.data.database.model.*
 import daniel.bertoldi.pokedex.data.database.model.relations.PokemonAbilitiesCrossRef
 import daniel.bertoldi.pokedex.domain.mapper.GenerationResponseToModelMapper
@@ -32,6 +34,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
     private val generationsResponseToModelMapper: GenerationResponseToModelMapper,
     private val pokemonResponseToCompleteModelMapper: PokemonResponseToCompleteModelMapper,
     private val speciesDao: SpeciesDao,
+    private val typeEffectivenessDao: TypeEffectivenessDao,
 ) : PokedexRemoteDataSource {
 
     override suspend fun getBasicPokemonInfo(pokemonId: Int): PokemonBasicModel {
@@ -46,6 +49,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         val pokemonResponse = pokeApi.getPokemon(pokemonId)
         getPokemonAbilities(pokemonResponse.abilities)
         getPokemonSpecies(pokemonResponse.species.url)
+        getPokemonTypeEffectiveness(pokemonResponse.types)
 
         return pokemonResponseToCompleteModelMapper.mapFrom(pokemonResponse)
     }
@@ -94,7 +98,7 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
                 specialAttack = statsResponse.getBaseStat("special-attack"),
                 specialDefense = statsResponse.getBaseStat("special-defense"),
                 speed = statsResponse.getBaseStat("speed"),
-                accuracy = statsResponse.getBaseStat( "accuracy"),
+                accuracy = statsResponse.getBaseStat("accuracy"),
                 evasion = statsResponse.getBaseStat("evasion"),
             )
         )
@@ -168,8 +172,78 @@ class PokedexDefaultRemoteDataSource @Inject constructor(
         }
     }
 
+    private suspend fun getPokemonTypeEffectiveness(types: List<TypesResponse>) {
+        val typeNames = types.map { it.type.name }.sorted()
+        val multipliers = mutableMapOf(
+            "defense" to mutableMapOf<String, Float>(),
+            "attack" to mutableMapOf()
+        )
+        types.forEach { type ->
+            val typeInfo = pokeApi.getPokemonTypeInfo(type.type.url.fetchIdFromUrl())
+            typeInfo.damageRelations.defenseDouble.forEach {
+                multipliers.calculateTypeEffectiveness(2f, "defense", it.name)
+            }
+            typeInfo.damageRelations.attackDouble.forEach {
+                multipliers.calculateTypeEffectiveness(2f, "attack", it.name)
+            }
+            typeInfo.damageRelations.defenseHalf.forEach {
+                multipliers.calculateTypeEffectiveness(0.5f, "defense", it.name)
+            }
+            typeInfo.damageRelations.attackHalf.forEach {
+                multipliers.calculateTypeEffectiveness(0.5f, "attack", it.name)
+            }
+            typeInfo.damageRelations.defenseZero.forEach {
+                multipliers.calculateTypeEffectiveness(0f, "defense", it.name)
+            }
+            typeInfo.damageRelations.attackZero.forEach {
+                multipliers.calculateTypeEffectiveness(0f, "attack", it.name)
+            }
+        }
+
+        if (!typeEffectivenessDao.isTypeEffectivenessInDataBase(
+                typeNames[0],
+                typeNames.getOrElse(1) { "" })
+        ) {
+            typeEffectivenessDao.insertTypeEffectiveness(
+                TypeEffectiveness(
+                    firstType = typeNames[0],
+                    secondType = typeNames.getOrElse(1) { "" },
+                    normal = multipliers["defense"]?.get("normal"),
+                    fighting = multipliers["defense"]?.get("fighting"),
+                    flying = multipliers["defense"]?.get("flying"),
+                    poison = multipliers["defense"]?.get("poison"),
+                    ground = multipliers["defense"]?.get("ground"),
+                    rock = multipliers["defense"]?.get("rock"),
+                    bug = multipliers["defense"]?.get("bug"),
+                    ghost = multipliers["defense"]?.get("ghost"),
+                    steel = multipliers["defense"]?.get("steel"),
+                    fire = multipliers["defense"]?.get("fire"),
+                    water = multipliers["defense"]?.get("water"),
+                    grass = multipliers["defense"]?.get("grass"),
+                    electric = multipliers["defense"]?.get("electric"),
+                    psychic = multipliers["defense"]?.get("psychic"),
+                    ice = multipliers["defense"]?.get("ice"),
+                    dragon = multipliers["defense"]?.get("dragon"),
+                    dark = multipliers["defense"]?.get("dark"),
+                    fairy = multipliers["defense"]?.get("fairy"),
+                    unknown = multipliers["defense"]?.get("unknown"),
+                    shadow = multipliers["defense"]?.get("shadow"),
+                )
+            )
+        }
+    }
+
     private fun List<StatsResponse>.getBaseStat(stat: String) =
         this.firstOrNull { it.stat.name == stat }?.baseStat
 
     private fun String.fetchIdFromUrl() = fetchIdRegex.findAll(this).last().value.toInt()
+
+    private fun MutableMap<String, MutableMap<String, Float>>.calculateTypeEffectiveness(
+        multiplier: Float,
+        key: String,
+        type: String,
+    ) {
+        val value = this[key]?.get(type)?.times(multiplier) ?: multiplier
+        this[key]?.put(type, value)
+    }
 }

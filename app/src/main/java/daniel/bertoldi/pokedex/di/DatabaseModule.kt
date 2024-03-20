@@ -41,4 +41,8 @@ object DatabaseModule {
 
     @Provides
     fun provideSpeciesDao(pokedexDatabase: PokedexDatabase) = pokedexDatabase.speciesDao()
+
+    @Provides
+    fun provideTypeEffectivenessDao(pokedexDatabase: PokedexDatabase) =
+        pokedexDatabase.typeEffectivenessDao()
 }

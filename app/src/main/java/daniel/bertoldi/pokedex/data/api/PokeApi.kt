@@ -5,6 +5,7 @@ import daniel.bertoldi.pokedex.data.api.response.GenerationResponse
 import daniel.bertoldi.pokedex.data.api.response.GenerationsListResponse
 import daniel.bertoldi.pokedex.data.api.response.PokemonResponse
 import daniel.bertoldi.pokedex.data.api.response.PokemonSpeciesResponse
+import daniel.bertoldi.pokedex.data.api.response.PokemonTypeResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -33,4 +34,9 @@ interface PokeApi {
     suspend fun getPokemonSpecies(
         @Path("speciesId") speciesId: Int,
     ): PokemonSpeciesResponse
+
+    @GET("type/{typeId}")
+    suspend fun getPokemonTypeInfo(
+        @Path("typeId") typeId: Int,
+    ): PokemonTypeResponse
 }
